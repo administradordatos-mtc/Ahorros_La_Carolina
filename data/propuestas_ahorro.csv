@@ -1,0 +1,9 @@
+departamento,propuesta,responsable,cifra_estimada,calculo,evidencia,fecha_implementacion,estado,ahorro_real,bloqueo
+Operaciones,Optimizar rutas de despacho,Carlos Perez,8500000,"Reducción de km recorridos x costo promedio por km","Informe rutas abril",2026-07-01,En análisis,0,
+Mantenimiento,Compra consolidada de repuestos,Ana Gomez,12000000,"Diferencia entre precio actual y precio negociado x volumen","Cotización proveedor",2026-06-20,Aprobada,0,
+Administración,Digitalizar archivo físico,Laura Ruiz,3500000,"Horas administrativas ahorradas x costo hora","Levantamiento interno",2026-08-01,Idea,0,
+Talento Humano,Reducir horas extra por programación,Diego Torres,6000000,"Horas extra promedio mensual x valor hora extra","Reporte nómina",2026-07-15,En implementación,1500000,
+Compras,Renegociar contrato de papelería,Maria Lopez,2500000,"Consumo anual actual - propuesta proveedor","Contrato comparativo",2026-06-30,Bloqueada,0,"Pendiente aprobación jurídica"
+Sistemas,Optimizar licencias SaaS,Nestor Molina,4200000,"Licencias sin uso x costo mensual x 12","Inventario de licencias",2026-09-01,Implementada,3800000,
+Financiero,Automatizar conciliaciones,Paula Rojas,7800000,"Horas de conciliación ahorradas x costo hora","",2026-08-15,Medida,7200000,
+Operaciones,Reducir consumo de combustible,Jorge Diaz,15000000,"Galones estimados ahorrados x precio promedio galón","Análisis telemetría",2026-10-01,En análisis,0,"Pendiente prueba piloto"
