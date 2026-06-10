@@ -1,0 +1,19 @@
+# Entornos y secretos
+.env
+.env.*
+
+# Dependencias de Node
+node_modules/
+dist/
+build/
+.next/
+
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores y herramientas
+.vscode/
+*.tmp
+*.log
