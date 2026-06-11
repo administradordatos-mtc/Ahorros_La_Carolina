@@ -10,7 +10,11 @@ def test_generate_dashboard(tmp_path):
     path = generate_dashboard(ROOT / "data" / "propuestas_ahorro.csv", output)
     assert path.exists()
     html = path.read_text(encoding="utf-8")
-    assert "Tablero Único de Propuestas de Ahorro" in html
+    assert "Tablero único de propuestas de ahorro" in html
+    assert "La Carolina" in html
+    assert "Transporte con Corazón" in html
+    assert "Logo La Carolina" in html
+    assert "Búsqueda rápida" in html
     assert "Ahorro estimado total" in html
     assert "Resumen por departamento" in html
     assert "Optimizar rutas de despacho" in html
