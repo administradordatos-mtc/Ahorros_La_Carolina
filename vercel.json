@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/tablero_ahorros.html", "destination": "/index.html" },
+    { "source": "/output/tablero_ahorros.html", "destination": "/index.html" }
+  ]
+}

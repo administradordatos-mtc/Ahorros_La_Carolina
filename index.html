@@ -1,0 +1,283 @@
+<!doctype html>
+<!-- Vercel entrypoint -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero Único de Propuestas de Ahorro</title>
+  <style>
+    :root { --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#687083; --blue:#1d4ed8; --green:#047857; --red:#b91c1c; --amber:#b45309; --line:#d9dfeb; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, Helvetica, sans-serif; color:var(--text); background:var(--bg); }
+    header { padding: 28px 32px; background: linear-gradient(135deg, #0f172a, #1d4ed8); color:white; }
+    header h1 { margin:0 0 8px; font-size: 28px; }
+    header p { margin:0; opacity:.9; }
+    main { padding: 24px 32px 48px; }
+    .kpis { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap:16px; margin-bottom:22px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 8px 24px rgba(15,23,42,.06); }
+    .card .label { color:var(--muted); font-size:13px; margin-bottom:8px; }
+    .card .value { font-size:25px; font-weight:700; }
+    .green { color:var(--green); } .red { color:var(--red); } .amber { color:var(--amber); } .blue { color:var(--blue); }
+    section { margin-top:22px; }
+    h2 { font-size:20px; margin:0 0 14px; }
+    .filters { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px; align-items:end; }
+    label { font-size:13px; color:var(--muted); display:block; margin-bottom:5px; }
+    select, button { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:white; }
+    button { background:var(--blue); color:white; border:0; cursor:pointer; font-weight:700; }
+    button.secondary { background:#334155; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:14px; background:white; }
+    table { width:100%; border-collapse: collapse; min-width: 1100px; }
+    th, td { border-bottom:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top; font-size:14px; }
+    th { background:#f8fafc; color:#334155; position:sticky; top:0; z-index:1; }
+    tr.row-blocked { background:#fff1f2; }
+    .badge { display:inline-block; border-radius:999px; padding:4px 8px; font-size:12px; font-weight:700; }
+    .badge-blocked { background:#fee2e2; color:var(--red); }
+    .badge-ok { background:#dcfce7; color:var(--green); }
+    .badge-warn { background:#fef3c7; color:var(--amber); margin-left:4px; }
+    .muted { color:var(--muted); }
+    .summary-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:14px; }
+    .dept-card h3 { margin:0 0 10px; }
+    .dept-card p { margin:6px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width: 720px) { header, main { padding-left:16px; padding-right:16px; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Tablero Único de Propuestas de Ahorro</h1>
+  <p>Seguimiento por departamento, responsable, estado, evidencia, cálculo, ahorro estimado, ahorro real y bloqueos.</p>
+</header>
+<main>
+  <div class="kpis">
+    <div class="card"><div class="label">Total propuestas</div><div class="value blue">8</div></div>
+    <div class="card"><div class="label">Ahorro estimado total</div><div class="value green">$59.500.000</div></div>
+    <div class="card"><div class="label">Ahorro real total</div><div class="value green">$12.500.000</div></div>
+    <div class="card"><div class="label">Diferencia estimado vs real</div><div class="value amber">$47.000.000</div></div>
+    <div class="card"><div class="label">Propuestas bloqueadas</div><div class="value red">2</div></div>
+    <div class="card"><div class="label">Implementadas o medidas</div><div class="value green">2</div></div>
+    <div class="card"><div class="label">Pendientes evidencia</div><div class="value amber">1</div></div>
+    <div class="card"><div class="label">Pendientes cálculo</div><div class="value amber">0</div></div>
+  </div>
+
+  <section class="card">
+    <h2>Filtros</h2>
+    <div class="filters">
+      <div><label>Departamento</label><select id="filterDepartamento"><option value="">Todos</option><option>Administración</option><option>Compras</option><option>Financiero</option><option>Mantenimiento</option><option>Operaciones</option><option>Sistemas</option><option>Talento Humano</option></select></div>
+      <div><label>Responsable</label><select id="filterResponsable"><option value="">Todos</option><option>Ana Gomez</option><option>Carlos Perez</option><option>Diego Torres</option><option>Jorge Diaz</option><option>Laura Ruiz</option><option>Maria Lopez</option><option>Nestor Molina</option><option>Paula Rojas</option></select></div>
+      <div><label>Estado</label><select id="filterEstado"><option value="">Todos</option><option>Aprobada</option><option>Bloqueada</option><option>En análisis</option><option>En implementación</option><option>Idea</option><option>Implementada</option><option>Medida</option></select></div>
+      <div><label>Bloqueo</label><select id="filterBloqueo"><option value="">Todas</option><option value="si">Bloqueadas</option><option value="no">No bloqueadas</option></select></div>
+      <div><label>&nbsp;</label><button onclick="exportFilteredCSV()">Exportar CSV filtrado</button></div>
+      <div><label>&nbsp;</label><button class="secondary" onclick="resetFilters()">Limpiar filtros</button></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Resumen por departamento</h2>
+    <div class="summary-grid">
+      
+      <div class="card dept-card">
+        <h3>Operaciones</h3>
+        <p><strong>Propuestas:</strong> 2</p>
+        <p><strong>Ahorro estimado:</strong> $23.500.000</p>
+        <p><strong>Ahorro real:</strong> $0</p>
+        <p><strong>Bloqueos:</strong> <span class="red">1</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Mantenimiento</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $12.000.000</p>
+        <p><strong>Ahorro real:</strong> $0</p>
+        <p><strong>Bloqueos:</strong> <span class="green">0</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Financiero</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $7.800.000</p>
+        <p><strong>Ahorro real:</strong> $7.200.000</p>
+        <p><strong>Bloqueos:</strong> <span class="green">0</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Talento Humano</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $6.000.000</p>
+        <p><strong>Ahorro real:</strong> $1.500.000</p>
+        <p><strong>Bloqueos:</strong> <span class="green">0</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Sistemas</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $4.200.000</p>
+        <p><strong>Ahorro real:</strong> $3.800.000</p>
+        <p><strong>Bloqueos:</strong> <span class="green">0</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Administración</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $3.500.000</p>
+        <p><strong>Ahorro real:</strong> $0</p>
+        <p><strong>Bloqueos:</strong> <span class="green">0</span></p>
+      </div>
+      
+      <div class="card dept-card">
+        <h3>Compras</h3>
+        <p><strong>Propuestas:</strong> 1</p>
+        <p><strong>Ahorro estimado:</strong> $2.500.000</p>
+        <p><strong>Ahorro real:</strong> $0</p>
+        <p><strong>Bloqueos:</strong> <span class="red">1</span></p>
+      </div>
+      
+    </div>
+  </section>
+
+  <section>
+    <h2>Detalle de propuestas</h2>
+    <div class="table-wrap">
+      <table id="proposalsTable">
+        <thead>
+          <tr>
+            <th>Departamento</th><th>Propuesta</th><th>Responsable</th><th>Cifra estimada</th><th>Cálculo</th><th>Evidencia</th><th>Fecha implementación</th><th>Estado</th><th>Ahorro real</th><th>Bloqueo</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <tr class="" data-departamento="Operaciones" data-responsable="Carlos Perez" data-estado="En análisis" data-bloqueada="no">
+            <td>Operaciones</td>
+            <td>Optimizar rutas de despacho</td>
+            <td>Carlos Perez</td>
+            <td>$8.500.000</td>
+            <td>Reducción de km recorridos x costo promedio por km</td>
+            <td>Informe rutas abril</td>
+            <td>2026-07-01</td>
+            <td><span class="badge badge-ok">En análisis</span></td>
+            <td>$0</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="" data-departamento="Mantenimiento" data-responsable="Ana Gomez" data-estado="Aprobada" data-bloqueada="no">
+            <td>Mantenimiento</td>
+            <td>Compra consolidada de repuestos</td>
+            <td>Ana Gomez</td>
+            <td>$12.000.000</td>
+            <td>Diferencia entre precio actual y precio negociado x volumen</td>
+            <td>Cotización proveedor</td>
+            <td>2026-06-20</td>
+            <td><span class="badge badge-ok">Aprobada</span></td>
+            <td>$0</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="" data-departamento="Administración" data-responsable="Laura Ruiz" data-estado="Idea" data-bloqueada="no">
+            <td>Administración</td>
+            <td>Digitalizar archivo físico</td>
+            <td>Laura Ruiz</td>
+            <td>$3.500.000</td>
+            <td>Horas administrativas ahorradas x costo hora</td>
+            <td>Levantamiento interno</td>
+            <td>2026-08-01</td>
+            <td><span class="badge badge-ok">Idea</span></td>
+            <td>$0</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="" data-departamento="Talento Humano" data-responsable="Diego Torres" data-estado="En implementación" data-bloqueada="no">
+            <td>Talento Humano</td>
+            <td>Reducir horas extra por programación</td>
+            <td>Diego Torres</td>
+            <td>$6.000.000</td>
+            <td>Horas extra promedio mensual x valor hora extra</td>
+            <td>Reporte nómina</td>
+            <td>2026-07-15</td>
+            <td><span class="badge badge-ok">En implementación</span></td>
+            <td>$1.500.000</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="row-blocked" data-departamento="Compras" data-responsable="Maria Lopez" data-estado="Bloqueada" data-bloqueada="si">
+            <td>Compras</td>
+            <td>Renegociar contrato de papelería</td>
+            <td>Maria Lopez</td>
+            <td>$2.500.000</td>
+            <td>Consumo anual actual - propuesta proveedor</td>
+            <td>Contrato comparativo</td>
+            <td>2026-06-30</td>
+            <td><span class="badge badge-blocked">Bloqueada</span></td>
+            <td>$0</td>
+            <td>Pendiente aprobación jurídica</td>
+          </tr>
+        
+          <tr class="" data-departamento="Sistemas" data-responsable="Nestor Molina" data-estado="Implementada" data-bloqueada="no">
+            <td>Sistemas</td>
+            <td>Optimizar licencias SaaS</td>
+            <td>Nestor Molina</td>
+            <td>$4.200.000</td>
+            <td>Licencias sin uso x costo mensual x 12</td>
+            <td>Inventario de licencias</td>
+            <td>2026-09-01</td>
+            <td><span class="badge badge-ok">Implementada</span></td>
+            <td>$3.800.000</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="" data-departamento="Financiero" data-responsable="Paula Rojas" data-estado="Medida" data-bloqueada="no">
+            <td>Financiero</td>
+            <td>Automatizar conciliaciones</td>
+            <td>Paula Rojas</td>
+            <td>$7.800.000</td>
+            <td>Horas de conciliación ahorradas x costo hora</td>
+            <td><span class="badge badge-warn">Pendiente evidencia</span></td>
+            <td>2026-08-15</td>
+            <td><span class="badge badge-ok">Medida</span></td>
+            <td>$7.200.000</td>
+            <td><span class="muted">Sin bloqueo</span></td>
+          </tr>
+        
+          <tr class="row-blocked" data-departamento="Operaciones" data-responsable="Jorge Diaz" data-estado="En análisis" data-bloqueada="si">
+            <td>Operaciones</td>
+            <td>Reducir consumo de combustible</td>
+            <td>Jorge Diaz</td>
+            <td>$15.000.000</td>
+            <td>Galones estimados ahorrados x precio promedio galón</td>
+            <td>Análisis telemetría</td>
+            <td>2026-10-01</td>
+            <td><span class="badge badge-blocked">En análisis</span></td>
+            <td>$0</td>
+            <td>Pendiente prueba piloto</td>
+          </tr>
+        
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>Generado localmente desde <code>data/propuestas_ahorro.csv</code>.</footer>
+</main>
+<script>
+const filters = ['filterDepartamento','filterResponsable','filterEstado','filterBloqueo'];
+filters.forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+function applyFilters(){
+  const dep = document.getElementById('filterDepartamento').value;
+  const resp = document.getElementById('filterResponsable').value;
+  const estado = document.getElementById('filterEstado').value;
+  const bloqueo = document.getElementById('filterBloqueo').value;
+  document.querySelectorAll('#proposalsTable tbody tr').forEach(row => {
+    const show = (!dep || row.dataset.departamento === dep) && (!resp || row.dataset.responsable === resp) && (!estado || row.dataset.estado === estado) && (!bloqueo || row.dataset.bloqueada === bloqueo);
+    row.style.display = show ? '' : 'none';
+  });
+}
+function resetFilters(){ filters.forEach(id => document.getElementById(id).value = ''); applyFilters(); }
+function exportFilteredCSV(){
+  const rows = Array.from(document.querySelectorAll('#proposalsTable tr'));
+  const visible = rows.filter((row, idx) => idx === 0 || row.style.display !== 'none');
+  const csv = visible.map(row => Array.from(row.children).map(cell => '"' + cell.innerText.replaceAll('"','""').replaceAll('\n',' ') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'propuestas_ahorro_filtradas.csv'; a.click(); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
