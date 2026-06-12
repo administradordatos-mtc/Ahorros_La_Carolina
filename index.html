@@ -222,9 +222,9 @@
                         <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Ahorro Total</span>
                         <span class="material-symbols-outlined text-primary" data-icon="savings">savings</span>
                     </div>
-                    <div class="font-data-mono text-display-lg text-primary">$4,520,000</div>
+                    <div id="card-ahorro-total" class="font-data-mono text-display-lg text-primary">$0</div>
                     <div class="mt-md flex items-center gap-xs">
-                        <span class="text-secondary font-data-mono text-body-md">+12.5%</span>
+                        <span class="text-secondary font-data-mono text-body-md">+0%</span>
                         <span class="text-on-surface-variant font-body-md">vs mes anterior</span>
                     </div>
                     <div class="absolute bottom-0 right-0 p-base opacity-10 group-hover:opacity-20 transition-opacity">
@@ -238,12 +238,12 @@
                         <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Presupuesto Restante</span>
                         <span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
                     </div>
-                    <div class="font-data-mono text-display-lg text-on-surface">$1,280,500</div>
+                    <div id="card-presupuesto-restante" class="font-data-mono text-display-lg text-on-surface">$0</div>
                     <div class="mt-md w-full bg-surface-variant h-2 rounded-full overflow-hidden flex items-center">
-                        <div class="bg-primary h-full transition-all duration-1000" style="width: 74%;"></div>
+                        <div id="progress-presupuesto" class="bg-primary h-full transition-all duration-1000" style="width: 0%;"></div>
                         <span class="text-primary ml-2">»</span>
                     </div>
-                    <div class="mt-xs text-right text-on-surface-variant font-label-sm text-label-sm">74% Utilizado</div>
+                    <div id="text-presupuesto-utilizado" class="mt-xs text-right text-on-surface-variant font-label-sm text-label-sm">0% Utilizado</div>
                 </div>
 
                 <!-- Eficiencia del Mes -->
@@ -252,7 +252,7 @@
                         <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Eficiencia del Mes</span>
                         <span class="material-symbols-outlined text-primary" data-icon="speed">speed</span>
                     </div>
-                    <div class="font-data-mono text-display-lg text-secondary">94.2%</div>
+                    <div id="card-eficiencia" class="font-data-mono text-display-lg text-secondary">0%</div>
                     <div class="mt-md flex items-center gap-xs">
                         <span class="bg-primary/10 text-primary px-xs py-[2px] rounded text-label-sm font-label-sm">OPTIMIZADO</span>
                     </div>
@@ -275,22 +275,9 @@
                         </div>
                     </div>
                     <div class="flex-grow relative flex items-end justify-between pb-sm">
-                        <!-- Custom SVG Line Chart Emulation -->
-                        <div class="absolute inset-0 flex items-end">
-                            <svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 400">
-                                <path d="M0,350 L100,320 L200,340 L300,280 L400,290 L500,240 L600,200 L700,220 L800,150 L900,120 L1000,100" fill="none" stroke="#f1d47f" stroke-width="3"></path>
-                                <path d="M0,350 L100,320 L200,340 L300,280 L400,290 L500,240 L600,200 L700,220 L800,150 L900,120 L1000,100 V400 H0 Z" fill="url(#gradient-gold)" opacity="0.1"></path>
-                                <defs>
-                                    <lineargradient id="gradient-gold" x1="0" x2="0" y1="0" y2="1">
-                                        <stop offset="0%" stop-color="#f1d47f"></stop>
-                                        <stop offset="100%" stop-color="transparent"></stop>
-                                    </lineargradient>
-                                </defs>
-                            </svg>
-                        </div>
-                        <!-- Chart Labels -->
-                        <div class="w-full flex justify-between font-label-sm text-label-sm text-on-surface-variant z-10 px-xs">
-                            <span>ENE</span><span>FEB</span><span>MAR</span><span>ABR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AGO</span><span>SEP</span><span>OCT</span>
+                        <!-- Chart.js Canvas -->
+                        <div class="absolute inset-0 p-2">
+                            <canvas id="savingsChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -315,7 +302,7 @@
                     <h3 class="font-headline-md text-headline-md text-on-surface tracking-wide">MOVIMIENTOS RECIENTES</h3>
                     <span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="filter_list">filter_list</span>
                 </div>
-                <div class="space-y-base">
+                <div id="recent-movements-container" class="space-y-base">
                     <!-- Row 1 -->
                     <div class="flex items-center justify-between p-sm hover:bg-surface-container-high transition-colors cursor-pointer group">
                         <div class="flex items-center gap-md">
@@ -405,5 +392,6 @@
             });
         });
     </script>
+    <script type="module" src="./src/js/dashboard.js"></script>
 </body>
 </html>
