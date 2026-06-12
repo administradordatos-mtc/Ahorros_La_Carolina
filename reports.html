@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reportes Ejecutivos | LA CAROLINA MTC</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#a0020e",
+                    "on-secondary-container": "#ffa99f",
+                    "inverse-on-surface": "#2f3131",
+                    "on-error": "#690005",
+                    "surface-dim": "#121414",
+                    "secondary-fixed-dim": "#ffb4ab",
+                    "outline": "#98907f",
+                    "primary-fixed": "#fee08a",
+                    "surface-container": "#1e2020",
+                    "surface-container-high": "#282a2b",
+                    "on-tertiary-fixed": "#181c1f",
+                    "on-secondary-fixed-variant": "#93000b",
+                    "on-secondary": "#690005",
+                    "on-primary-fixed": "#231a00",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#d3d6db",
+                    "inverse-surface": "#e2e2e2",
+                    "on-primary-fixed-variant": "#574500",
+                    "on-surface": "#e2e2e2",
+                    "error-container": "#93000a",
+                    "error": "#ffb4ab",
+                    "surface-variant": "#333535",
+                    "primary": "#f1d47f",
+                    "on-secondary-fixed": "#410002",
+                    "on-primary-container": "#5b4800",
+                    "on-primary": "#3c2f00",
+                    "tertiary-fixed": "#e0e3e7",
+                    "outline-variant": "#4c4638",
+                    "surface-container-lowest": "#0c0f0f",
+                    "tertiary-fixed-dim": "#c4c7cb",
+                    "inverse-primary": "#725c12",
+                    "surface-tint": "#e1c471",
+                    "secondary-fixed": "#ffdad6",
+                    "on-surface-variant": "#cfc6b3",
+                    "tertiary-container": "#b8bbbf",
+                    "on-tertiary-fixed-variant": "#43474b",
+                    "surface": "#121414",
+                    "on-tertiary": "#2d3134",
+                    "surface-container-highest": "#333535",
+                    "background": "#121414",
+                    "surface-container-low": "#1a1c1c",
+                    "on-background": "#e2e2e2",
+                    "primary-fixed-dim": "#e1c471"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xl": "64px",
+                    "md": "24px",
+                    "base": "4px",
+                    "lg": "40px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "xs": "8px",
+                    "margin-mobile": "16px",
+                    "sm": "16px"
+            },
+            "fontFamily": {
+                    "data-mono": ["Montserrat"],
+                    "headline-md": ["Bebas Neue"],
+                    "display-lg": ["Bebas Neue"],
+                    "headline-lg": ["Bebas Neue"],
+                    "headline-lg-mobile": ["Bebas Neue"],
+                    "body-md": ["Montserrat"],
+                    "body-lg": ["Montserrat"],
+                    "label-sm": ["Montserrat"],
+                    "title-lg": ["Montserrat"]
+            },
+            "fontSize": {
+                    "data-mono": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "28px", "letterSpacing": "0.04em", "fontWeight": "400"}],
+                    "display-lg": ["64px", {"lineHeight": "64px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "44px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body { background-color: #0B0D0F; color: #e2e2e2; min-height: max(884px, 100dvh); }
+        .c-frame {
+            position: relative;
+            transition: border-color 0.2s ease;
+        }
+        .c-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-top: 1px solid rgba(241, 212, 127, 0.2);
+            border-left: 1px solid rgba(241, 212, 127, 0.2);
+        }
+        .watermark-c {
+            position: fixed;
+            right: -10%;
+            bottom: 5%;
+            font-size: 80vh;
+            line-height: 1;
+            font-family: 'Bebas Neue';
+            color: rgba(241, 212, 127, 0.03);
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+        }
+        .route-line {
+            position: relative;
+        }
+        .route-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(241, 212, 127, 0.2) 0%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden font-body-md text-body-md">
+    <!-- Watermark Background -->
+    <div class="watermark-c">C</div>
+    <div class="flex h-screen overflow-hidden">
+        <!-- NavigationDrawer (Desktop) -->
+        <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-64 z-50 shrink-0">
+            <div class="p-md flex flex-col items-start gap-base">
+                <div class="w-12 h-12 rounded-full overflow-hidden mb-xs border border-primary/20 cursor-pointer" onclick="location.href='index.html'">
+                    <img alt="Avatar Operador" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCopX6OLrE7e_4tnVFZg-fxXsLqElSJy3AjeQXVYBUwTIYf8bTLazAbS53k8yG5nkwarIw1urT3-OwZk34Nz0EpuAwuGkSUzZIfGncE7pnnCumNnlE9VJ8iYWLwmaEmzo-D1bCt00L7le73AixJsoKg9uXqQcE9yy19GXvEIjd7FK8hPPabWz8nCAGKIV8Psan3qye3jzreCcF0Ni_yEWUGBy-I1sdVmeyq-Fa8P-EIB796zYuqqxvUwdTVlqV3_rbB6Jxa0KMCGik"/>
+                </div>
+                <h2 class="font-title-lg text-title-lg text-primary uppercase">OPERADOR CAROLINA</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">Presupuesto Activo</p>
+            </div>
+            <nav class="mt-md flex-grow space-y-1">
+                <a class="flex items-center gap-sm text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 px-md py-sm transition-all" href="index.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-title-lg text-title-lg">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-sm text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 px-md py-sm transition-all" href="expenses.html">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    <span class="font-title-lg text-title-lg">Gastos</span>
+                </a>
+                <a class="flex items-center gap-sm text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 px-md py-sm transition-all" href="goals.html">
+                    <span class="material-symbols-outlined">flag</span>
+                    <span class="font-title-lg text-title-lg">Metas</span>
+                </a>
+                <a class="flex items-center gap-sm bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 px-md py-sm transition-colors" href="reports.html">
+                    <span class="material-symbols-outlined">assessment</span>
+                    <span class="font-title-lg text-title-lg font-bold">Reportes</span>
+                </a>
+            </nav>
+            <div class="p-md mt-auto border-t border-primary/15">
+                <p class="font-label-sm text-label-sm text-primary/50 tracking-widest uppercase">La Carolina MTC</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-full overflow-y-auto relative z-10 bg-background/50 backdrop-blur-sm">
+            <!-- TopAppBar -->
+            <header class="w-full top-0 sticky z-40 bg-surface-container-lowest border-l border-t border-primary/15 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-base">
+                <div class="flex items-center gap-sm cursor-pointer" onclick="location.href='index.html'">
+                    <button class="md:hidden text-primary cursor-pointer active:scale-95">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 class="font-headline-md text-headline-md text-primary tracking-widest">LA CAROLINA MTC</h1>
+                </div>
+                <div class="flex items-center gap-sm">
+                    <span class="hidden md:block font-body-md text-body-md text-on-surface-variant">Reportes Ejecutivos</span>
+                    <div class="w-8 h-8 rounded-full overflow-hidden border border-primary/30">
+                        <img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtj2lZNTUSexY9bs3GLn_9gqRu8RC7HUohnyVlDbeNC0HpoTkeY_Pnvo0Bd5MwxYpPY8jvPV0QRbHI4C3oRIe_ovUaaMEG-Y-Ber3NUjiv5PzXG99xVMrPtib6lbDoY-Ai0o90NTRiIQP1kKRJq9tgtpRLLjvY8mRXTMDLqXAIRacofwXmM1bbc4Q_Gf7Kr-1bHPtWAmLIhkJdOAn6-Jb-Uv3gNBgQYnfpU1wdiYlQSX7WRm-y53vzFd-A1cX8cAL6I-5lDc_v8hk"/>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex-grow p-margin-mobile md:p-margin-desktop space-y-lg">
+                <!-- Section Header -->
+                <div class="relative pb-md route-line">
+                    <h2 class="font-headline-lg text-headline-lg text-primary">REPORTES EJECUTIVOS</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Acceda a los informes detallados de gestión, eficiencia operativa y proyecciones financieras de la flota Carolina.</p>
+                </div>
+
+                <!-- Reports Grid / Bento List -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+                    <!-- Main Feature: Monthly Report -->
+                    <div class="md:col-span-8 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 c-frame hover:bg-surface-container-high transition-all cursor-pointer relative overflow-hidden active:scale-[0.98]">
+                        <div class="flex flex-col md:flex-row gap-md items-start md:items-center justify-between relative z-10">
+                            <div class="flex items-center gap-md">
+                                <div class="w-16 h-16 flex items-center justify-center bg-secondary-container/20 rounded-lg text-secondary border border-secondary/20">
+                                    <span class="material-symbols-outlined text-[40px]">picture_as_pdf</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Reporte Mensual de Eficiencia</h3>
+                                    <p class="font-body-md text-body-md text-on-surface-variant">Análisis detallado de consumo, rutas y tiempos de respuesta. Mayo 2024.</p>
+                                </div>
+                            </div>
+                            <button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-headline-md text-headline-md flex items-center gap-xs hover:bg-primary-container transition-colors active:scale-95">
+                                DESCARGAR <span class="material-symbols-outlined">download</span>
+                            </button>
+                        </div>
+                        <!-- Background Accent -->
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <span class="material-symbols-outlined text-[160px] text-primary">assessment</span>
+                        </div>
+                    </div>
+
+                    <!-- Side Info Card -->
+                    <div class="md:col-span-4 bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-center gap-sm">
+                        <div class="flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Estado del Sistema</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Los datos están actualizados al cierre de operación de ayer a las 23:59.</p>
+                        <div class="mt-base h-1 w-full bg-surface-variant rounded-full overflow-hidden">
+                            <div class="h-full bg-primary w-full animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Reports -->
+                    <div class="md:col-span-6 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 hover:bg-surface-container-high transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-md">
+                                <div class="w-12 h-12 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant border border-primary/10">
+                                    <span class="material-symbols-outlined">picture_as_pdf</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">Comparativa Trimestral</h4>
+                                    <p class="font-body-md text-body-md text-on-surface-variant">Q1 vs Q2 2024</p>
+                                </div>
+                            </div>
+                            <span class="text-primary font-body-md flex items-center group-hover:translate-x-1 transition-transform">VER »»</span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-6 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 hover:bg-surface-container-high transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-md">
+                                <div class="w-12 h-12 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant border border-primary/10">
+                                    <span class="material-symbols-outlined">picture_as_pdf</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">Análisis de Desviaciones</h4>
+                                    <p class="font-body-md text-body-md text-on-surface-variant">Presupuesto Operativo 2024</p>
+                                </div>
+                            </div>
+                            <span class="text-primary font-body-md flex items-center group-hover:translate-x-1 transition-transform">VER »»</span>
+                        </div>
+                    </div>
+
+                    <!-- Custom Visual Feature -->
+                    <div class="md:col-span-12 h-48 rounded-xl overflow-hidden relative border border-primary/10 group">
+                        <img alt="Transport Background" class="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgn9LYyA-3FFoZtJPVAPmdWAw-zZPnrV1HakSSlo6YIdvbq1G3xH0HTUImBU40NPJnqm9Z48C99HBs680hV7D91IBMoiPMhws_cWpT9ZByMl66qPJitoWG2xORspk1i9A2uLQibI4RtGFPWvbMqnlprHFjqRrBqNlCA9bapdjlS1siXA9jE7qvYF1qnWWiGnxVgjZL6TRN-YsIuapzrozk_ZaECggLMoDgtNbGs3_tHy3-WlijpVRGocjcyyWwY4nNYo3qfexdJsM"/>
+                        <div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent flex flex-col justify-center px-lg">
+                            <span class="font-label-sm text-label-sm text-primary mb-xs">PRÓXIMA ENTREGA</span>
+                            <h3 class="font-display-lg text-4xl text-on-surface">REPORTE ANUAL 2023</h3>
+                            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm">Consolidación completa del ejercicio fiscal previo disponible el 15 de Junio.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Slogan for Content Area -->
+            <div class="py-lg border-t border-primary/10 flex flex-col items-center text-center">
+                <p class="font-headline-md text-headline-md text-primary/30 tracking-[0.4em] uppercase">Movemos el progreso de Barranquilla</p>
+            </div>
+            <div class="h-32 md:hidden"></div> <!-- Spacer for mobile nav -->
+        </main>
+
+        <!-- BottomNavBar (Mobile) -->
+        <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-sm px-margin-mobile md:hidden bg-surface-container border-t border-primary/20 z-50 rounded-t-xl">
+            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="index.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-sm text-label-sm">Dashboard</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="expenses.html">
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+                <span class="font-label-sm text-label-sm">Gastos</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="goals.html">
+                <span class="material-symbols-outlined">flag</span>
+                <span class="font-label-sm text-label-sm">Metas</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform" href="reports.html">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assessment</span>
+                <span class="font-label-sm text-label-sm">Reportes</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Micro-interactions and effects
+        document.querySelectorAll('.active\\:scale-95, .active\\:scale-90').forEach(el => {
+            el.addEventListener('mousedown', () => el.style.transform = 'scale(0.95)');
+            el.addEventListener('mouseup', () => el.style.transform = '');
+            el.addEventListener('mouseleave', () => el.style.transform = '');
+        });
+
+        // Simple Fade In for reports
+        window.addEventListener('DOMContentLoaded', () => {
+            const items = document.querySelectorAll('.grid > div');
+            items.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'all 0.5s ease-out';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+
+        // Interactive border transitions
+        document.querySelectorAll('.c-frame').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = 'rgba(241, 212, 127, 0.4)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = 'rgba(241, 212, 127, 0.15)';
+            });
+        });
+    </script>
+</body>
+</html>

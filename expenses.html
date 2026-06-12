@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Registro de Gastos - La Carolina MTC</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#a0020e",
+                    "on-secondary-container": "#ffa99f",
+                    "inverse-on-surface": "#2f3131",
+                    "on-error": "#690005",
+                    "surface-dim": "#121414",
+                    "secondary-fixed-dim": "#ffb4ab",
+                    "outline": "#98907f",
+                    "primary-fixed": "#fee08a",
+                    "surface-container": "#1e2020",
+                    "surface-container-high": "#282a2b",
+                    "on-tertiary-fixed": "#181c1f",
+                    "on-secondary-fixed-variant": "#93000b",
+                    "on-secondary": "#690005",
+                    "on-primary-fixed": "#231a00",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#d3d6db",
+                    "inverse-surface": "#e2e2e2",
+                    "on-primary-fixed-variant": "#574500",
+                    "on-surface": "#e2e2e2",
+                    "error-container": "#93000a",
+                    "error": "#ffb4ab",
+                    "surface-variant": "#333535",
+                    "primary": "#f1d47f",
+                    "on-secondary-fixed": "#410002",
+                    "on-primary-container": "#5b4800",
+                    "on-primary": "#3c2f00",
+                    "tertiary-fixed": "#e0e3e7",
+                    "outline-variant": "#4c4638",
+                    "surface-container-lowest": "#0c0f0f",
+                    "tertiary-fixed-dim": "#c4c7cb",
+                    "inverse-primary": "#725c12",
+                    "surface-tint": "#e1c471",
+                    "secondary-fixed": "#ffdad6",
+                    "on-surface-variant": "#cfc6b3",
+                    "tertiary-container": "#b8bbbf",
+                    "on-tertiary-container": "#474b4e",
+                    "primary-container": "#d4b866",
+                    "surface-bright": "#37393a",
+                    "secondary": "#ffb4ab",
+                    "on-tertiary": "#2d3134",
+                    "surface-container-highest": "#333535",
+                    "background": "#121414",
+                    "surface-container-low": "#1a1c1c",
+                    "on-background": "#e2e2e2",
+                    "primary-fixed-dim": "#e1c471"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xl": "64px",
+                    "md": "24px",
+                    "base": "4px",
+                    "lg": "40px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "xs": "8px",
+                    "margin-mobile": "16px",
+                    "sm": "16px"
+            },
+            "fontFamily": {
+                    "data-mono": ["Montserrat"],
+                    "headline-md": ["Bebas Neue"],
+                    "display-lg": ["Bebas Neue"],
+                    "headline-lg": ["Bebas Neue"],
+                    "headline-lg-mobile": ["Bebas Neue"],
+                    "body-md": ["Montserrat"],
+                    "body-lg": ["Montserrat"],
+                    "label-sm": ["Montserrat"],
+                    "title-lg": ["Montserrat"]
+            },
+            "fontSize": {
+                    "data-mono": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "28px", "letterSpacing": "0.04em", "fontWeight": "400"}],
+                    "display-lg": ["64px", {"lineHeight": "64px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "44px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "0.03em", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            background-color: #0B0D0F; /* Level 0 Canvas */
+            color: #e2e2e2;
+            min-height: max(884px, 100dvh);
+        }
+        .c-frame {
+            border-left: 1px solid rgba(241, 212, 127, 0.15);
+            border-top: 1px solid rgba(241, 212, 127, 0.15);
+            transition: border-color 0.2s ease;
+        }
+        .transit-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(241, 212, 127, 0.2), transparent);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .rojo-corazon {
+            background-color: #C52724;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- TopAppBar -->
+    <header class="w-full top-0 sticky border-l border-t border-primary/15 bg-surface-container-lowest z-50">
+        <div class="flex justify-between items-center px-margin-desktop py-base w-full">
+            <div class="flex items-center gap-xs cursor-pointer active:scale-95" onclick="location.href='index.html'">
+                <span class="material-symbols-outlined text-primary">menu</span>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-widest flex items-center">LA CAROLINA MTC</h1>
+            </div>
+            <div class="cursor-pointer active:scale-95">
+                <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-primary/20">
+                    <img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaBeogy2XA-uaplnKAjmXxvj0lcSwFtNrm5NHzi7Btep24Bz5DwuK-Iw9-ESxdpUh6hKWlQQkt6Os_gC8qn6l5HyA1Z56Kc0R5lSdegQSthWK1psLHwVa7Ftjihu3HDEFR1OrPfW6jf5vBF4jhGwgxR-9ZXzxQ-VNvrTqkQS9tgTqJGkaytZmy6QFFUOa5S4RlpOeTQGZGXgmPSIrDLS8qC6ojGCQluhwHq0Odalkslr-qhkeJIfItX3j22a8QivZisF3kHmmn_fk"/>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1">
+        <!-- NavigationDrawer (Desktop) -->
+        <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-80">
+            <div class="p-lg flex flex-col gap-sm">
+                <div class="flex items-center gap-sm mb-lg">
+                    <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+                    </div>
+                    <div>
+                        <h2 class="font-title-lg text-title-lg text-primary uppercase">OPERADOR CAROLINA</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Presupuesto Activo</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-base">
+                    <a class="flex items-center gap-sm px-sm py-xs text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 transition-all group" href="index.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="font-body-md text-body-md">Dashboard</span>
+                    </a>
+                    <a class="flex items-center gap-sm px-sm py-xs bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 transition-all" href="expenses.html">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+                        <span class="font-body-md text-body-md font-bold">Gastos</span>
+                    </a>
+                    <a class="flex items-center gap-sm px-sm py-xs text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 transition-all group" href="goals.html">
+                        <span class="material-symbols-outlined">flag</span>
+                        <span class="font-body-md text-body-md">Metas</span>
+                    </a>
+                    <a class="flex items-center gap-sm px-sm py-xs text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 transition-all group" href="reports.html">
+                        <span class="material-symbols-outlined">assessment</span>
+                        <span class="font-body-md text-body-md">Reportes</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto p-lg border-t border-primary/10">
+                <div class="p-sm bg-surface-container-high rounded-xl border border-primary/5">
+                    <p class="font-label-sm text-label-sm text-primary mb-xs">ESTADO DE RUTA »»</p>
+                    <div class="h-1 bg-surface-variant rounded-full overflow-hidden">
+                        <div class="h-full bg-primary w-2/3 flex items-center justify-end">
+                            <span class="text-[8px] text-surface-container-lowest font-bold mr-1 leading-none">»</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-lg">
+                    <div class="flex items-center gap-base mb-xs">
+                        <span class="text-primary font-bold tracking-widest text-xs">REGISTRO »»»</span>
+                    </div>
+                    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase">NUEVO REGISTRO</h2>
+                    <div class="transit-divider mt-sm"></div>
+                </div>
+
+                <!-- Registration Form Container -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+                    <!-- Left: Form -->
+                    <div class="lg:col-span-7 bg-[#171B1E] p-sm md:p-md rounded-xl c-frame border border-primary/10">
+                        <form class="space-y-md">
+                            <!-- Categoría -->
+                            <div class="flex flex-col gap-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
+                                    <span class="text-primary">»»»</span> Categoría de Gasto
+                                </label>
+                                <select class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all appearance-none cursor-pointer">
+                                    <option>Mantenimiento</option>
+                                    <option>Combustible</option>
+                                    <option>Personal</option>
+                                    <option>Peajes</option>
+                                    <option>Administrativo</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                                <!-- Monto -->
+                                <div class="flex flex-col gap-xs">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
+                                        <span class="text-primary">»»»</span> Monto
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-sm top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                                        <input class="w-full bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-data-mono text-data-mono pl-base md:pl-md pr-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="0.00" type="number" step="0.01"/>
+                                    </div>
+                                </div>
+                                <!-- Fecha -->
+                                <div class="flex flex-col gap-xs">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
+                                        <span class="text-primary">»»»</span> Fecha
+                                    </label>
+                                    <input class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" type="date"/>
+                                </div>
+                            </div>
+                            <!-- Descripción -->
+                            <div class="flex flex-col gap-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
+                                    <span class="text-primary">»»»</span> Descripción
+                                </label>
+                                <textarea class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all resize-none" placeholder="Detalle del gasto realizado..." rows="4"></textarea>
+                            </div>
+                            <!-- Guardar Button -->
+                            <button class="w-full rojo-corazon hover:bg-on-secondary-fixed-variant text-white font-headline-md text-headline-md py-sm rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-secondary-container/20 flex items-center justify-center gap-sm" type="submit">
+                                GUARDAR GASTO
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Info/Context -->
+                    <div class="lg:col-span-5 flex flex-col gap-gutter">
+                        <!-- Budget Preview Card -->
+                        <div class="bg-[#171B1E] p-sm md:p-md rounded-xl c-frame border border-primary/10 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-xs opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span class="material-symbols-outlined text-[120px]">account_balance_wallet</span>
+                            </div>
+                            <div class="relative z-10">
+                                <h3 class="font-title-lg text-title-lg text-primary mb-md">RESUMEN DEL DÍA</h3>
+                                <div class="space-y-sm">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-body-md text-body-md text-on-surface-variant">Presupuesto Diario</span>
+                                        <span class="font-data-mono text-data-mono text-primary">$1,200.00</span>
+                                    </div>
+                                    <div class="h-2 bg-surface-container rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary/40 w-1/3 flex items-center justify-end">
+                                            <span class="text-[8px] text-surface-container-lowest font-bold mr-1 leading-none">»</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center text-on-error">
+                                        <span class="font-body-md text-body-md font-bold">Gastos Registrados</span>
+                                        <span class="font-data-mono text-data-mono">$342.15</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decorative Image Card -->
+                        <div class="flex-1 min-h-[200px] rounded-xl overflow-hidden relative border border-primary/15">
+                            <img class="w-full h-full object-cover" alt="La Carolina MTC premium city bus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHMiw4xI3OqAV4Ahgzo-Y4drfMwadNoGqr0ZRPUIP0RzRYXRNEDiRU22oMQtp_5eY4TWMAtSsGjad2UzfC1K_uPG1--gvWj2r6UDKSH2mGrm-xGRlohxe0uCF9Ze0hZw5s4T9uT4u0wBXZEA9rex6YF9WTpynHJzYGRnZkEHx9GczLTGchGlWPaP0axRW-VL0Apy-kCVz_hes7pWQBzMjQo_z2932-bLD7nAU6AgcDp9gwy-nErAWyPkn9Pr3nZxBtmKjTJxVZ6vo"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                            <div class="absolute bottom-sm left-sm right-sm">
+                                <div class="flex items-center gap-xs">
+                                    <span class="text-primary font-bold">»»»</span>
+                                    <span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">Flota Carolina 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions Placeholder -->
+                <div class="mt-lg">
+                    <h4 class="font-title-lg text-title-lg text-on-surface mb-sm flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-primary">history</span>
+                        ÚLTIMOS MOVIMIENTOS
+                    </h4>
+                    <div class="bg-surface-container-low rounded-xl border border-primary/5 divide-y divide-primary/10">
+                        <div class="p-sm flex justify-between items-center hover:bg-surface-variant transition-colors">
+                            <div class="flex items-center gap-sm">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">local_gas_station</span>
+                                </div>
+                                <div>
+                                    <p class="font-body-md text-body-md font-bold">Carga de Combustible - Unidad 42</p>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant">Hoy, 08:30 AM</p>
+                                </div>
+                            </div>
+                            <span class="font-data-mono text-data-mono text-on-surface">$120.00</span>
+                        </div>
+                        <div class="p-sm flex justify-between items-center hover:bg-surface-variant transition-colors">
+                            <div class="flex items-center gap-sm">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">build</span>
+                                </div>
+                                <div>
+                                    <p class="font-body-md text-body-md font-bold">Cambio de Aceite</p>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant">Ayer, 16:45 PM</p>
+                                </div>
+                            </div>
+                            <span class="font-data-mono text-data-mono text-on-surface">$85.50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="h-32 md:h-0"></div> <!-- Spacer for mobile nav -->
+        </main>
+    </div>
+
+    <!-- Bottom Navigation Bar (Mobile) -->
+    <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-sm px-margin-mobile md:hidden bg-surface-container border-t border-primary/20 z-50 rounded-t-xl">
+        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-90 transition-transform p-xs rounded-lg" href="index.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-label-sm text-label-sm">Dashboard</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform p-xs rounded-lg" href="expenses.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+            <span class="font-label-sm text-label-sm">Gastos</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-90 transition-transform p-xs rounded-lg" href="goals.html">
+            <span class="material-symbols-outlined">flag</span>
+            <span class="font-label-sm text-label-sm">Metas</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-90 transition-transform p-xs rounded-lg" href="reports.html">
+            <span class="material-symbols-outlined">assessment</span>
+            <span class="font-label-sm text-label-sm">Reportes</span>
+        </a>
+    </nav>
+
+    <script>
+        // Simple interactive feedback for form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = 'REGISTRANDO...';
+            btn.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> GUARDADO';
+                btn.classList.replace('rojo-corazon', 'bg-emerald-600');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-emerald-600', 'rojo-corazon');
+                    btn.classList.remove('opacity-80');
+                    this.reset();
+                }, 2000);
+            }, 1000);
+        });
+
+        // Interactive border transitions
+        document.querySelectorAll('.c-frame').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = 'rgba(241, 212, 127, 0.4)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = 'rgba(241, 212, 127, 0.15)';
+            });
+        });
+    </script>
+</body>
+</html>
