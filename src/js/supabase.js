@@ -7,4 +7,6 @@ if (!supabaseUrl || !supabaseAnonKey || supabaseAnonKey.includes('TU_SUPABASE_AN
   console.warn('¡Supabase URL o Anon Key falta o tiene el marcador de posición en el archivo .env!');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = (supabaseUrl && supabaseAnonKey && !supabaseAnonKey.includes('TU_SUPABASE_ANON_KEY'))
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;

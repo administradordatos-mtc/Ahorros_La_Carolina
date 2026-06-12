@@ -5,6 +5,29 @@ import { supabase } from './supabase.js';
  * @param {string} [requiredRole] - Rol requerido para acceder a la página ('administrador' | 'directivo').
  */
 export async function checkSession(requiredRole = null) {
+    if (!supabase) {
+        console.error('Supabase client is not initialized. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+        // Hacer visible el body para poder ver el error
+        document.body.style.visibility = 'visible';
+        
+        // Crear un banner de error visual en el DOM
+        const errorBanner = document.createElement('div');
+        errorBanner.style.position = 'fixed';
+        errorBanner.style.top = '0';
+        errorBanner.style.left = '0';
+        errorBanner.style.width = '100%';
+        errorBanner.style.backgroundColor = '#690005';
+        errorBanner.style.color = '#ffdad6';
+        errorBanner.style.padding = '16px';
+        errorBanner.style.textAlign = 'center';
+        errorBanner.style.zIndex = '9999';
+        errorBanner.style.fontFamily = 'sans-serif';
+        errorBanner.innerHTML = '<strong>Error de configuración:</strong> No se detectaron las credenciales de Supabase. Por favor, configure las variables de entorno <code>VITE_SUPABASE_URL</code> y <code>VITE_SUPABASE_ANON_KEY</code> en Vercel.';
+        document.body.appendChild(errorBanner);
+        
+        return null;
+    }
+
     // 1. Obtener la sesión actual de Supabase
     const { data: { session }, error } = await supabase.auth.getSession();
 
@@ -54,7 +77,9 @@ export async function checkSession(requiredRole = null) {
  * Cierra la sesión de Supabase Auth y limpia localStorage.
  */
 export async function logout() {
-    await supabase.auth.signOut();
+    if (supabase) {
+        await supabase.auth.signOut();
+    }
     localStorage.removeItem('user_role');
     window.location.href = 'login.html';
 }

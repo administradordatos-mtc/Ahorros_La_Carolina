@@ -31,6 +31,10 @@ if (inputDate) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!supabase) {
+        console.warn('Goals: Supabase client is not initialized.');
+        return;
+    }
     // Load and render goals
     await loadAndRenderGoals();
 

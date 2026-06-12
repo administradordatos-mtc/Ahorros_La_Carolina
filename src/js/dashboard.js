@@ -5,6 +5,10 @@ import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!supabase) {
+        console.warn('Dashboard: Supabase client is not initialized.');
+        return;
+    }
     // 1. Obtener datos de Supabase
     try {
         const { data: metas, error: metasError } = await supabase

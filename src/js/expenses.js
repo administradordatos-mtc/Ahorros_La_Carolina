@@ -25,6 +25,10 @@ if (inputDate) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!supabase) {
+        console.warn('Expenses: Supabase client is not initialized.');
+        return;
+    }
     await loadInitialData();
 
     // Actualizar resumen al cargar la página
