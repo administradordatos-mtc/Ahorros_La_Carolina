@@ -1,6 +1,7 @@
 # Entornos y secretos
 .env
 .env.*
+!.env.example
 
 # Dependencias de Node
 node_modules/
