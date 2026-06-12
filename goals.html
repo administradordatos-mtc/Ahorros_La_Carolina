@@ -128,10 +128,19 @@
             background-color: #0B0D0F;
             color: #e2e2e2;
             min-height: max(884px, 100dvh);
+            visibility: hidden;
         }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+    <script type="module">
+        import { checkSession } from './src/js/auth.js';
+        checkSession('administrador').then(session => {
+            if (session) {
+                document.body.style.visibility = 'visible';
+            }
+        });
+    </script>
     <!-- NavigationDrawer (Desktop Only) -->
     <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-xl shrink-0">
         <div class="p-lg flex flex-col gap-lg">

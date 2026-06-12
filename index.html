@@ -33,6 +33,7 @@
             background-color: #0B0D0F;
             color: #e2e2e2;
             min-height: max(884px, 100dvh);
+            visibility: hidden;
         }
     </style>
     <script id="tailwind-config">
@@ -130,6 +131,14 @@
     </script>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
+    <script type="module">
+        import { checkSession } from './src/js/auth.js';
+        checkSession().then(session => {
+            if (session) {
+                document.body.style.visibility = 'visible';
+            }
+        });
+    </script>
     <!-- Sidebar / Navigation Drawer (Desktop) -->
     <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-xl">
         <div class="p-md flex items-center gap-sm">

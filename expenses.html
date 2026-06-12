@@ -107,6 +107,7 @@
             background-color: #0B0D0F; /* Level 0 Canvas */
             color: #e2e2e2;
             min-height: max(884px, 100dvh);
+            visibility: hidden;
         }
         .c-frame {
             border-left: 1px solid rgba(241, 212, 127, 0.15);
@@ -126,6 +127,14 @@
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
+    <script type="module">
+        import { checkSession } from './src/js/auth.js';
+        checkSession('administrador').then(session => {
+            if (session) {
+                document.body.style.visibility = 'visible';
+            }
+        });
+    </script>
     <!-- TopAppBar -->
     <header class="w-full top-0 sticky border-l border-t border-primary/15 bg-surface-container-lowest z-50">
         <div class="flex justify-between items-center px-margin-desktop py-base w-full">

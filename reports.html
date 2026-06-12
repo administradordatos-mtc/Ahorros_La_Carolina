@@ -101,7 +101,7 @@
       }
     </script>
     <style>
-        body { background-color: #0B0D0F; color: #e2e2e2; min-height: max(884px, 100dvh); }
+        body { background-color: #0B0D0F; color: #e2e2e2; min-height: max(884px, 100dvh); visibility: hidden; }
         .c-frame {
             position: relative;
             transition: border-color 0.2s ease;
@@ -143,6 +143,14 @@
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden font-body-md text-body-md">
+    <script type="module">
+        import { checkSession } from './src/js/auth.js';
+        checkSession().then(session => {
+            if (session) {
+                document.body.style.visibility = 'visible';
+            }
+        });
+    </script>
     <!-- Watermark Background -->
     <div class="watermark-c">C</div>
     <div class="flex h-screen overflow-hidden">
