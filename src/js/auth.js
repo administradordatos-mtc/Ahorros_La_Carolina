@@ -28,49 +28,73 @@ export async function checkSession(requiredRole = null) {
         return null;
     }
 
-    // 1. Obtener la sesión actual de Supabase
-    const { data: { session }, error } = await supabase.auth.getSession();
+    try {
+        // 1. Obtener la sesión actual de Supabase
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (error || !session) {
-        // Si no hay sesión activa, borrar datos locales y redirigir al login
-        localStorage.removeItem('user_role');
-        window.location.href = 'login.html';
-        return null;
-    }
-
-    const user = session.user;
-    let rol = localStorage.getItem('user_role');
-
-    // 2. Si no tenemos el rol en localStorage, lo consultamos en la base de datos
-    if (!rol) {
-        const { data: perfil, error: perfilError } = await supabase
-            .from('perfiles')
-            .select('rol')
-            .eq('id', user.id)
-            .single();
-
-        if (perfilError || !perfil) {
-            console.error('Error al recuperar rol del perfil:', perfilError);
-            // Por defecto, asignar rol básico de directivo en caso de error
-            rol = 'directivo';
-        } else {
-            rol = perfil.rol;
-            localStorage.setItem('user_role', rol);
+        if (error || !session) {
+            // Si no hay sesión activa, borrar datos locales y redirigir al login
+            localStorage.removeItem('user_role');
+            window.location.href = 'login.html';
+            return null;
         }
-    }
 
-    // 3. Validar permisos si la página requiere un rol específico
-    if (requiredRole && rol !== requiredRole) {
-        console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${rol}'`);
-        // Redirigir al dashboard general si no tiene permisos
-        window.location.href = 'index.html?access_denied=true';
+        const user = session.user;
+        let rol = localStorage.getItem('user_role');
+
+        // 2. Si no tenemos el rol en localStorage, lo consultamos en la base de datos
+        if (!rol) {
+            const { data: perfil, error: perfilError } = await supabase
+                .from('perfiles')
+                .select('rol')
+                .eq('id', user.id)
+                .single();
+
+            if (perfilError || !perfil) {
+                console.error('Error al recuperar rol del perfil:', perfilError);
+                // Por defecto, asignar rol básico de directivo en caso de error
+                rol = 'directivo';
+            } else {
+                rol = perfil.rol;
+                localStorage.setItem('user_role', rol);
+            }
+        }
+
+        // 3. Validar permisos si la página requiere un rol específico
+        if (requiredRole && rol !== requiredRole) {
+            console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${rol}'`);
+            // Redirigir al dashboard general si no tiene permisos
+            window.location.href = 'index.html?access_denied=true';
+            return null;
+        }
+
+        // 4. Actualizar la interfaz con los datos del usuario logueado
+        actualizarInterfazUsuario(user.email, rol);
+
+        return { user, rol };
+    } catch (e) {
+        console.error('Error durante la validación de sesión:', e);
+        
+        // Asegurar que el body sea visible para ver el error
+        document.body.style.visibility = 'visible';
+        
+        // Crear un banner de error visual en el DOM
+        const errorBanner = document.createElement('div');
+        errorBanner.style.position = 'fixed';
+        errorBanner.style.top = '0';
+        errorBanner.style.left = '0';
+        errorBanner.style.width = '100%';
+        errorBanner.style.backgroundColor = '#690005';
+        errorBanner.style.color = '#ffdad6';
+        errorBanner.style.padding = '16px';
+        errorBanner.style.textAlign = 'center';
+        errorBanner.style.zIndex = '9999';
+        errorBanner.style.fontFamily = 'sans-serif';
+        errorBanner.innerHTML = '<strong>Error de conexión/ejecución:</strong> Ocurrió un error inesperado al validar la sesión: <code>' + e.message + '</code>. Si estás en producción, verifica la configuración de variables de entorno (Supabase URL/Key) y conexión de red.';
+        document.body.appendChild(errorBanner);
+        
         return null;
     }
-
-    // 4. Actualizar la interfaz con los datos del usuario logueado
-    actualizarInterfazUsuario(user.email, rol);
-
-    return { user, rol };
 }
 
 /**

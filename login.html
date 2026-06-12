@@ -172,52 +172,65 @@
         const errorText = document.getElementById('error-text');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorMessage.classList.add('hidden');
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            // Feedback visual
-            const originalBtnContent = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'INGRESANDO...';
-            submitBtn.disabled = true;
-
-            try {
-                // 1. Iniciar sesión en Supabase Auth
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-                if (authError) throw authError;
-
-                // 2. Obtener perfil para validar el rol del usuario
-                const { data: perfilData, error: perfilError } = await supabase
-                    .from('perfiles')
-                    .select('rol')
-                    .eq('id', authData.user.id)
-                    .single();
-
-                if (perfilError) throw perfilError;
-
-                // Guardar rol en localStorage para accesos rápidos en vistas
-                localStorage.setItem('user_role', perfilData.rol);
-
-                // 3. Redireccionar al dashboard (index.html)
-                window.location.href = 'index.html';
-
-            } catch (error) {
-                console.error('Error de autenticación:', error.message);
-                errorText.textContent = error.message === 'Invalid login credentials' 
-                    ? 'Correo o contraseña incorrectos.' 
-                    : error.message;
-                errorMessage.classList.remove('hidden');
-                submitBtn.innerHTML = originalBtnContent;
-                submitBtn.disabled = false;
+        if (!supabase) {
+            console.error('Supabase client is not initialized.');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.backgroundColor = '#4c5155'; // Color gris neutro desactivado
+                submitBtn.innerHTML = 'CONFIGURACIÓN INCOMPLETA';
             }
-        });
+            if (errorText && errorMessage) {
+                errorText.innerHTML = '<strong>Error de configuración:</strong> No se detectaron las credenciales de Supabase. Por favor, configure las variables de entorno <code>VITE_SUPABASE_URL</code> y <code>VITE_SUPABASE_ANON_KEY</code> en Vercel y redespliegue.';
+                errorMessage.classList.remove('hidden');
+            }
+        } else {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.classList.add('hidden');
+                
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Feedback visual
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'INGRESANDO...';
+                submitBtn.disabled = true;
+
+                try {
+                    // 1. Iniciar sesión en Supabase Auth
+                    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                        email,
+                        password
+                    });
+
+                    if (authError) throw authError;
+
+                    // 2. Obtener perfil para validar el rol del usuario
+                    const { data: perfilData, error: perfilError } = await supabase
+                        .from('perfiles')
+                        .select('rol')
+                        .eq('id', authData.user.id)
+                        .single();
+
+                    if (perfilError) throw perfilError;
+
+                    // Guardar rol en localStorage para accesos rápidos en vistas
+                    localStorage.setItem('user_role', perfilData.rol);
+
+                    // 3. Redireccionar al dashboard (index.html)
+                    window.location.href = 'index.html';
+
+                } catch (error) {
+                    console.error('Error de autenticación:', error.message);
+                    errorText.textContent = error.message === 'Invalid login credentials' 
+                        ? 'Correo o contraseña incorrectos.' 
+                        : error.message;
+                    errorMessage.classList.remove('hidden');
+                    submitBtn.innerHTML = originalBtnContent;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
     </script>
 </body>
 </html>
