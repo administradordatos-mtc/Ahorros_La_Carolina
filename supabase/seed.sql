@@ -1,6 +1,9 @@
--- Datos semilla de ejemplo para Ahorros La Carolina
+-- Datos semilla de ejemplo para Ahorros La Carolina (Idempotente)
 
--- 1. Insertar Metas Semanales de ejemplo para semanas 20, 21 y 22 del año 2026
+-- 1. Limpiar gastos de prueba existentes para evitar duplicados al re-ejecutar
+delete from public.gastos_semanales where anio = 2026 and semana in (20, 21, 22);
+
+-- 2. Insertar/Actualizar Metas Semanales de ejemplo para semanas 20, 21 y 22 del año 2026
 insert into public.metas_semanales (categoria, monto_meta, semana, anio, fecha_inicio) values
 -- Semana 20 (Mayo 2026)
 ('Combustible', 1500000.00, 20, 2026, '2026-05-11'),
@@ -18,10 +21,14 @@ insert into public.metas_semanales (categoria, monto_meta, semana, anio, fecha_i
 ('Combustible', 1500000.00, 22, 2026, '2026-05-25'),
 ('Mantenimiento', 900000.00, 22, 2026, '2026-05-25'),
 ('Peajes', 300000.00, 22, 2026, '2026-05-25'),
-('Administrativo', 150000.00, 22, 2026, '2026-05-25');
+('Administrativo', 150000.00, 22, 2026, '2026-05-25')
+on conflict (categoria, semana, anio)
+do update set
+  monto_meta = excluded.monto_meta,
+  fecha_inicio = excluded.fecha_inicio;
 
 
--- 2. Insertar Gastos Reales Semanales para las mismas semanas
+-- 3. Insertar Gastos Reales Semanales para las mismas semanas
 insert into public.gastos_semanales (categoria, monto_gasto, semana, anio, fecha, descripcion) values
 -- Semana 20 (Combustible bajo la meta -> ahorro exitoso!)
 ('Combustible', 1320400.00, 20, 2026, '2026-05-14', 'Consumo combustible Zona Norte Flota A-12'),
