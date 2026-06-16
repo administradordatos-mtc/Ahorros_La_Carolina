@@ -74,8 +74,8 @@ delete from public.kpis where departamento_id = 1;
 
 -- Insertar los 5 KPIs del Excel
 insert into public.kpis (id, departamento_id, nombre_kpi, linea_base, meta_mensual, frecuencia) values
-('kpi-accidentalidad-0000000000', 1, 'Accidentalidad (eventos/mes)', 'Línea Base', 'Meta Mensual', 'Mensual'),
-('kpi-rotacion-00000000000000', 1, 'Rotación de personal', 'Línea Base', 'Meta Mensual', 'Mensual'),
-('kpi-ausentismo-000000000000', 1, 'Ausentismo de conductores', 'Línea Base', 'Meta Mensual', 'Mensual'),
-('kpi-conductorestarde-00000', 1, 'Conductores tarde', 'Línea Base', 'Meta Mensual', 'Mensual'),
-('kpi-ahorromaterializado-000', 1, 'Ahorro materializado vs. proyectado', 'Línea Base', 'Meta Mensual', 'Mensual');
+('00000000-0000-0000-0000-000000000001', 1, 'Accidentalidad (eventos/mes)', 'Línea Base', 'Meta Mensual', 'Mensual'),
+('00000000-0000-0000-0000-000000000002', 1, 'Rotación de personal', 'Línea Base', 'Meta Mensual', 'Mensual'),
+('00000000-0000-0000-0000-000000000003', 1, 'Ausentismo de conductores', 'Línea Base', 'Meta Mensual', 'Mensual'),
+('00000000-0000-0000-0000-000000000004', 1, 'Conductores tarde', 'Línea Base', 'Meta Mensual', 'Mensual'),
+('00000000-0000-0000-0000-000000000005', 1, 'Ahorro materializado vs. proyectado', 'Línea Base', 'Meta Mensual', 'Mensual');
