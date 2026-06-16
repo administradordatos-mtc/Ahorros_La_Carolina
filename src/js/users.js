@@ -236,8 +236,8 @@ async function loadUsers() {
             const row = document.createElement('tr');
             row.className = 'border-b border-primary/5 hover:bg-surface-variant/20 transition-colors';
             row.innerHTML = `
-                <td class="py-md px-sm font-body-md text-on-surface">${u.email}</td>
-                <td class="py-md px-sm">
+                <td class="py-4 px-6 font-body-md text-on-surface">${u.email}</td>
+                <td class="py-4 px-6">
                     <span class="px-xs py-[2px] rounded text-label-sm font-label-sm uppercase ${
                         u.rol === 'administrador' 
                             ? 'bg-primary/20 text-primary border border-primary/30' 
@@ -246,8 +246,8 @@ async function loadUsers() {
                         ${u.rol}
                     </span>
                 </td>
-                <td class="py-md px-sm font-body-md text-on-surface-variant">${dateStr}</td>
-                <td class="py-md px-sm text-center">
+                <td class="py-4 px-6 font-body-md text-on-surface-variant">${dateStr}</td>
+                <td class="py-4 px-6 text-center">
                     <button class="btn-change-pwd text-primary hover:text-white px-sm py-[2px] border border-primary/20 hover:border-primary/50 rounded text-label-sm font-label-sm uppercase transition-all" data-id="${u.id}" data-email="${u.email}">
                         Contraseña
                     </button>

@@ -149,7 +149,7 @@
 <body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row overflow-x-hidden">
     <script type="module">
         import { checkSession } from './src/js/auth.js';
-        checkSession('administrador').then(session => {
+        checkSession().then(session => {
             if (session) {
                 document.body.style.visibility = 'visible';
             }
@@ -167,7 +167,7 @@
                     <p class="font-body-md text-body-md text-on-surface-variant">Presupuesto Activo</p>
                 </div>
             </div>
-            <nav class="flex flex-col gap-base">
+            <nav class="flex flex-col gap-3">
                 <a class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 px-sm py-xs flex items-center gap-sm cursor-pointer transition-colors" href="index.html">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span class="font-body-md">Dashboard</span>

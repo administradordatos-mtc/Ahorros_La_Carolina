@@ -67,6 +67,14 @@ const init = async () => {
         return;
     }
 
+    // Validar rol del usuario
+    const userRole = localStorage.getItem('user_role');
+    if (userRole !== 'administrador') {
+        if (btnNuevaMeta) {
+            btnNuevaMeta.classList.add('hidden');
+        }
+    }
+
     // Cargar y renderizar metas por primera vez
     await loadInitialData();
 

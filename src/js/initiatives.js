@@ -272,23 +272,23 @@ async function loadInitiatives(deptId) {
             else if (i.estado === 'Por desarrollar') badgeClass = 'bg-blue-500/25 text-blue-400 border-blue-500/40';
 
             row.innerHTML = `
-                <td class="py-md px-sm font-body-md text-on-surface font-semibold">${i.nombre}</td>
-                <td class="py-md px-sm text-center">
+                <td class="py-4 px-6 font-body-md text-on-surface font-semibold">${i.nombre}</td>
+                <td class="py-4 px-6 text-center">
                     <span class="px-xs py-[2px] rounded text-[10px] font-bold ${
                         i.tipo === 'AHORRO' ? 'bg-green-500/10 text-green-400' : i.tipo === 'INGRESO' ? 'bg-blue-500/10 text-blue-400' : 'bg-amber-500/10 text-amber-400'
                     }">
                         ${i.tipo}
                     </span>
                 </td>
-                <td class="py-md px-sm text-on-surface-variant">${i.categoria}</td>
-                <td class="py-md px-sm text-right font-semibold text-primary">${formatCurrency(i.esperado_mes)}</td>
-                <td class="py-md px-sm text-right font-semibold text-primary">${formatCurrency(i.anual_esperado)}</td>
-                <td class="py-md px-sm text-center">
+                <td class="py-4 px-6 text-on-surface-variant">${i.categoria}</td>
+                <td class="py-4 px-6 text-right font-semibold text-primary">${formatCurrency(i.esperado_mes)}</td>
+                <td class="py-4 px-6 text-right font-semibold text-primary">${formatCurrency(i.anual_esperado)}</td>
+                <td class="py-4 px-6 text-center">
                     <span class="px-xs py-[2px] rounded text-label-sm font-label-sm border uppercase ${badgeClass}">
                         ${i.estado}
                     </span>
                 </td>
-                <td class="py-md px-sm pl-sm text-on-surface-variant max-w-xs truncate" title="${i.notas || ''}">${i.notas || '-'}</td>
+                <td class="py-4 px-6 text-on-surface-variant max-w-xs truncate" title="${i.notas || ''}">${i.notas || '-'}</td>
             `;
 
             container.appendChild(row);

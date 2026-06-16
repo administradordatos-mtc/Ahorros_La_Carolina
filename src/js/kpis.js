@@ -246,15 +246,15 @@ async function loadKPIs(deptId, month, year) {
             }
 
             row.innerHTML = `
-                <td class="py-md px-sm font-body-md text-on-surface font-semibold">${k.nombre_kpi}</td>
-                <td class="py-md px-sm text-on-surface-variant">${k.linea_base || '-'}</td>
-                <td class="py-md px-sm text-on-surface-variant">${k.meta_mensual || '-'}</td>
-                <td class="py-md px-sm text-on-surface-variant">
+                <td class="py-4 px-6 font-body-md text-on-surface font-semibold">${k.nombre_kpi}</td>
+                <td class="py-4 px-6 text-on-surface-variant">${k.linea_base || '-'}</td>
+                <td class="py-4 px-6 text-on-surface-variant">${k.meta_mensual || '-'}</td>
+                <td class="py-4 px-6 text-on-surface-variant">
                     <span class="px-xs py-[2px] rounded text-[10px] font-bold bg-zinc-700/50 text-zinc-300">
                         ${k.frecuencia}
                     </span>
                 </td>
-                <td class="py-md px-sm">${realValueHtml}</td>
+                <td class="py-4 px-6">${realValueHtml}</td>
             `;
 
             container.appendChild(row);
