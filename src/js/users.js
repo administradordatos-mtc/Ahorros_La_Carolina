@@ -15,6 +15,12 @@ const btnClose = document.getElementById('btn-close-modal');
 const btnCancel = document.getElementById('btn-cancel-modal');
 const form = document.getElementById('new-user-form');
 
+// Elementos del DOM - Cambio de Contraseña
+const pwdModal = document.getElementById('change-password-modal');
+const btnClosePwd = document.getElementById('btn-close-pwd-modal');
+const btnCancelPwd = document.getElementById('btn-cancel-pwd-modal');
+const formPwd = document.getElementById('change-password-form');
+
 document.addEventListener('DOMContentLoaded', async () => {
     if (!supabase) {
         console.warn('Users Admin: Supabase client is not initialized.');
@@ -118,6 +124,71 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // Eventos del Modal de Cambio de Contraseña
+    const hidePwdModal = () => {
+        pwdModal.classList.add('hidden');
+        formPwd.reset();
+    };
+
+    if (btnClosePwd) btnClosePwd.addEventListener('click', hidePwdModal);
+    if (btnCancelPwd) btnCancelPwd.addEventListener('click', hidePwdModal);
+
+    // Evento para abrir el modal (delegado)
+    if (container) {
+        container.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btn-change-pwd');
+            if (btn) {
+                const userId = btn.dataset.id;
+                const userEmail = btn.dataset.email;
+                
+                document.getElementById('pwd-user-id').value = userId;
+                document.getElementById('pwd-user-email').value = userEmail;
+                pwdModal.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Formulario de Envío - Cambiar Contraseña
+    if (formPwd) {
+        formPwd.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = formPwd.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            const userId = document.getElementById('pwd-user-id').value;
+            const newPassword = document.getElementById('pwd-new-password').value;
+
+            submitBtn.innerHTML = 'ASIGNANDO...';
+            submitBtn.disabled = true;
+
+            try {
+                const { data, error } = await supabase.rpc('actualizar_password_usuario', {
+                    target_user_id: userId,
+                    new_password: newPassword
+                });
+
+                if (error) throw error;
+
+                submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> ASIGNADA';
+                submitBtn.style.backgroundColor = '#10B981';
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.disabled = false;
+                    hidePwdModal();
+                }, 1500);
+
+            } catch (err) {
+                console.error('Error al cambiar contraseña:', err);
+                alert('Ocurrió un error al cambiar la contraseña: ' + err.message);
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.disabled = false;
+            }
+        });
+    }
 });
 
 /**
@@ -139,7 +210,7 @@ async function loadUsers() {
         if (!users || users.length === 0) {
             container.innerHTML = `
                 <tr>
-                    <td colspan="3" class="py-lg text-center text-on-surface-variant">
+                    <td colspan="4" class="py-lg text-center text-on-surface-variant">
                         No hay usuarios registrados en el sistema.
                     </td>
                 </tr>
@@ -170,6 +241,11 @@ async function loadUsers() {
                     </span>
                 </td>
                 <td class="py-md px-sm font-body-md text-on-surface-variant">${dateStr}</td>
+                <td class="py-md px-sm text-center">
+                    <button class="btn-change-pwd text-primary hover:text-white px-sm py-[2px] border border-primary/20 hover:border-primary/50 rounded text-label-sm font-label-sm uppercase transition-all" data-id="${u.id}" data-email="${u.email}">
+                        Contraseña
+                    </button>
+                </td>
             `;
             container.appendChild(row);
         });
@@ -178,7 +254,7 @@ async function loadUsers() {
         console.error('Error al cargar la tabla de usuarios:', err);
         container.innerHTML = `
             <tr>
-                <td colspan="3" class="py-lg text-center text-red-500 font-bold">
+                <td colspan="4" class="py-lg text-center text-red-500 font-bold">
                     Error al cargar los usuarios: ${err.message}
                 </td>
             </tr>
