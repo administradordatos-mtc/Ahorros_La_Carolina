@@ -150,11 +150,14 @@ async function updateDashboard(deptId) {
             }
 
             if (progressPresupuesto) {
-                progressPresupuesto.className = 'bg-primary h-full transition-all duration-1000';
-                progressPresupuesto.style.width = `${Math.min(100, porcentajeUtilizado)}%`;
+                let colorClass = 'bg-primary';
                 if (porcentajeUtilizado > 100) {
-                    progressPresupuesto.classList.replace('bg-primary', 'bg-red-500');
+                    colorClass = 'bg-red-500';
+                } else if (porcentajeUtilizado >= 80) {
+                    colorClass = 'bg-amber-500';
                 }
+                progressPresupuesto.className = `${colorClass} h-full transition-all duration-1000`;
+                progressPresupuesto.style.width = `${Math.min(100, porcentajeUtilizado)}%`;
             }
 
             if (textPresupuestoUtilizado) {
