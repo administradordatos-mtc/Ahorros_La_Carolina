@@ -1,4 +1,6 @@
 import { supabase } from './supabase.js';
+import { checkSession } from './auth.js';
+
 
 // DOM elements
 const btnNuevaMeta = document.getElementById('btn-nueva-meta');
@@ -71,13 +73,18 @@ const init = async () => {
             return;
         }
 
-        // Validar rol del usuario de forma robusta frente a restricciones de localStorage
-        let userRole = 'directivo';
-        try {
-            userRole = localStorage.getItem('user_role') || 'directivo';
-        } catch (e) {
-            console.warn('No se pudo acceder a localStorage:', e);
+        // 1. Validar la sesión de forma asíncrona antes de cualquier consulta
+        const session = await checkSession();
+        if (!session) {
+            // checkSession redirige al login si no hay sesión
+            return;
         }
+
+        // Hacer visible el cuerpo ahora que la sesión está autenticada
+        document.body.style.visibility = 'visible';
+
+        // 2. Validar rol del usuario de forma robusta
+        const userRole = session.rol || 'directivo';
 
         if (userRole !== 'administrador') {
             if (btnNuevaMeta) {
@@ -85,7 +92,7 @@ const init = async () => {
             }
         }
 
-        // Cargar y renderizar metas por primera vez
+        // 3. Cargar y renderizar metas por primera vez
         await loadInitialData();
 
         // Eventos de los filtros
