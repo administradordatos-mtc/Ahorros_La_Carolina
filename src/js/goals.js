@@ -58,109 +58,123 @@ if (inputWeek) {
     inputWeek.value = actualPeriod.week;
 }
 if (inputDate) {
-    inputDate.value = today.toLocaleDateString('en-CA');
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    inputDate.value = `${yyyy}-${mm}-${dd}`;
 }
 
 const init = async () => {
-    if (!supabase) {
-        console.warn('Goals: Supabase client is not initialized.');
-        return;
-    }
-
-    // Validar rol del usuario
-    const userRole = localStorage.getItem('user_role');
-    if (userRole !== 'administrador') {
-        if (btnNuevaMeta) {
-            btnNuevaMeta.classList.add('hidden');
+    try {
+        if (!supabase) {
+            console.warn('Goals: Supabase client is not initialized.');
+            return;
         }
-    }
 
-    // Cargar y renderizar metas por primera vez
-    await loadInitialData();
+        // Validar rol del usuario de forma robusta frente a restricciones de localStorage
+        let userRole = 'directivo';
+        try {
+            userRole = localStorage.getItem('user_role') || 'directivo';
+        } catch (e) {
+            console.warn('No se pudo acceder a localStorage:', e);
+        }
 
-    // Eventos de los filtros
-    if (filterCategory) filterCategory.addEventListener('change', applyFiltersAndRender);
-    if (filterYear) filterYear.addEventListener('change', applyFiltersAndRender);
-    if (searchWeek) searchWeek.addEventListener('input', applyFiltersAndRender);
+        if (userRole !== 'administrador') {
+            if (btnNuevaMeta) {
+                btnNuevaMeta.classList.add('hidden');
+            }
+        }
 
-    // Open Modal
-    if (btnNuevaMeta && modal) {
-        btnNuevaMeta.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-        });
-    }
+        // Cargar y renderizar metas por primera vez
+        await loadInitialData();
 
-    // Close Modal
-    if (btnCloseModal && modal) {
-        btnCloseModal.addEventListener('click', () => {
-            modal.classList.add('hidden');
-        });
-    }
+        // Eventos de los filtros
+        if (filterCategory) filterCategory.addEventListener('change', applyFiltersAndRender);
+        if (filterYear) filterYear.addEventListener('change', applyFiltersAndRender);
+        if (searchWeek) searchWeek.addEventListener('input', applyFiltersAndRender);
 
-    // Close Modal on clicking outside the form card
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
+        // Open Modal
+        if (btnNuevaMeta && modal) {
+            btnNuevaMeta.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+        }
+
+        // Close Modal
+        if (btnCloseModal && modal) {
+            btnCloseModal.addEventListener('click', () => {
                 modal.classList.add('hidden');
-            }
-        });
-    }
+            });
+        }
 
-    // Handle form submit (Insert or Upsert Goal)
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = 'GUARDANDO...';
-            submitBtn.disabled = true;
-
-            const category = selectCategory.value;
-            const amount = parseFloat(inputAmount.value);
-            const week = parseInt(inputWeek.value);
-            const year = parseInt(inputYear.value);
-            const dateVal = inputDate.value;
-
-            try {
-                // Upsert to handle updates seamlessly if category/week/year already exists
-                const { error } = await supabase
-                    .from('metas_semanales')
-                    .upsert({
-                        categoria: category,
-                        monto_meta: amount,
-                        semana: week,
-                        anio: year,
-                        fecha_inicio: dateVal
-                    }, {
-                        onConflict: 'categoria,semana,anio'
-                    });
-
-                if (error) throw error;
-
-                submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> GUARDADO';
-                submitBtn.classList.replace('rojo-corazon', 'bg-emerald-600');
-
-                // Reload metas
-                await loadInitialData();
-
-                // Clear input amount
-                inputAmount.value = '';
-
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.classList.replace('bg-emerald-600', 'rojo-corazon');
-                    submitBtn.disabled = false;
+        // Close Modal on clicking outside the form card
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
                     modal.classList.add('hidden');
-                }, 1500);
+                }
+            });
+        }
 
-            } catch (err) {
-                console.error('Error al guardar la meta:', err);
-                alert('Error al guardar la meta: ' + err.message);
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        });
+        // Handle form submit (Insert or Upsert Goal)
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                submitBtn.innerHTML = 'GUARDANDO...';
+                submitBtn.disabled = true;
+
+                const category = selectCategory.value;
+                const amount = parseFloat(inputAmount.value);
+                const week = parseInt(inputWeek.value);
+                const year = parseInt(inputYear.value);
+                const dateVal = inputDate.value;
+
+                try {
+                    // Upsert to handle updates seamlessly if category/week/year already exists
+                    const { error } = await supabase
+                        .from('metas_semanales')
+                        .upsert({
+                            categoria: category,
+                            monto_meta: amount,
+                            semana: week,
+                            anio: year,
+                            fecha_inicio: dateVal
+                        }, {
+                            onConflict: 'categoria,semana,anio'
+                        });
+
+                    if (error) throw error;
+
+                    submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> GUARDADO';
+                    submitBtn.classList.replace('rojo-corazon', 'bg-emerald-600');
+
+                    // Reload metas
+                    await loadInitialData();
+
+                    // Clear input amount
+                    inputAmount.value = '';
+
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.classList.replace('bg-emerald-600', 'rojo-corazon');
+                        submitBtn.disabled = false;
+                        modal.classList.add('hidden');
+                    }, 1500);
+
+                } catch (err) {
+                    console.error('Error al guardar la meta:', err);
+                    alert('Error al guardar la meta: ' + err.message);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error crítico durante la inicialización de Metas:', error);
+        mostrarErrorVisual(error);
     }
 };
 
@@ -197,6 +211,7 @@ async function loadInitialData() {
 
     } catch (err) {
         console.error('Error al cargar datos de metas:', err);
+        mostrarErrorVisual(err);
     }
 }
 
@@ -224,8 +239,9 @@ function calculateAndRenderKPIs() {
             g.categoria === meta.categoria
         );
 
-        const totalGasto = gastosFiltrados.reduce((sum, g) => sum + Number(g.monto_gasto), 0);
-        const desviacion = Number(meta.monto_meta) - totalGasto;
+        const totalGasto = gastosFiltrados.reduce((sum, g) => sum + (Number(g.monto_gasto) || 0), 0);
+        const montoMeta = Number(meta.monto_meta) || 0;
+        const desviacion = montoMeta - totalGasto;
         desviacionTotalAcumulada += desviacion;
 
         if (desviacion >= 0) {
@@ -317,8 +333,9 @@ function applyFiltersAndRender() {
             g.categoria === meta.categoria
         );
 
-        const totalGasto = gastosFiltrados.reduce((sum, g) => sum + Number(g.monto_gasto), 0);
-        const ratio = meta.monto_meta > 0 ? Math.round((totalGasto / meta.monto_meta) * 100) : 0;
+        const totalGasto = gastosFiltrados.reduce((sum, g) => sum + (Number(g.monto_gasto) || 0), 0);
+        const montoMeta = Number(meta.monto_meta) || 0;
+        const ratio = montoMeta > 0 ? Math.round((totalGasto / montoMeta) * 100) : 0;
 
         let icon = 'flag';
         let iconBgColor = 'bg-primary/10';
@@ -450,4 +467,25 @@ function applyFiltersAndRender() {
             card.style.borderColor = 'rgba(241, 212, 127, 0.15)';
         });
     });
+}
+
+/**
+ * Dibuja un banner visible de error en el DOM en caso de error crítico
+ */
+function mostrarErrorVisual(error) {
+    document.body.style.visibility = 'visible';
+
+    const errorBanner = document.createElement('div');
+    errorBanner.style.position = 'fixed';
+    errorBanner.style.top = '0';
+    errorBanner.style.left = '0';
+    errorBanner.style.width = '100%';
+    errorBanner.style.backgroundColor = '#690005';
+    errorBanner.style.color = '#ffdad6';
+    errorBanner.style.padding = '16px';
+    errorBanner.style.textAlign = 'center';
+    errorBanner.style.zIndex = '99999';
+    errorBanner.style.fontFamily = 'sans-serif';
+    errorBanner.innerHTML = `<strong>Error en Panel de Metas:</strong> Ocurrió un error en tiempo de ejecución: <code>${error.message || error}</code>. Por favor contacta al administrador.`;
+    document.body.appendChild(errorBanner);
 }

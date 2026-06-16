@@ -19,7 +19,10 @@ let allGastos = [];
 
 // Establecer fecha de hoy por defecto en el formulario
 const today = new Date();
-const localDateString = today.toLocaleDateString('en-CA'); // YYYY-MM-DD local format
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, '0');
+const dd = String(today.getDate()).padStart(2, '0');
+const localDateString = `${yyyy}-${mm}-${dd}`;
 if (inputDate) {
     inputDate.value = localDateString;
 }
