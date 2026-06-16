@@ -21,7 +21,7 @@ const btnClosePwd = document.getElementById('btn-close-pwd-modal');
 const btnCancelPwd = document.getElementById('btn-cancel-pwd-modal');
 const formPwd = document.getElementById('change-password-form');
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
     if (!supabase) {
         console.warn('Users Admin: Supabase client is not initialized.');
         return;
@@ -189,7 +189,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 /**
  * Carga el listado de todos los usuarios registrados desde la tabla perfiles.

@@ -30,7 +30,7 @@ if (inputDate) {
     inputDate.value = today.toLocaleDateString('en-CA');
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
     if (!supabase) {
         console.warn('Goals: Supabase client is not initialized.');
         return;
@@ -117,7 +117,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 /**
  * Loads metas and actual gastos from Supabase, aggregates, and renders them.

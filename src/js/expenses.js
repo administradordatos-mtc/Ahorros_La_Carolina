@@ -24,7 +24,7 @@ if (inputDate) {
     inputDate.value = localDateString;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
     if (!supabase) {
         console.warn('Expenses: Supabase client is not initialized.');
         return;
@@ -105,7 +105,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 /**
  * Carga metas y gastos desde Supabase y renderiza los componentes.

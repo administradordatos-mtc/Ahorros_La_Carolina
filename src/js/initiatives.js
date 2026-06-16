@@ -25,7 +25,7 @@ const formatCurrency = (val) => {
     }).format(val || 0);
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
     if (!supabase) {
         console.error('Supabase client not initialized.');
         return;
@@ -153,7 +153,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 /**
  * Carga los departamentos en el elemento <select>

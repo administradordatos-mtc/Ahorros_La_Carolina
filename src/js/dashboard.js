@@ -27,7 +27,7 @@ const formatCurrency = (val) => {
     }).format(val || 0);
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
     if (!supabase) {
         console.warn('Dashboard: Supabase client is not initialized.');
         return;
@@ -46,7 +46,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             await updateDashboard(deptId);
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 /**
  * Carga departamentos desde Supabase

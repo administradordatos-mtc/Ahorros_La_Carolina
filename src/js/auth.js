@@ -112,7 +112,7 @@ export async function logout() {
  * Actualiza los elementos visuales de la interfaz relacionados con el perfil del usuario.
  */
 function actualizarInterfazUsuario(email, rol) {
-    document.addEventListener('DOMContentLoaded', () => {
+    const initUI = () => {
         // Actualizar el correo o nombre del operador en el sidebar si existe
         const operatorNameEl = document.querySelector('aside .font-title-lg');
         if (operatorNameEl) {
@@ -127,8 +127,7 @@ function actualizarInterfazUsuario(email, rol) {
         // Ocultar botones o vistas administrativas si el usuario es solo "directivo"
         if (rol === 'directivo') {
             // Ocultar botón "Reportar Gasto" del dashboard
-            const btnReportar = document.querySelector('button:contains("REPORTAR GASTO")') || 
-                                Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('REPORTAR GASTO'));
+            const btnReportar = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('REPORTAR GASTO'));
             if (btnReportar) {
                 btnReportar.style.display = 'none';
             }
@@ -160,5 +159,11 @@ function actualizarInterfazUsuario(email, rol) {
                 }
             });
         }
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initUI);
+    } else {
+        initUI();
+    }
 }
