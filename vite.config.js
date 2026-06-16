@@ -14,6 +14,7 @@ export default defineConfig({
         expenses: resolve(__dirname, 'expenses.html'),
         goals: resolve(__dirname, 'goals.html'),
         reports: resolve(__dirname, 'reports.html'),
+        users: resolve(__dirname, 'users.html'),
       },
     },
   },

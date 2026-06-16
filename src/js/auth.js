@@ -137,6 +137,17 @@ function actualizarInterfazUsuario(email, rol) {
             // Para dar flexibilidad, mantendremos los links pero redirigirán en checkSession() si intentan entrar.
         }
 
+        // Mostrar accesos de administración de usuarios si el usuario es administrador
+        if (rol === 'administrador') {
+            const menuUsuarios = document.querySelectorAll('#menu-usuarios, #mobile-menu-usuarios');
+            menuUsuarios.forEach(el => {
+                el.classList.remove('hidden');
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                }
+            });
+        }
+
         // Configurar el botón de cerrar sesión si existe en la interfaz
         // Buscaremos el elemento de perfil y le añadiremos evento de logout al hacer click en algún botón o avatar
         const userAvatar = document.querySelector('header img') || document.querySelector('header .w-10');
