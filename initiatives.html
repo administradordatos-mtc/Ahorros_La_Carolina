@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Usuarios - LA CAROLINA MTC</title>
+    <title>Iniciativas - LA CAROLINA MTC</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
@@ -122,7 +122,7 @@
 <body class="flex flex-col md:flex-row min-h-screen">
     <script type="module">
         import { checkSession } from './src/js/auth.js';
-        checkSession('administrador').then(session => {
+        checkSession().then(session => {
             if (session) {
                 document.body.style.visibility = 'visible';
             }
@@ -166,9 +166,9 @@
                         <span class="font-title-lg text-title-lg">Reportes</span>
                     </a>
                 </li>
-                <li class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                <li class="bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="initiatives.html">
-                        <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+                        <span class="material-symbols-outlined text-on-primary-container" data-icon="lightbulb">lightbulb</span>
                         <span class="font-title-lg text-title-lg">Iniciativas</span>
                     </a>
                 </li>
@@ -178,9 +178,9 @@
                         <span class="font-title-lg text-title-lg">KPIs</span>
                     </a>
                 </li>
-                <li id="menu-usuarios" class="hidden bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                <li id="menu-usuarios" class="hidden text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="users.html">
-                        <span class="material-symbols-outlined text-on-primary-container" data-icon="group">group</span>
+                        <span class="material-symbols-outlined" data-icon="group">group</span>
                         <span class="font-title-lg text-title-lg">Usuarios</span>
                     </a>
                 </li>
@@ -205,37 +205,72 @@
         </header>
 
         <!-- Page Content -->
-        <section class="p-margin-mobile md:p-margin-desktop space-y-lg overflow-y-auto">
+        <section class="p-margin-mobile md:p-margin-desktop space-y-lg overflow-y-auto flex-grow">
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-primary/10 pb-md">
                 <div>
-                    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">GESTIÓN DE USUARIOS</h2>
-                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Administración de credenciales de acceso y asignación de roles.</p>
+                    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">INICIATIVAS DE AHORRO</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Propuestas y seguimiento de eficiencia por departamento.</p>
                 </div>
-                <div>
-                    <button id="btn-nuevo-usuario" class="bg-secondary-container hover:bg-on-secondary-fixed-variant text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform flex items-center gap-sm">
-                        NUEVO USUARIO
+                <div class="flex items-center gap-sm">
+                    <!-- Dropdown Departamento -->
+                    <div class="flex flex-col gap-[2px]">
+                        <label for="filter-dept" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Departamento</label>
+                        <select id="filter-dept" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30">
+                            <!-- Populated dynamically -->
+                            <option value="">Cargando departamentos...</option>
+                        </select>
+                    </div>
+                    <button id="btn-nueva-iniciativa" class="hidden bg-[#C52724] hover:bg-[#a0020e] text-white px-md py-sm font-headline-md text-headline-md rounded-lg active:scale-95 transition-all flex items-center gap-sm self-end">
+                        NUEVA INICIATIVA
                         <span class="material-symbols-outlined">add</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Users List Table -->
+            <!-- Dashboard Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-xs">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ahorro Mensual</span>
+                    <span id="card-ahorro-mes" class="font-display-lg text-4xl text-primary">$0</span>
+                    <span class="font-body-md text-body-md text-green-500 flex items-center gap-xs">Proyectado esperado</span>
+                </div>
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-xs">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ahorro Anual</span>
+                    <span id="card-ahorro-anio" class="font-display-lg text-4xl text-primary">$0</span>
+                    <span class="font-body-md text-body-md text-green-500 flex items-center gap-xs">Total anual esperado</span>
+                </div>
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-xs">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Iniciativas</span>
+                    <span id="card-total-iniciativas" class="font-display-lg text-4xl text-primary">0</span>
+                    <span class="font-body-md text-body-md text-on-surface-variant">Registradas en el área</span>
+                </div>
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-xs">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">En Curso</span>
+                    <span id="card-iniciativas-curso" class="font-display-lg text-4xl text-primary">0</span>
+                    <span id="card-porcentaje-curso" class="font-body-md text-body-md text-green-500 flex items-center gap-xs">0% en ejecución</span>
+                </div>
+            </div>
+
+            <!-- Initiatives Table -->
             <div class="bg-surface-container p-md c-frame rounded-xl overflow-hidden">
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-primary/10 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                                <th class="pb-sm font-bold">Correo Electrónico</th>
-                                <th class="pb-sm font-bold">Rol Asignado</th>
-                                <th class="pb-sm font-bold">Fecha de Creación</th>
+                                <th class="pb-sm font-bold min-w-[200px]">Iniciativa</th>
+                                <th class="pb-sm font-bold text-center">Tipo</th>
+                                <th class="pb-sm font-bold">Categoría</th>
+                                <th class="pb-sm font-bold text-right">Mensual Esperado</th>
+                                <th class="pb-sm font-bold text-right">Anual Esperado</th>
+                                <th class="pb-sm font-bold text-center">Estado</th>
+                                <th class="pb-sm font-bold pl-sm">Notas / Metodología</th>
                             </tr>
                         </thead>
-                        <tbody id="users-table-body" class="divide-y divide-primary/5 font-body-md text-body-md text-on-surface">
-                            <!-- Rows dynamically populated by JS -->
+                        <tbody id="initiatives-table-body" class="divide-y divide-primary/5 font-body-md text-body-md text-on-surface">
                             <tr>
-                                <td colspan="3" class="py-lg text-center text-on-surface-variant">
-                                    Cargando listado de usuarios...
+                                <td colspan="7" class="py-lg text-center text-on-surface-variant">
+                                    Selecciona un departamento para ver sus iniciativas de ahorro.
                                 </td>
                             </tr>
                         </tbody>
@@ -245,7 +280,7 @@
         </section>
 
         <!-- Slogan Bar Mobile-Visible -->
-        <div class="md:hidden bg-secondary-container text-white text-center py-2 font-headline-md text-headline-md tracking-widest fixed bottom-16 w-full z-40">
+        <div class="md:hidden bg-[#C52724] text-white text-center py-2 font-headline-md text-headline-md tracking-widest fixed bottom-16 w-full z-40">
             TRANSPORTE CON CORAZÓN
         </div>
 
@@ -263,26 +298,26 @@
                 <span class="material-symbols-outlined" data-icon="flag">flag</span>
                 <span class="font-label-sm text-label-sm">Metas</span>
             </a>
-            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="initiatives.html">
-                <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+            <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform" href="initiatives.html">
+                <span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
                 <span class="font-label-sm text-label-sm">Iniciativas</span>
             </a>
             <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="kpis.html">
                 <span class="material-symbols-outlined" data-icon="speed">speed</span>
                 <span class="font-label-sm text-label-sm">KPIs</span>
             </a>
-            <a id="mobile-menu-usuarios" class="hidden flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform" href="users.html">
+            <a id="mobile-menu-usuarios" class="hidden flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="users.html">
                 <span class="material-symbols-outlined" data-icon="group">group</span>
                 <span class="font-label-sm text-label-sm">Usuarios</span>
             </a>
         </nav>
     </main>
 
-    <!-- Modal: Nuevo Usuario -->
-    <div id="user-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-margin-mobile bg-black/70 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-[#171B1E] p-md md:p-lg rounded-xl c-frame border border-primary/10 flex flex-col gap-md">
+    <!-- Modal: Nueva Iniciativa -->
+    <div id="initiative-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-margin-mobile bg-black/70 backdrop-blur-sm">
+        <div class="w-full max-w-lg bg-[#171B1E] p-md md:p-lg rounded-xl c-frame border border-primary/10 flex flex-col gap-md max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center">
-                <h3 class="font-headline-md text-headline-md text-primary tracking-wider">REGISTRAR NUEVO USUARIO</h3>
+                <h3 class="font-headline-md text-headline-md text-primary tracking-wider">REGISTRAR NUEVA INICIATIVA</h3>
                 <button id="btn-close-modal" class="text-on-surface-variant hover:text-white transition-colors">
                     <span class="material-symbols-outlined">close</span>
                 </button>
@@ -290,32 +325,100 @@
             
             <div class="h-[1px] bg-primary/10 my-xs"></div>
 
-            <form id="new-user-form" class="space-y-md">
-                <!-- Email -->
+            <form id="new-initiative-form" class="space-y-md">
+                <!-- Nombre de la iniciativa -->
                 <div class="flex flex-col gap-xs">
-                    <label for="new-email" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Correo Electrónico
+                    <label for="ini-name" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
+                        <span class="text-primary">»»»</span> Nombre de la iniciativa
                     </label>
-                    <input id="new-email" type="email" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="usuario@lacarolina.com"/>
+                    <input id="ini-name" type="text" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Ej. Renegociar LM Solución"/>
                 </div>
 
-                <!-- Contraseña -->
-                <div class="flex flex-col gap-xs">
-                    <label for="new-password" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Contraseña inicial
-                    </label>
-                    <input id="new-password" type="password" required minlength="6" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
+                <div class="grid grid-cols-2 gap-sm">
+                    <!-- Tipo -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-type" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Tipo</label>
+                        <select id="ini-type" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1">
+                            <option value="AHORRO">Ahorro</option>
+                            <option value="INGRESO">Ingreso</option>
+                            <option value="MIXTA">Mixta</option>
+                        </select>
+                    </div>
+                    <!-- Categoría -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-category" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Categoría</label>
+                        <input id="ini-category" type="text" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1" placeholder="Ej. Tecnología"/>
+                    </div>
                 </div>
 
-                <!-- Rol -->
+                <div class="grid grid-cols-2 gap-sm">
+                    <!-- Pesimista Mes -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-pesimista" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Pesimista Mes ($)</label>
+                        <input id="ini-pesimista" type="number" step="0.01" required value="0" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1"/>
+                    </div>
+                    <!-- Base Mes -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-base" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Base Mes ($)</label>
+                        <input id="ini-base" type="number" step="0.01" required value="0" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1"/>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-sm">
+                    <!-- Optimista Mes -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-optimista" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Optimista Mes ($)</label>
+                        <input id="ini-optimista" type="number" step="0.01" required value="0" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1"/>
+                    </div>
+                    <!-- Esperado Mes -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-esperado" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Esperado Mes ($)</label>
+                        <input id="ini-esperado" type="number" step="0.01" required value="0" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1"/>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-sm">
+                    <!-- Anual Esperado -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-anual" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Anual Esperado ($)</label>
+                        <input id="ini-anual" type="number" step="0.01" required value="0" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1"/>
+                    </div>
+                    <!-- Estado -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-status" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Estado</label>
+                        <select id="ini-status" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1">
+                            <option value="Propuesta">Propuesta</option>
+                            <option value="Negociación">Negociación</option>
+                            <option value="Por desarrollar">Por desarrollar</option>
+                            <option value="Piloto">Piloto</option>
+                            <option value="En curso">En curso</option>
+                            <option value="Completado">Completado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-sm">
+                    <!-- CapEx -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-capex" class="font-label-sm text-label-sm text-on-surface-variant uppercase">CapEx ($)</label>
+                        <input id="ini-capex" type="number" step="0.01" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1" placeholder="Ej. 0"/>
+                    </div>
+                    <!-- Payback -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-payback" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Payback (meses)</label>
+                        <input id="ini-payback" type="number" step="0.1" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1" placeholder="Ej. 6"/>
+                    </div>
+                    <!-- ROI -->
+                    <div class="flex flex-col gap-xs">
+                        <label for="ini-roi" class="font-label-sm text-label-sm text-on-surface-variant uppercase">ROI 12m (%)</label>
+                        <input id="ini-roi" type="number" step="0.1" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1" placeholder="Ej. 150"/>
+                    </div>
+                </div>
+
+                <!-- Notas -->
                 <div class="flex flex-col gap-xs">
-                    <label for="new-role" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Rol asignado
-                    </label>
-                    <select id="new-role" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all">
-                        <option value="directivo">Directivo (Sólo Dashboard y Reportes)</option>
-                        <option value="administrador">Administrador (Carga y registro de datos)</option>
-                    </select>
+                    <label for="ini-notes" class="font-label-sm text-label-sm text-on-surface-variant uppercase">Notas / Metodología</label>
+                    <textarea id="ini-notes" rows="2" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 outline-none transition-all" placeholder="Metodología o comentarios del proyecto..."></textarea>
                 </div>
 
                 <!-- Botones -->
@@ -323,7 +426,7 @@
                     <button type="button" id="btn-cancel-modal" class="border border-primary text-primary px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
                         CANCELAR
                     </button>
-                    <button type="submit" class="rojo-corazon hover:bg-on-secondary-fixed-variant text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
+                    <button type="submit" class="rojo-corazon hover:bg-[#a0020e] text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
                         REGISTRAR
                     </button>
                 </div>
@@ -342,6 +445,6 @@
             });
         });
     </script>
-    <script type="module" src="./src/js/users.js"></script>
+    <script type="module" src="./src/js/initiatives.js"></script>
 </body>
 </html>

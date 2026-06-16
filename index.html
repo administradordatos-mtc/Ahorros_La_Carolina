@@ -176,6 +176,18 @@
                         <span class="font-title-lg text-title-lg">Reportes</span>
                     </a>
                 </li>
+                <li class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                    <a class="flex items-center gap-sm px-md py-sm" href="initiatives.html">
+                        <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+                        <span class="font-title-lg text-title-lg">Iniciativas</span>
+                    </a>
+                </li>
+                <li class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                    <a class="flex items-center gap-sm px-md py-sm" href="kpis.html">
+                        <span class="material-symbols-outlined" data-icon="speed">speed</span>
+                        <span class="font-title-lg text-title-lg">KPIs</span>
+                    </a>
+                </li>
                 <li id="menu-usuarios" class="hidden text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="users.html">
                         <span class="material-symbols-outlined" data-icon="group">group</span>
@@ -210,12 +222,16 @@
                     <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">CONTROL DE AHORROS</h2>
                     <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Monitoreo en tiempo real de eficiencia presupuestal.</p>
                 </div>
-                <div class="flex gap-sm">
-                    <button onclick="location.href='expenses.html'" class="bg-secondary-container text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
+                <div class="flex items-center gap-sm">
+                    <!-- Selector de Departamento -->
+                    <div class="flex flex-col gap-[2px]">
+                        <label for="dashboard-dept" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Departamento</label>
+                        <select id="dashboard-dept" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[4px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30">
+                            <option value="">General (Todos)</option>
+                        </select>
+                    </div>
+                    <button onclick="location.href='expenses.html'" class="bg-secondary-container text-white px-md py-[8px] font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform self-end">
                         REPORTAR GASTO
-                    </button>
-                    <button class="border border-primary text-primary px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
-                        EXPORTAR
                     </button>
                 </div>
             </div>
@@ -380,9 +396,13 @@
                 <span class="material-symbols-outlined" data-icon="flag">flag</span>
                 <span class="font-label-sm text-label-sm">Metas</span>
             </a>
-            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="reports.html">
-                <span class="material-symbols-outlined" data-icon="assessment">assessment</span>
-                <span class="font-label-sm text-label-sm">Reportes</span>
+            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="initiatives.html">
+                <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+                <span class="font-label-sm text-label-sm">Iniciativas</span>
+            </a>
+            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="kpis.html">
+                <span class="material-symbols-outlined" data-icon="speed">speed</span>
+                <span class="font-label-sm text-label-sm">KPIs</span>
             </a>
             <a id="mobile-menu-usuarios" class="hidden flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="users.html">
                 <span class="material-symbols-outlined" data-icon="group">group</span>

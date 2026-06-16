@@ -15,6 +15,8 @@ export default defineConfig({
         goals: resolve(__dirname, 'goals.html'),
         reports: resolve(__dirname, 'reports.html'),
         users: resolve(__dirname, 'users.html'),
+        initiatives: resolve(__dirname, 'initiatives.html'),
+        kpis: resolve(__dirname, 'kpis.html'),
       },
     },
   },
