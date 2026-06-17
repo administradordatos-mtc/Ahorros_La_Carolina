@@ -1,4 +1,26 @@
-<!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-<!-- SPECKIT END -->
+# claude-obsidian: Agent Instructions
+
+This repo is a Claude Code plugin **and** an Obsidian vault that builds persistent, compounding knowledge bases using Andrej Karpathy's LLM Wiki pattern.
+
+## Available Skills
+
+- speckit-plan
+- speckit-specify
+- speckit-tasks
+- speckit-implement
+- speckit-analyze
+
+## Recent Accomplishments (June 17, 2026)
+
+* **Layout & Spacing**: Resolved density of views, increasing sidebar elements to `space-y-3` and table rows to `py-4 px-6`.
+* **Goals View (Access & Role Control)**: Opened view to directivo roles, hiding the form controls programmatically.
+* **Async Concurrency Fix**: Caching of checkSession promises in `auth.js` to prevent double execution and database RLS errors.
+* **Scroll & Parallax Fix**: Removed continuous query selector inside scroll loops, used passive event listeners, and safe fallback scroll offsets.
+
+## Knowledge base files
+* [memoria.md](file:///c:/Users/administradordatos/TRANSPORTES%20LA%20CAROLINA/Administracion%20Datos%20-%20Documentos/La%20Carolina%20De%20Transporte/Projects/Ahorros_La_Carolina/memoria.md) — Complete memory log of today's work.
+* [pendientes.md](file:///c:/Users/administradordatos/TRANSPORTES%20LA%20CAROLINA/Administracion%20Datos%20-%20Documentos/La%20Carolina%20De%20Transporte/Projects/Ahorros_La_Carolina/pendientes.md) — Product backlog and pending features.
+* [decisiones.md](file:///c:/Users/administradordatos/TRANSPORTES%20LA%20CAROLINA/Administracion%20Datos%20-%20Documentos/La%20Carolina%20De%20Transporte/Projects/Ahorros_La_Carolina/decisiones.md) — Technical and design decisions.
+* [CLAUDE.md](file:///c:/Users/administradordatos/TRANSPORTES%20LA%20CAROLINA/Administracion%20Datos%20-%20Documentos/La%20Carolina%20De%20Transporte/Projects/Ahorros_La_Carolina/CLAUDE.md) — Code guidelines and routing structure.
+* [cloud.md](file:///c:/Users/administradordatos/TRANSPORTES%20LA%20CAROLINA/Administracion%20Datos%20-%20Documentos/La%20Carolina%20De%20Transporte/Projects/Ahorros_La_Carolina/cloud.md) — Redundant copy of guidelines.
+* [task.md](file:///C:/Users/administradordatos/.gemini/antigravity/brain/20a6bbac-6412-4850-857a-4739fc40d811/task.md) — Current task board status.
