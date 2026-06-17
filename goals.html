@@ -144,9 +144,20 @@
         .pulse-warn {
             animation: alert-pulse-warn 2s infinite;
         }
+        .rojo-corazon {
+            background-color: #C52724;
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+    <script type="module">
+        import { checkSession } from './src/js/auth.js';
+        checkSession().then(session => {
+            if (session) {
+                document.body.style.visibility = 'visible';
+            }
+        });
+    </script>
 
     <!-- NavigationDrawer (Desktop Only) -->
     <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-xl shrink-0">
@@ -419,14 +430,14 @@
             }, 300);
         });
 
-        // Simple parallax effect for the hero image
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const heroBg = document.querySelector('.md\\:col-span-2 img');
-            if(heroBg) {
+        // Safe parallax effect for the hero image
+        const heroBg = document.querySelector('.md\\:col-span-2 img');
+        if (heroBg) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY || window.pageYOffset || 0;
                 heroBg.style.transform = `translateY(${scrolled * 0.15}px)`;
-            }
-        });
+            }, { passive: true });
+        }
 
         // Interactive border transitions
         document.querySelectorAll('.c-frame').forEach(card => {

@@ -70,6 +70,7 @@ const init = async () => {
     try {
         if (!supabase) {
             console.warn('Goals: Supabase client is not initialized.');
+            mostrarErrorVisual(new Error('El cliente de Supabase no está configurado. Por favor, verifica las variables de entorno.'));
             return;
         }
 
@@ -325,11 +326,19 @@ function applyFiltersAndRender() {
         return;
     }
 
-    // Ordenar metas por año y semana descendente
+    // Ordenar metas por año y semana descendente de forma robusta
     const sorted = [...filteredMetas].sort((a, b) => {
-        if (b.anio !== a.anio) return b.anio - a.anio;
-        if (b.semana !== a.semana) return b.semana - a.semana;
-        return a.categoria.localeCompare(b.categoria);
+        const anioA = Number(a.anio) || 0;
+        const anioB = Number(b.anio) || 0;
+        if (anioB !== anioA) return anioB - anioA;
+        
+        const semA = Number(a.semana) || 0;
+        const semB = Number(b.semana) || 0;
+        if (semB !== semA) return semB - semA;
+        
+        const catA = String(a.categoria || '');
+        const catB = String(b.categoria || '');
+        return catA.localeCompare(catB);
     });
 
     sorted.forEach(meta => {
