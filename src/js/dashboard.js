@@ -31,10 +31,7 @@ const actualYear = today.getFullYear();
 
 // Estado local
 let allDepartamentos = [];
-let allConceptos = [];
-let allMetasMensuales = [];
-let allGastosSemanales = [];
-let allValidacionesAhorros = [];
+let allIniciativas = [];
 
 const init = async () => {
     if (!supabase) {
@@ -86,10 +83,6 @@ async function loadDepartments() {
             selectDept.appendChild(opt);
         });
 
-        // Cargar también el catálogo de conceptos
-        const { data: concts } = await supabase.from('conceptos').select('*');
-        allConceptos = concts || [];
-
     } catch (err) {
         console.error('Error al cargar departamentos en dashboard:', err);
     }
@@ -100,25 +93,13 @@ async function loadDepartments() {
  */
 async function loadInitialData() {
     try {
-        const { data: metas, error: metasError } = await supabase
-            .from('metas_mensuales')
+        const { data: inis, error } = await supabase
+            .from('iniciativas')
             .select('*');
 
-        const { data: gastos, error: gastosError } = await supabase
-            .from('gastos_semanales')
-            .select('*');
+        if (error) throw error;
 
-        const { data: valids, error: validsError } = await supabase
-            .from('validaciones_ahorros')
-            .select('*');
-
-        if (metasError) throw metasError;
-        if (gastosError) throw gastosError;
-        if (validsError) throw validsError;
-
-        allMetasMensuales = metas || [];
-        allGastosSemanales = gastos || [];
-        allValidacionesAhorros = valids || [];
+        allIniciativas = inis || [];
 
         // Por defecto, refrescar la vista General
         await refreshView('');
@@ -129,64 +110,41 @@ async function loadInitialData() {
 }
 
 /**
- * Calcula el gasto real mensual agrupado por mes, año, concepto y departamento de forma retrocompatible
- */
-function getGastoMensual(deptId, conceptoNombre, mes, anio) {
-    return allGastosSemanales
-        .filter(g => {
-            const gDate = new Date(g.fecha + 'T12:00:00');
-            const gMes = gDate.getMonth() + 1;
-            const gAnio = gDate.getFullYear();
-            const matchPeriod = gMes === mes && gAnio === anio;
-            const matchConcepto = g.categoria === conceptoNombre;
-            
-            // Si el gasto tiene la columna departamento_id de forma nativa la validamos
-            const matchDept = !g.departamento_id || g.departamento_id === deptId;
-            
-            return matchPeriod && matchConcepto && matchDept;
-        })
-        .reduce((sum, g) => sum + (Number(g.monto_gasto) || 0), 0);
-}
-
-/**
  * Refresca los componentes visuales del Dashboard según el departamento
  */
 async function refreshView(deptId) {
     const parsedDeptId = deptId !== '' ? parseInt(deptId) : null;
 
-    // 1. Filtrar metas mensuales y validaciones
-    const metasFiltradas = parsedDeptId
-        ? allMetasMensuales.filter(m => m.departamento_id === parsedDeptId)
-        : allMetasMensuales;
+    // 1. Filtrar iniciativas del departamento seleccionado (o todas)
+    const inisFiltradas = parsedDeptId
+        ? allIniciativas.filter(i => i.departamento_id === parsedDeptId)
+        : allIniciativas;
 
-    const validsFiltradas = parsedDeptId
-        ? allValidacionesAhorros.filter(v => v.departamento_id === parsedDeptId)
-        : allValidacionesAhorros;
-
-    // 2. Calcular Ahorro Reportado (Meta - Gasto)
+    // 2. Calcular Ahorros Acumulados
     let ahorroReportadoTotal = 0;
-    metasFiltradas.forEach(meta => {
-        const concepto = allConceptos.find(c => c.id === meta.concepto_id);
-        if (!concepto) return;
-        const gastoReal = getGastoMensual(meta.departamento_id, concepto.nombre, meta.mes, meta.anio);
-        const ahorroProyectado = Number(meta.monto_meta) - gastoReal;
-        ahorroReportadoTotal += ahorroProyectado;
+    let ahorroRealValidadoTotal = 0;
+
+    inisFiltradas.forEach(i => {
+        const startMonth = i.fecha_inicio_ejecucion
+            ? new Date(i.fecha_inicio_ejecucion + 'T12:00:00').getMonth() + 1
+            : 1;
+        const activeMonths = Math.max(0, 12 - startMonth + 1);
+        const proyectadoAnual = (Number(i.esperado_mes) || 0) * activeMonths;
+        const validadoAnual = i.estado === 'Validada' ? proyectadoAnual : 0;
+
+        ahorroReportadoTotal += proyectadoAnual;
+        ahorroRealValidadoTotal += validadoAnual;
     });
 
     if (cardAhorroTotal) {
         cardAhorroTotal.textContent = formatCurrency(ahorroReportadoTotal);
     }
 
-    // 3. Calcular Ahorro Real Validado por Control Interno (estado === 'Validado')
-    const ahorroRealValidadoTotal = validsFiltradas
-        .filter(v => v.estado_pipeline === 'Validated' || v.estado_pipeline === 'Validado')
-        .reduce((sum, v) => sum + (Number(v.ahorro_real_ejecutado) || 0), 0);
-
     if (cardPresupuestoRestante) {
         cardPresupuestoRestante.textContent = formatCurrency(ahorroRealValidadoTotal);
     }
 
-    // 4. Progreso de Validación (% de Ahorro Validado vs Ahorro Reportado)
+    // 3. Progreso de Validación (% de Ahorro Validado vs Ahorro Reportado)
     const porcentajeValidado = ahorroReportadoTotal > 0
         ? Math.max(0, Math.min(100, Math.round((ahorroRealValidadoTotal / ahorroReportadoTotal) * 100)))
         : 0;
@@ -199,66 +157,64 @@ async function refreshView(deptId) {
         textPresupuestoUtilizado.textContent = `${porcentajeValidado}% Ahorro Validado por Control Interno`;
     }
 
-    // 5. Eficiencia de Validación
+    // 4. Eficiencia de Validación
     if (cardEficiencia) {
         cardEficiencia.textContent = `${porcentajeValidado}%`;
     }
 
-    // 6. Si es vista de departamento, cargar también sus iniciativas de ahorro en el gráfico y panel
-    if (parsedDeptId) {
-        // Cargar iniciativas para el departamento
-        try {
-            const { data: inis } = await supabase
-                .from('iniciativas')
-                .select('*')
-                .eq('departamento_id', parsedDeptId);
-            
-            renderInitiativesBarChart(inis || []);
-            renderRecentInitiatives(inis || []);
-        } catch (err) {
-            console.error('Error al cargar iniciativas del departamento:', err);
-        }
-    } else {
-        // Vista general: Renderizar gráfico lineal acumulado mensual de Metas vs Gastos vs Ahorros Validados
-        renderMonthlyLineChart(metasFiltradas, validsFiltradas);
-        renderRecentExpensesList(deptId);
-    }
+    // 5. Renderizar gráfico acumulado y lista de movimientos (siempre iniciativas)
+    renderMonthlyLineChart(inisFiltradas);
+    renderRecentInitiatives(inisFiltradas);
 }
 
 /**
  * Renderiza el gráfico de progreso de forma mensual (12 meses)
  */
-function renderMonthlyLineChart(metas, valids) {
+function renderMonthlyLineChart(inis) {
     const canvas = document.getElementById('savingsChart');
     if (!canvas) return;
 
     const mesesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-    const metasMensualesArray = Array(12).fill(0);
-    const gastosMensualesArray = Array(12).fill(0);
-    const ahorroValidadoArray = Array(12).fill(0);
+    const proyectadoMensual = Array(12).fill(0);
+    const realMensual = Array(12).fill(0);
 
-    // Agrupar metas mensuales por mes (año actual)
-    metas.filter(m => m.anio === actualYear).forEach(meta => {
-        const mIdx = meta.mes - 1;
-        if (mIdx >= 0 && mIdx < 12) {
-            metasMensualesArray[mIdx] += Number(meta.monto_meta) || 0;
-            
-            // Buscar concepto y calcular el gasto real de este mes y concepto
-            const concepto = allConceptos.find(c => c.id === meta.concepto_id);
-            if (concepto) {
-                const gasto = getGastoMensual(meta.departamento_id, concepto.nombre, meta.mes, meta.anio);
-                gastosMensualesArray[mIdx] += gasto;
+    // Filtrar iniciativas para el año actual
+    const inisAñoActual = inis.filter(i => {
+        const year = i.fecha_inicio_ejecucion
+            ? new Date(i.fecha_inicio_ejecucion + 'T12:00:00').getFullYear()
+            : actualYear;
+        return year === actualYear;
+    });
+
+    // Para cada mes (1 a 12), calcular el ahorro mensual activo
+    const ahorroProyectadoMes = Array(12).fill(0);
+    const ahorroRealMes = Array(12).fill(0);
+
+    inisAñoActual.forEach(i => {
+        const startMonth = i.fecha_inicio_ejecucion
+            ? new Date(i.fecha_inicio_ejecucion + 'T12:00:00').getMonth() + 1
+            : 1;
+        const esperado = Number(i.esperado_mes) || 0;
+        const isValidated = (i.estado === 'Validada');
+
+        // Se activa a partir de startMonth
+        for (let m = startMonth; m <= 12; m++) {
+            ahorroProyectadoMes[m - 1] += esperado;
+            if (isValidated) {
+                ahorroRealMes[m - 1] += esperado;
             }
         }
     });
 
-    // Agrupar validaciones de ahorro real
-    valids.filter(v => v.anio === actualYear && (v.estado_pipeline === 'Validado' || v.estado_pipeline === 'Validated')).forEach(v => {
-        const mIdx = v.mes - 1;
-        if (mIdx >= 0 && mIdx < 12) {
-            ahorroValidadoArray[mIdx] += Number(v.ahorro_real_ejecutado) || 0;
-        }
-    });
+    // Ahora calculamos el acumulado mensual
+    let acumProyectado = 0;
+    let acumReal = 0;
+    for (let m = 0; m < 12; m++) {
+        acumProyectado += ahorroProyectadoMes[m];
+        acumReal += ahorroRealMes[m];
+        proyectadoMensual[m] = acumProyectado;
+        realMensual[m] = acumReal;
+    }
 
     if (myChart) myChart.destroy();
 
@@ -268,35 +224,24 @@ function renderMonthlyLineChart(metas, valids) {
             labels: mesesLabels,
             datasets: [
                 {
-                    label: 'Meta Límite',
-                    data: metasMensualesArray,
-                    borderColor: '#98907f',
+                    label: 'Ahorro Proyectado (Meta)',
+                    data: proyectadoMensual,
+                    borderColor: '#f1d47f',
                     borderWidth: 2,
                     borderDash: [5, 5],
                     fill: false,
-                    tension: 0.3,
-                    pointBackgroundColor: '#98907f',
-                    pointBorderColor: '#0B0D0F',
-                    pointRadius: 4,
-                },
-                {
-                    label: 'Gasto Real',
-                    data: gastosMensualesArray,
-                    borderColor: '#f1d47f',
-                    backgroundColor: 'rgba(241, 212, 127, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
                     tension: 0.3,
                     pointBackgroundColor: '#f1d47f',
                     pointBorderColor: '#0B0D0F',
                     pointRadius: 4,
                 },
                 {
-                    label: 'Ahorro Validado',
-                    data: ahorroValidadoArray,
+                    label: 'Ahorro Real (Validado)',
+                    data: realMensual,
                     borderColor: '#10B981',
-                    borderWidth: 2,
-                    fill: false,
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
                     tension: 0.3,
                     pointBackgroundColor: '#10B981',
                     pointBorderColor: '#0B0D0F',
@@ -337,153 +282,6 @@ function renderMonthlyLineChart(metas, valids) {
 }
 
 /**
- * Renderiza el gráfico de barras por departamento (Iniciativas)
- */
-function renderInitiativesBarChart(inis) {
-    const canvas = document.getElementById('savingsChart');
-    if (!canvas) return;
-
-    const filteredInis = inis.filter(i => parseFloat(i.esperado_mes) > 0);
-    const labels = filteredInis.map(i => i.nombre.length > 20 ? i.nombre.substring(0, 17) + '...' : i.nombre);
-    const expectedData = filteredInis.map(i => parseFloat(i.esperado_mes));
-
-    if (myChart) myChart.destroy();
-
-    myChart = new Chart(canvas, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Ahorro Mensual Esperado',
-                    data: expectedData,
-                    backgroundColor: '#C52724',
-                    borderColor: '#a0020e',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    grid: { color: 'rgba(241, 212, 127, 0.05)' },
-                    ticks: {
-                        color: '#98907f',
-                        callback: function(value) {
-                            if (value >= 1000000) {
-                                return `$${(value / 1000000).toFixed(1)}M`;
-                            }
-                            return `$${value.toLocaleString('es-CO')}`;
-                        }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#98907f' }
-                }
-            }
-        }
-    });
-}
-
-/**
- * Renderiza los últimos gastos del dashboard con opción de eliminar para el administrador
- */
-function renderRecentExpensesList(deptId) {
-    const container = document.getElementById('recent-movements-container');
-    if (!container) return;
-
-    container.innerHTML = '';
-    const sorted = [...allGastosSemanales].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 5);
-
-    if (sorted.length === 0) {
-        container.innerHTML = `<div class="text-center p-md text-on-surface-variant">No hay gastos recientes.</div>`;
-        return;
-    }
-
-    const userRole = localStorage.getItem('user_role');
-
-    sorted.forEach(g => {
-        let icon = 'receipt_long';
-        let colorClass = 'text-primary';
-
-        switch (g.categoria) {
-            case 'Combustible': icon = 'oil_barrel'; colorClass = 'text-secondary'; break;
-            case 'Mantenimiento': icon = 'build'; colorClass = 'text-primary'; break;
-            case 'Personal': icon = 'badge'; colorClass = 'text-blue-400'; break;
-            case 'Peajes': icon = 'local_shipping'; colorClass = 'text-emerald-400'; break;
-            case 'Administrativo': icon = 'description'; colorClass = 'text-zinc-400'; break;
-        }
-
-        const dateStr = new Date(g.fecha).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
-
-        const deleteBtnHtml = userRole === 'administrador'
-            ? `<button class="btn-delete-gasto text-on-surface-variant hover:text-red-400 p-1 rounded ml-sm transition-colors" data-id="${g.id}" title="Eliminar gasto">
-                   <span class="material-symbols-outlined text-[16px]">delete</span>
-               </button>`
-            : '';
-
-        const row = document.createElement('div');
-        row.className = 'flex items-center justify-between p-sm hover:bg-surface-container-high transition-colors rounded-lg group';
-        row.innerHTML = `
-            <div class="flex items-center gap-md">
-                <div class="w-12 h-12 bg-surface-container-lowest flex items-center justify-center rounded">
-                    <span class="material-symbols-outlined ${colorClass}">${icon}</span>
-                </div>
-                <div>
-                    <p class="font-body-lg text-body-lg text-on-surface">${g.categoria} - ${g.descripcion || 'Gasto'}</p>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant">${dateStr} • Semana ${g.semana}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-sm">
-                <div class="text-right">
-                    <p class="font-data-mono text-body-lg text-on-surface">-${formatCurrency(Number(g.monto_gasto))}</p>
-                    <span class="text-secondary text-[10px] uppercase font-bold tracking-tighter">Procesado</span>
-                </div>
-                ${deleteBtnHtml}
-            </div>
-        `;
-        container.appendChild(row);
-    });
-
-    // Configurar listener de eliminación de gasto
-    document.querySelectorAll('.btn-delete-gasto').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const gastoId = e.currentTarget.getAttribute('data-id');
-            if (confirm('¿Está seguro de que desea eliminar este gasto de la base de datos?')) {
-                try {
-                    const { error } = await supabase
-                        .from('gastos_semanales')
-                        .delete()
-                        .eq('id', gastoId);
-
-                    if (error) throw error;
-                    
-                    // Recargar datos y refrescar la vista
-                    await loadInitialData();
-                } catch (err) {
-                    console.error('Error al eliminar el gasto:', err);
-                    alert('Error: ' + err.message);
-                }
-            }
-        });
-    });
-}
-
-/**
  * Renderiza las iniciativas recientes del dashboard (Vista Departamento)
  */
 function renderRecentInitiatives(inis) {
@@ -494,19 +292,42 @@ function renderRecentInitiatives(inis) {
     const sorted = [...inis].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
 
     if (sorted.length === 0) {
-        container.innerHTML = `<div class="text-center p-md text-on-surface-variant">No hay iniciativas registradas.</div>`;
+        container.innerHTML = `<div class="text-center p-md text-on-surface-variant font-body-md">No hay iniciativas registradas.</div>`;
         return;
     }
+
+    const userRole = localStorage.getItem('user_role');
 
     sorted.forEach(i => {
         let icon = 'lightbulb';
         let colorClass = 'text-amber-400';
 
-        if (i.estado === 'En curso') { icon = 'play_circle'; colorClass = 'text-green-400'; }
-        else if (i.estado === 'Completado') { icon = 'check_circle'; colorClass = 'text-cyan-400'; }
-        else if (i.estado === 'Negociación') { icon = 'handshake'; colorClass = 'text-purple-400'; }
+        if (i.estado === 'Validada') { icon = 'check_circle'; colorClass = 'text-emerald-400'; }
 
         const dateStr = new Date(i.created_at).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
+
+        const deleteBtnHtml = userRole === 'administrador'
+            ? `<button class="btn-delete-ini-dash text-on-surface-variant hover:text-red-400 p-1 rounded ml-sm transition-colors" data-id="${i.id}" title="Eliminar iniciativa">
+                   <span class="material-symbols-outlined text-[16px]">delete</span>
+               </button>`
+            : '';
+
+        let estadoHtml = '';
+        if (userRole === 'administrador' || userRole === 'control_interno') {
+            estadoHtml = `
+                <select class="status-select-dash bg-[#121414] border border-primary/15 text-primary font-body-md text-xs py-[2px] px-xs rounded cursor-pointer outline-none focus:ring-1 focus:ring-primary/20" data-id="${i.id}">
+                    <option value="Iniciativa" ${i.estado === 'Iniciativa' ? 'selected' : ''}>Iniciativa</option>
+                    <option value="Validada" ${i.estado === 'Validada' ? 'selected' : ''}>Validada</option>
+                </select>
+            `;
+        } else {
+            let badgeClass = i.estado === 'Validada' ? 'bg-green-500/25 text-green-400 border-green-500/40' : 'bg-zinc-700/50 text-zinc-300 border-zinc-600/30';
+            estadoHtml = `
+                <span class="px-xs py-[2px] rounded text-[10px] font-bold border uppercase ${badgeClass}">
+                    ${i.estado}
+                </span>
+            `;
+        }
 
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-sm hover:bg-surface-container-high transition-colors rounded-lg group';
@@ -517,14 +338,59 @@ function renderRecentInitiatives(inis) {
                 </div>
                 <div>
                     <p class="font-body-lg text-body-lg text-on-surface font-semibold truncate max-w-xs" title="${i.nombre}">${i.nombre}</p>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant">${dateStr} • Estado: ${i.estado}</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">${dateStr} • ${estadoHtml}</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="font-data-mono text-body-lg text-green-400">+${formatCurrency(Number(i.esperado_mes))}/mes</p>
-                <span class="text-primary text-[10px] uppercase font-bold tracking-tighter">${i.tipo}</span>
+            <div class="flex items-center gap-sm">
+                <div class="text-right">
+                    <p class="font-data-mono text-body-lg text-green-400">+${formatCurrency(Number(i.esperado_mes))}/mes</p>
+                    <span class="text-primary text-[10px] uppercase font-bold tracking-tighter">${i.tipo}</span>
+                </div>
+                ${deleteBtnHtml}
             </div>
         `;
         container.appendChild(row);
     });
+
+    // Configurar listener para cambiar estado
+    container.querySelectorAll('.status-select-dash').forEach(select => {
+        select.addEventListener('change', async (e) => {
+            const iniId = e.target.getAttribute('data-id');
+            const newStatus = e.target.value;
+            try {
+                const { error } = await supabase
+                    .from('iniciativas')
+                    .update({ estado: newStatus })
+                    .eq('id', iniId);
+
+                if (error) throw error;
+                await loadInitialData();
+            } catch (err) {
+                console.error('Error al actualizar estado en dashboard:', err);
+                alert('Error al actualizar estado: ' + err.message);
+            }
+        });
+    });
+
+    // Configurar listener para eliminar
+    container.querySelectorAll('.btn-delete-ini-dash').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const iniId = e.currentTarget.getAttribute('data-id');
+            if (confirm('¿Está seguro de que desea eliminar esta iniciativa de ahorro?')) {
+                try {
+                    const { error } = await supabase
+                        .from('iniciativas')
+                        .delete()
+                        .eq('id', iniId);
+
+                    if (error) throw error;
+                    await loadInitialData();
+                } catch (err) {
+                    console.error('Error al eliminar iniciativa en dashboard:', err);
+                    alert('Error al eliminar iniciativa: ' + err.message);
+                }
+            }
+        });
+    });
 }
+

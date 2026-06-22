@@ -78,3 +78,31 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Decisión**: Implementar botones de eliminación interactivos en las tablas de Iniciativas y listas de movimientos de Gastos (tanto en Dashboard como en la sección de Gastos) condicionados estrictamente a usuarios con el rol `'administrador'`.
 * **Contexto**: Se requería una vía sencilla para depurar registros ingresados de forma errónea sin alterar la base de datos a nivel SQL.
 * **Razón**: Protege la integridad de los datos permitiendo la eliminación de transacciones e iniciativas únicamente al rol jerárquicamente superior (administrador).
+
+---
+
+## 12. Foco Único en Iniciativas de Ahorro y Ocultación de Vistas Legadas
+* **Decisión**: Consolidar el núcleo del control financiero y de caja en las **Iniciativas de Ahorro**, eliminando el uso de "Gastos" y "Metas" semanales. Las vistas HTML correspondientes se ocultaron de la navegación general.
+* **Contexto**: El modelo presupuestal anterior basado en vales semanales generaba excesivo ruido administrativo e inconsistencias con las proyecciones anuales.
+* **Razón**: Centraliza el control de ahorros corporativos en planes estratégicos (iniciativas) de departamentos específicos, alineándose al objetivo de negocio.
+
+---
+
+## 13. Cálculo de Ahorros Basado en Meses Activos
+* **Decisión**: Calcular el ahorro proyectado anual multiplicando `esperado_mes` por el factor `12 - mes_inicio + 1`.
+* **Contexto**: Las iniciativas de ahorro inician en un mes determinado de ejecución, por lo que su impacto en la caja del año presupuestal está acotado al periodo en que realmente operan.
+* **Razón**: Representa de forma fidedigna la afectación financiera real de caja para el ejercicio fiscal en curso.
+
+---
+
+## 14. Curva de Progreso Acumulativa Mensual en el Dashboard
+* **Decisión**: Implementar un gráfico de líneas para 12 meses donde cada mes grafica la suma acumulada de los ahorros mensuales acumulados hasta ese periodo (tanto proyectado como validado).
+* **Contexto**: Se necesitaba visualizar gráficamente cómo se acumula el ahorro a medida que transcurre el año.
+* **Razón**: Permite a directivos ver la tendencia exponencial de caja y evaluar si la meta proyectada anual se logrará con las iniciativas actualmente validadas.
+
+---
+
+## 15. Controles Directos de Pipeline en Movimientos Recientes
+* **Decisión**: Habilitar selectores de cambio de estado y botones de eliminación directa en la lista de movimientos del Dashboard para roles autorizados.
+* **Contexto**: Facilitar el trabajo de Control Interno y Administradores reduciendo clicks y permitiendo validar o limpiar registros desde el panel de inicio.
+* **Razón**: Optimiza la usabilidad y velocidad de administración del pipeline de ahorros.

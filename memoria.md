@@ -8,14 +8,18 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 
 ### A. Corrección del Menú Lateral (Sidebar) y UX
 * **Ajuste de Sidebar**: Corregido el ancho de la navegación lateral desktop (cambiado `w-xl` y `w-80` a `w-64 shrink-0`) en todos los archivos HTML (`index.html`, `goals.html`, `initiatives.html`, `kpis.html`, `users.html`, `expenses.html`) para evitar el colapso del menú y cortes de texto.
-* **Dashboard Consolidado**: Rediseño de las tarjetas Bento y la lógica en `src/js/dashboard.js` para usar `metas_mensuales` y `validaciones_ahorros` (ahorro validado con `estado_pipeline === 'Validado'`), calculando: Ahorro Reportado (Proyectado), Ahorro Real Validado, y Eficiencia de Validación.
-* **Gráfico de Progreso Anual**: Reestructurado de escala semanal a mensual (12 meses) para una visualización ejecutiva uniforme.
+* **Dashboard Consolidado**: Rediseño de las tarjetas Bento y la lógica en `src/js/dashboard.js` para calcular: Ahorro Reportado (Proyectado), Ahorro Real Validado, y Eficiencia de Validación a nivel de Iniciativas.
+* **Ocultación de Secciones Obsoletas**: Se removieron las secciones "Gastos" y "Metas" de los menús laterales y móviles. Se actualizó el botón rápido en el Dashboard de "REPORTAR GASTO" a "NUEVA INICIATIVA", redirigiendo a iniciativas.
 
-### B. Eliminación de Registros y Control de Roles
-* **Iniciativas**: Añadido selector dinámico de departamento en el modal de nueva iniciativa y columna/acción de borrado en la tabla (`src/js/initiatives.js`) con confirmación interactiva para usuarios con rol `administrador`.
-* **Gastos**: Habilitada la opción de borrar gastos individuales desde los movimientos recientes en el Dashboard (`src/js/dashboard.js`) y en la vista de Gastos (`src/js/expenses.js`), actualizando el presupuesto y el consolidado semanal.
+### B. Enfoque y Reestructuración en Iniciativas de Ahorro (Caja General)
+* **Formulario y Estados Simplificados**: Se añadió la captura de la fecha de inicio (`fecha_inicio_ejecucion`) y departamento en el modal de creación de iniciativas, y se limitaron los estados válidos únicamente a `'Iniciativa'` y `'Validada'`.
+* **Cálculo de Ahorros Dinámicos**: Se reestructuró la lógica para calcular el ahorro anual esperado multiplicando el `esperado_mes` por los meses activos restantes en el año presupuestal (`12 - startMonth + 1`).
+* **Validación Directa en Dashboard y Tablas**: Los administradores y auditores de Control Interno pueden validar en tiempo real el estado de una iniciativa (cambiar entre `'Iniciativa'` y `'Validada'`) a través de un select dropdown interactivo directamente en las tablas y en la lista de movimientos recientes del Dashboard.
+* **Eliminación Directa**: Se añadieron botones de eliminación física en la tabla de iniciativas y en la lista de movimientos recientes del Dashboard para usuarios con el rol `'administrador'`.
+* **Gráfico Acumulado Anual (12 Meses)**: Se rediseñó el gráfico de línea de progreso anual para mostrar dos curvas acumulativas (Ahorro Proyectado en base a iniciativas activas, y Ahorro Real Validado en base a iniciativas aprobadas por Control Interno).
+* **Corrección de Sintaxis**: Se resolvió una condición de syntax error en `initiatives.js` (falta de llave de cierre) que impedía la compilación.
 
-### C. Reestructuración de Metas a Formato Mensual
+### C. Reestructuración de Metas a Formato Mensual (Fase Anterior)
 * **Migración SQL (`supabase/restructure_metas.sql`)**: Se diseñó el script SQL para crear la tabla de `conceptos` (Maestro de Conceptos), ampliar la restricción de rol en `perfiles` para el nuevo rol `'control_interno'`, crear `metas_mensuales` (con llave única compuesta por departamento, concepto, mes y año) y la tabla de `validaciones_ahorros` con RLS.
 * **Rediseño de Modal y Filtros (`goals.html`)**: Se reestructuró el modal de creación de metas para usar selectores dinámicos en lugar de inputs estáticos, permitiendo elegir el Departamento, el Concepto Presupuestal, el Monto Límite Mensual, el Año de presupuesto, el Mes de Inicio y la Fecha de Inicio.
 
@@ -34,7 +38,7 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **CRUD de Parámetros**: Permite la creación y eliminación en cascada de Departamentos y Conceptos directamente en la UI mediante formularios dedicados integrados con Supabase.
 
 ### G. Verificación y Compilación
-* **Build de Producción**: Se ejecutó exitosamente el comando `npm run build` confirmando que Vite empaqueta de forma correcta los módulos de JS (`goals.js`, `auth.js`) y HTML (`goals.html`).
+* **Build de Producción**: Se ejecutó exitosamente el comando `npm run build` confirmando que Vite empaqueta de forma correcta todos los módulos sin errores de compilación.
 
 ---
 

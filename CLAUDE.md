@@ -47,7 +47,8 @@ Este archivo documenta los comandos frecuentes, las convenciones de codificació
 ### C. Fechas
 * Para formatear fechas en formato `YYYY-MM-DD`, evitar `toLocaleDateString` de forma directa y usar en su lugar concatenación limpia y rellenos con ceros (`padStart(2, '0')`) para evitar discrepancias en diferentes motores de JavaScript.
 
-### D. Reestructuración Mensual y Proyecciones
-* **Metas Mensuales**: Las metas operan mensualmente. Al guardar una nueva meta, el frontend genera de forma masiva (por lote) registros mensuales automáticos desde el mes de inicio del ahorro hasta el 31 de diciembre del año presupuestal seleccionado mediante `.upsert()`.
-* **Pipeline de Validación de Ahorros**: La tabla `validaciones_ahorros` se alimenta calculando el gasto real acumulado del concepto y departamento del mes desde `gastos_semanales`. Las validaciones se guardan/actualizan en lote, registrando el ahorro ejecutado, observaciones y estado del pipeline (`Pendiente`, `En Revisión`, `Validado`, `Observado`).
-* **Catálogos Dinámicos**: Los conceptos y departamentos se cargan dinámicamente y se gestionan desde la UI (pestaña de parámetros) de forma descentralizada.
+### D. Iniciativas de Ahorro y Afectación de Caja
+* **Foco en Iniciativas**: El control presupuestal y de ahorros se centra en las **Iniciativas de Ahorro**, eliminando las metas y gastos independientes. Las iniciativas inician en estado `'Iniciativa'` y avanzan a `'Validada'`.
+* **Cálculo de Ahorros Acumulados**: El ahorro anual proyectado se calcula en función de la `fecha_inicio_ejecucion`, multiplicando el valor `esperado_mes` por los meses activos restantes en el año (`12 - mes_inicio + 1`).
+* **Ahorro Real**: Se determina sumando el ahorro anual esperado únicamente de las iniciativas que han sido validadas (`estado === 'Validada'`) por Control Interno o Administradores.
+* **Dashboard Acumulado (12 Meses)**: Muestra curvas acumulativas mensuales de ahorros proyectados (Meta) y validados (Real) para simular el impacto en la caja general del año actual.

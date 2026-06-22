@@ -12,6 +12,10 @@ This repo is a Claude Code plugin **and** an Obsidian vault that builds persiste
 
 ## Recent Accomplishments (June 22, 2026)
 
+* **Reorientación a Iniciativas de Ahorro**: Consolidado el control financiero en Iniciativas de Ahorro (`iniciativas`), ocultando los accesos directos a "Gastos" y "Metas" en toda la aplicación. Se actualizó el botón rápido del Dashboard a "NUEVA INICIATIVA" que apunta a `initiatives.html`.
+* **Cálculo de Ahorros por Meses Activos**: Implementada la estimación anual en función de la `fecha_inicio_ejecucion` de cada iniciativa, calculando `esperado_mes * (12 - startMonth + 1)`.
+* **Gráfico de Ahorro Acumulativo de Caja**: Reconstruido el gráfico anual de 12 meses en el Dashboard para proyectar curvas acumulativas de ahorros proyectados (Meta) y validados (Real).
+* **Validación Directa en el Dashboard**: Integrados selectores de estado interactivos (`'Iniciativa'` / `'Validada'`) y botones de borrado para administradores y auditores directamente en la sección de Movimientos Recientes del Dashboard.
 * **Reestructuración a Metas Mensuales**: Reemplazadas las metas semanales y las categorías estáticas en `goals.html` y `goals.js` por una arquitectura de Metas Mensuales, utilizando el catálogo de Departamentos y el nuevo Maestro de Conceptos presupuestales.
 * **Proyección de Metas por Lote**: Lógica de guardado mensual que genera de forma automática y asíncrona proyecciones de límites de gasto mensuales desde el mes de inicio del ahorro hasta el 31 de diciembre del año presupuestal en Supabase.
 * **Tablero de Validación Pipeline**: Nueva interfaz y lógica para Control Interno (`'control_interno'`) y Administradores que calcula ahorros proyectados (Meta - Gasto Real) y permite registrar el ahorro real efectivamente ejecutado, cambiar el estado del pipeline (`Pendiente`, `En Revisión`, `Validado`, `Observado`) y añadir observaciones de control.

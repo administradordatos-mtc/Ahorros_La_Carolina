@@ -67,6 +67,9 @@ const init = async () => {
 
     if (btnNew) {
         btnNew.addEventListener('click', () => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dateStartInput = document.getElementById('ini-date-start');
+            if (dateStartInput) dateStartInput.value = todayStr;
             if (modal) modal.classList.remove('hidden');
         });
     }
@@ -84,6 +87,7 @@ const init = async () => {
             const name = document.getElementById('ini-name').value.trim();
             const type = document.getElementById('ini-type').value;
             const category = document.getElementById('ini-category').value.trim();
+            const dateStart = document.getElementById('ini-date-start').value;
             const pesimista = parseFloat(document.getElementById('ini-pesimista').value) || 0;
             const base = parseFloat(document.getElementById('ini-base').value) || 0;
             const optimista = parseFloat(document.getElementById('ini-optimista').value) || 0;
@@ -118,6 +122,7 @@ const init = async () => {
                         nombre: name,
                         tipo: type,
                         categoria: category,
+                        fecha_inicio_ejecucion: dateStart,
                         pesimista_mes: pesimista,
                         base_mes: base,
                         optimista_mes: optimista,
@@ -248,29 +253,28 @@ async function loadInitiatives(deptId) {
             `;
             return;
         }
-
-        // Calcular KPIs de las tarjetas
+          // Calcular KPIs de las tarjetas
         let totalMes = 0;
         let totalAnio = 0;
-        let enCurso = 0;
+        let validadas = 0;
 
         inis.forEach(i => {
             totalMes += parseFloat(i.esperado_mes) || 0;
             totalAnio += parseFloat(i.anual_esperado) || 0;
-            if (i.estado === 'En curso' || i.estado === 'Completado') {
-                enCurso++;
+            if (i.estado === 'Validada') {
+                validadas++;
             }
         });
 
         const totalCount = inis.length;
-        const pctCurso = totalCount > 0 ? Math.round((enCurso / totalCount) * 100) : 0;
+        const pctValidadas = totalCount > 0 ? Math.round((validadas / totalCount) * 100) : 0;
 
         // Escribir KPIs en las tarjetas
         if (cardAhorroMes) cardAhorroMes.textContent = formatCurrency(totalMes);
         if (cardAhorroAnio) cardAhorroAnio.textContent = formatCurrency(totalAnio);
         if (cardTotalIniciativas) cardTotalIniciativas.textContent = totalCount;
-        if (cardIniciativasCurso) cardIniciativasCurso.textContent = enCurso;
-        if (cardPorcentajeCurso) cardPorcentajeCurso.textContent = `${pctCurso}% en ejecución`;
+        if (cardIniciativasCurso) cardIniciativasCurso.textContent = validadas;
+        if (cardPorcentajeCurso) cardPorcentajeCurso.textContent = `${pctValidadas}% validadas`;
 
         // Renderizar tabla
         inis.forEach(i => {
@@ -279,11 +283,7 @@ async function loadInitiatives(deptId) {
 
             // Estilos del estado
             let badgeClass = 'bg-zinc-700/50 text-zinc-300 border-zinc-600/30';
-            if (i.estado === 'En curso') badgeClass = 'bg-green-500/25 text-green-400 border-green-500/40';
-            else if (i.estado === 'Completado') badgeClass = 'bg-cyan-500/25 text-cyan-400 border-cyan-500/40';
-            else if (i.estado === 'Piloto') badgeClass = 'bg-amber-500/25 text-amber-400 border-amber-500/40';
-            else if (i.estado === 'Negociación') badgeClass = 'bg-purple-500/25 text-purple-400 border-purple-500/40';
-            else if (i.estado === 'Por desarrollar') badgeClass = 'bg-blue-500/25 text-blue-400 border-blue-500/40';
+            if (i.estado === 'Validada') badgeClass = 'bg-green-500/25 text-green-400 border-green-500/40';
 
             const userRole = localStorage.getItem('user_role');
             const deleteBtnHtml = userRole === 'administrador'
@@ -291,6 +291,27 @@ async function loadInitiatives(deptId) {
                        <span class="material-symbols-outlined text-[16px]">delete</span>
                    </button>`
                 : `<span class="text-on-surface-variant text-[11px] italic">Solo lectura</span>`;
+
+            // Selector de estado interactivo para Administrador y Control Interno
+            let estadoHtml = '';
+            if (userRole === 'administrador' || userRole === 'control_interno') {
+                estadoHtml = `
+                    <select class="status-select bg-[#121414] border border-primary/15 text-primary font-body-md text-xs py-[2px] px-xs rounded cursor-pointer outline-none focus:ring-1 focus:ring-primary/20" data-id="${i.id}">
+                        <option value="Iniciativa" ${i.estado === 'Iniciativa' ? 'selected' : ''}>Iniciativa</option>
+                        <option value="Validada" ${i.estado === 'Validada' ? 'selected' : ''}>Validada</option>
+                    </select>
+                `;
+            } else {
+                estadoHtml = `
+                    <span class="px-xs py-[2px] rounded text-label-sm font-label-sm border uppercase ${badgeClass}">
+                        ${i.estado}
+                    </span>
+                `;
+            }
+
+            const dateStartStr = i.fecha_inicio_ejecucion
+                ? new Date(i.fecha_inicio_ejecucion + 'T12:00:00').toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+                : '-';
 
             row.innerHTML = `
                 <td class="py-4 px-6 font-body-md text-on-surface font-semibold">${i.nombre}</td>
@@ -302,18 +323,35 @@ async function loadInitiatives(deptId) {
                     </span>
                 </td>
                 <td class="py-4 px-6 text-on-surface-variant">${i.categoria}</td>
+                <td class="py-4 px-6 text-center text-on-surface-variant">${dateStartStr}</td>
                 <td class="py-4 px-6 text-right font-semibold text-primary">${formatCurrency(i.esperado_mes)}</td>
                 <td class="py-4 px-6 text-right font-semibold text-primary">${formatCurrency(i.anual_esperado)}</td>
-                <td class="py-4 px-6 text-center">
-                    <span class="px-xs py-[2px] rounded text-label-sm font-label-sm border uppercase ${badgeClass}">
-                        ${i.estado}
-                    </span>
-                </td>
-                <td class="py-4 px-6 text-on-surface-variant max-w-xs truncate" title="${i.notas || ''}">${i.notas || '-'}</td>
+                <td class="py-4 px-6 text-center">${estadoHtml}</td>
+                <td class="py-4 px-6 text-on-surface-variant max-w-xs truncate" title="${i.notes || ''}">${i.notes || '-'}</td>
                 <td class="py-4 px-6 text-center">${deleteBtnHtml}</td>
             `;
 
             container.appendChild(row);
+        });
+
+        // Configurar listener para cambiar estado
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', async (e) => {
+                const iniId = e.target.getAttribute('data-id');
+                const newStatus = e.target.value;
+                try {
+                    const { error } = await supabase
+                        .from('iniciativas')
+                        .update({ estado: newStatus })
+                        .eq('id', iniId);
+
+                    if (error) throw error;
+                    await loadInitiatives(deptId);
+                } catch (err) {
+                    console.error('Error al actualizar estado:', err);
+                    alert('Error al actualizar estado: ' + err.message);
+                }
+            });
         });
 
         // Configurar listener para eliminar
@@ -357,5 +395,5 @@ function clearSummaries() {
     if (cardAhorroAnio) cardAhorroAnio.textContent = '$0';
     if (cardTotalIniciativas) cardTotalIniciativas.textContent = '0';
     if (cardIniciativasCurso) cardIniciativasCurso.textContent = '0';
-    if (cardPorcentajeCurso) cardPorcentajeCurso.textContent = '0% en ejecución';
+    if (cardPorcentajeCurso) cardPorcentajeCurso.textContent = '0% validadas';
 }
