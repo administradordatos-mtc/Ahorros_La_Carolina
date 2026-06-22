@@ -7,15 +7,16 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 ## 1. Trabajo Realizado y Desarrollos (22 de Junio de 2026)
 
 ### A. Corrección del Menú Lateral (Sidebar) y UX
-* **Ajuste de Sidebar**: Corregido el ancho de la navegación lateral desktop (cambiado `w-xl` y `w-80` a `w-64 shrink-0`) en todos los archivos HTML (`index.html`, `goals.html`, `initiatives.html`, `kpis.html`, `users.html`, `expenses.html`) para evitar el colapso del menú y cortes de texto.
+* **Ajuste de Sidebar**: Corregido el ancho de la navegación lateral desktop (cambiado `w-xl` y `w-80` a `w-64 shrink-0`) en todos los archivos HTML principales (`index.html`, `initiatives.html`, `kpis.html`, `users.html`) para evitar el colapso del menú y cortes de texto.
 * **Dashboard Consolidado**: Rediseño de las tarjetas Bento y la lógica en `src/js/dashboard.js` para calcular: Ahorro Reportado (Proyectado), Ahorro Real Validado, y Eficiencia de Validación a nivel de Iniciativas.
 * **Ocultación de Secciones Obsoletas**: Se removieron las secciones "Gastos" y "Metas" de los menús laterales y móviles. Se actualizó el botón rápido en el Dashboard de "REPORTAR GASTO" a "NUEVA INICIATIVA", redirigiendo a iniciativas.
 
 ### B. Enfoque y Reestructuración en Iniciativas de Ahorro (Caja General)
 * **Formulario y Estados Simplificados**: Se añadió la captura de la fecha de inicio (`fecha_inicio_ejecucion`) y departamento en el modal de creación de iniciativas, y se limitaron los estados válidos únicamente a `'Iniciativa'` y `'Validada'`.
+* **Sincronización de Departamento**: Se implementó una lógica reactiva en el formulario que pre-selecciona automáticamente el departamento en el modal basándose en el filtro activo del listado principal.
 * **Cálculo de Ahorros Dinámicos**: Se reestructuró la lógica para calcular el ahorro anual esperado multiplicando el `esperado_mes` por los meses activos restantes en el año presupuestal (`12 - startMonth + 1`).
 * **Validación Directa en Dashboard y Tablas**: Los administradores y auditores de Control Interno pueden validar en tiempo real el estado de una iniciativa (cambiar entre `'Iniciativa'` y `'Validada'`) a través de un select dropdown interactivo directamente en las tablas y en la lista de movimientos recientes del Dashboard.
-* **Eliminación Directa**: Se añadieron botones de eliminación física en la tabla de iniciativas y en la lista de movimientos recientes del Dashboard para usuarios con el rol `'administrador'`.
+* **Eliminación de Código y Registros**: Se añadieron botones de eliminación física en la tabla de iniciativas y en la lista de movimientos recientes del Dashboard para usuarios con el rol `'administrador'`. Asimismo, se eliminaron físicamente del proyecto los archivos heredados `expenses.html`, `goals.html`, `src/js/expenses.js` y `src/js/goals.js`, removiendo sus entradas de compilación en `vite.config.js`.
 * **Gráfico Acumulado Anual (12 Meses)**: Se rediseñó el gráfico de línea de progreso anual para mostrar dos curvas acumulativas (Ahorro Proyectado en base a iniciativas activas, y Ahorro Real Validado en base a iniciativas aprobadas por Control Interno).
 * **Corrección de Sintaxis**: Se resolvió una condición de syntax error en `initiatives.js` (falta de llave de cierre) que impedía la compilación.
 

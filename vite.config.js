@@ -11,8 +11,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
-        expenses: resolve(__dirname, 'expenses.html'),
-        goals: resolve(__dirname, 'goals.html'),
         reports: resolve(__dirname, 'reports.html'),
         users: resolve(__dirname, 'users.html'),
         initiatives: resolve(__dirname, 'initiatives.html'),

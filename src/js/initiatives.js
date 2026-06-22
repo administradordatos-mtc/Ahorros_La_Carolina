@@ -70,6 +70,16 @@ const init = async () => {
             const todayStr = new Date().toISOString().split('T')[0];
             const dateStartInput = document.getElementById('ini-date-start');
             if (dateStartInput) dateStartInput.value = todayStr;
+
+            // Pre-select the department in the modal based on the active filter
+            const filterDeptVal = selectDept ? selectDept.value : '';
+            const selectIniDept = document.getElementById('ini-dept');
+            if (selectIniDept && filterDeptVal) {
+                selectIniDept.value = filterDeptVal;
+            } else if (selectIniDept) {
+                selectIniDept.value = ''; // Default to placeholder select option
+            }
+
             if (modal) modal.classList.remove('hidden');
         });
     }
