@@ -17,6 +17,9 @@ This repo is a Claude Code plugin **and** an Obsidian vault that builds persiste
 * **Tablero de Validación Pipeline**: Nueva interfaz y lógica para Control Interno (`'control_interno'`) y Administradores que calcula ahorros proyectados (Meta - Gasto Real) y permite registrar el ahorro real efectivamente ejecutado, cambiar el estado del pipeline (`Pendiente`, `En Revisión`, `Validado`, `Observado`) y añadir observaciones de control.
 * **Parámetros Generales**: Nueva pestaña interactiva que permite a los Administradores realizar el mantenimiento (creación, listado y eliminación en cascada) de Departamentos y Conceptos presupuestales directamente desde la interfaz.
 * **Compatibilidad de Gastos**: Agrupación inteligente de registros de `gastos_semanales` por concepto, mes y año para calcular el gasto real acumulado por departamento manteniendo compatibilidad retroactiva.
+* **Corrección del Sidebar**: Corregida la clase de ancho del menú lateral de `w-xl` y `w-80` a `w-64 shrink-0` en todas las páginas de la aplicación, solucionando el colapso visual del menú y asegurando legibilidad en pantallas desktop.
+* **Dashboard Consolidado Mensual**: Adaptadas las tarjetas Bento y la lógica de `dashboard.js` para mostrar KPIs mensuales acumulados de Ahorro Reportado (Proyectado), Ahorro Real Validado por Control Interno y Eficiencia de Validación, junto con un gráfico anual a escala de 12 meses.
+* **Borrado de Gastos e Iniciativas**: Implementadas las acciones y botones de eliminación física en la tabla de Iniciativas (`src/js/initiatives.js`), movimientos de gastos del Dashboard y la sección de Gastos (`src/js/expenses.js`) con confirmación interactiva para usuarios con rol `administrador`.
 
 ## Recent Accomplishments (June 17, 2026)
 

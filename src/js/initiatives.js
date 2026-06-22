@@ -94,10 +94,12 @@ const init = async () => {
             const roiVal = document.getElementById('ini-roi').value;
             const status = document.getElementById('ini-status').value;
             const notes = document.getElementById('ini-notes').value.trim();
-            const deptId = parseInt(selectDept.value);
+            
+            const selectIniDept = document.getElementById('ini-dept');
+            const deptId = selectIniDept ? parseInt(selectIniDept.value) : null;
 
             if (!deptId) {
-                alert('Por favor selecciona un departamento válido.');
+                alert('Por favor selecciona un departamento válido en el modal.');
                 return;
             }
 
@@ -177,12 +179,24 @@ async function loadDepartments() {
 
         selectDept.innerHTML = '<option value="">-- Seleccionar --</option>';
 
+        const selectIniDept = document.getElementById('ini-dept');
+        if (selectIniDept) {
+            selectIniDept.innerHTML = '<option value="" disabled selected>Seleccione un departamento</option>';
+        }
+
         if (depts && depts.length > 0) {
             depts.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d.id;
                 opt.textContent = d.nombre;
                 selectDept.appendChild(opt);
+
+                if (selectIniDept) {
+                    const optIni = document.createElement('option');
+                    optIni.value = d.id;
+                    optIni.textContent = d.nombre;
+                    selectIniDept.appendChild(optIni);
+                }
             });
 
             // Seleccionar por defecto Tecnología (TI) si está presente
@@ -271,6 +285,13 @@ async function loadInitiatives(deptId) {
             else if (i.estado === 'Negociación') badgeClass = 'bg-purple-500/25 text-purple-400 border-purple-500/40';
             else if (i.estado === 'Por desarrollar') badgeClass = 'bg-blue-500/25 text-blue-400 border-blue-500/40';
 
+            const userRole = localStorage.getItem('user_role');
+            const deleteBtnHtml = userRole === 'administrador'
+                ? `<button class="btn-delete-ini text-on-surface-variant hover:text-red-400 p-1 rounded" data-id="${i.id}" title="Eliminar iniciativa">
+                       <span class="material-symbols-outlined text-[16px]">delete</span>
+                   </button>`
+                : `<span class="text-on-surface-variant text-[11px] italic">Solo lectura</span>`;
+
             row.innerHTML = `
                 <td class="py-4 px-6 font-body-md text-on-surface font-semibold">${i.nombre}</td>
                 <td class="py-4 px-6 text-center">
@@ -289,9 +310,31 @@ async function loadInitiatives(deptId) {
                     </span>
                 </td>
                 <td class="py-4 px-6 text-on-surface-variant max-w-xs truncate" title="${i.notas || ''}">${i.notas || '-'}</td>
+                <td class="py-4 px-6 text-center">${deleteBtnHtml}</td>
             `;
 
             container.appendChild(row);
+        });
+
+        // Configurar listener para eliminar
+        document.querySelectorAll('.btn-delete-ini').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const iniId = e.currentTarget.getAttribute('data-id');
+                if (confirm('¿Está seguro de que desea eliminar esta iniciativa de ahorro?')) {
+                    try {
+                        const { error } = await supabase
+                            .from('iniciativas')
+                            .delete()
+                            .eq('id', iniId);
+
+                        if (error) throw error;
+                        await loadInitiatives(deptId);
+                    } catch (err) {
+                        console.error('Error al eliminar iniciativa:', err);
+                        alert('Error al eliminar iniciativa: ' + err.message);
+                    }
+                }
+            });
         });
 
     } catch (err) {

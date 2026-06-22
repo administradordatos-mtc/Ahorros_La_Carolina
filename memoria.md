@@ -6,25 +6,34 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 
 ## 1. Trabajo Realizado y Desarrollos (22 de Junio de 2026)
 
-### A. Reestructuración de Metas a Formato Mensual
+### A. Corrección del Menú Lateral (Sidebar) y UX
+* **Ajuste de Sidebar**: Corregido el ancho de la navegación lateral desktop (cambiado `w-xl` y `w-80` a `w-64 shrink-0`) en todos los archivos HTML (`index.html`, `goals.html`, `initiatives.html`, `kpis.html`, `users.html`, `expenses.html`) para evitar el colapso del menú y cortes de texto.
+* **Dashboard Consolidado**: Rediseño de las tarjetas Bento y la lógica en `src/js/dashboard.js` para usar `metas_mensuales` y `validaciones_ahorros` (ahorro validado con `estado_pipeline === 'Validado'`), calculando: Ahorro Reportado (Proyectado), Ahorro Real Validado, y Eficiencia de Validación.
+* **Gráfico de Progreso Anual**: Reestructurado de escala semanal a mensual (12 meses) para una visualización ejecutiva uniforme.
+
+### B. Eliminación de Registros y Control de Roles
+* **Iniciativas**: Añadido selector dinámico de departamento en el modal de nueva iniciativa y columna/acción de borrado en la tabla (`src/js/initiatives.js`) con confirmación interactiva para usuarios con rol `administrador`.
+* **Gastos**: Habilitada la opción de borrar gastos individuales desde los movimientos recientes en el Dashboard (`src/js/dashboard.js`) y en la vista de Gastos (`src/js/expenses.js`), actualizando el presupuesto y el consolidado semanal.
+
+### C. Reestructuración de Metas a Formato Mensual
 * **Migración SQL (`supabase/restructure_metas.sql`)**: Se diseñó el script SQL para crear la tabla de `conceptos` (Maestro de Conceptos), ampliar la restricción de rol en `perfiles` para el nuevo rol `'control_interno'`, crear `metas_mensuales` (con llave única compuesta por departamento, concepto, mes y año) y la tabla de `validaciones_ahorros` con RLS.
 * **Rediseño de Modal y Filtros (`goals.html`)**: Se reestructuró el modal de creación de metas para usar selectores dinámicos en lugar de inputs estáticos, permitiendo elegir el Departamento, el Concepto Presupuestal, el Monto Límite Mensual, el Año de presupuesto, el Mes de Inicio y la Fecha de Inicio.
 
-### B. Proyección de Metas por Lote
+### D. Proyección de Metas por Lote
 * **Generación Automática**: En `goals.js`, al registrar una nueva meta mensual, el sistema realiza un bucle desde el mes de inicio del ahorro hasta el mes 12 (Diciembre) del año presupuestal, construyendo un lote de objetos de meta.
 * **Upsert en Supabase**: Las metas mensuales se guardan mediante la función `.upsert()` por lote, garantizando que se creen o actualicen de forma masiva y limpia sin duplicar registros.
 
-### C. Tablero Pipeline de Validación para Control Interno
+### E. Tablero Pipeline de Validación para Control Interno
 * **Acceso y Roles**: Se modificó `auth.js` para admitir e integrar al nuevo rol `'control_interno'`.
 * **Tablero Interactivo**: Se implementó una tabla interactiva en `#section-validacion` donde se calcula automáticamente el Gasto Real Mensual (agrupando los gastos semanales de ese periodo y concepto) y el Ahorro Proyectado (Meta Mensual - Gasto Real Mensual).
 * **Edición y Guardado de Pipeline**: Los usuarios con rol `control_interno` o `administrador` pueden registrar el ahorro real efectivamente ejecutado, cambiar el estado del pipeline entre `Pendiente`, `En Revisión`, `Validado` y `Observado`, e ingresar observaciones de control.
 * **Fórmula de Gasto Retrocompatible**: Se implementó en `goals.js` un cálculo robusto de gastos mensuales agrupando `gastos_semanales` que coincidan en mes, año y categoría del concepto, admitiendo filtros opcionales de departamento si se habilitan en los gastos, garantizando compatibilidad retroactiva total.
 
-### D. Gestión de Parámetros Generales
+### F. Gestión de Parámetros Generales
 * **Pestaña de Parámetros**: Se implementó una pestaña exclusiva para el Administrador que carga y expone los catálogos en listas reactivas.
 * **CRUD de Parámetros**: Permite la creación y eliminación en cascada de Departamentos y Conceptos directamente en la UI mediante formularios dedicados integrados con Supabase.
 
-### E. Verificación y Compilación
+### G. Verificación y Compilación
 * **Build de Producción**: Se ejecutó exitosamente el comando `npm run build` confirmando que Vite empaqueta de forma correcta los módulos de JS (`goals.js`, `auth.js`) y HTML (`goals.html`).
 
 ---

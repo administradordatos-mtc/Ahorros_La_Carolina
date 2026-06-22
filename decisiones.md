@@ -57,3 +57,24 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Decisión**: Habilitar en la interfaz de metas (`goals.html`) la creación y eliminación en cascada de Departamentos y Conceptos presupuestales.
 * **Contexto**: Anteriormente las categorías de gasto y meta estaban restringidas por un CHECK constraint estático en PostgreSQL.
 * **Razón**: Otorga flexibilidad operativa para expandir o modificar la estructura presupuestal de la empresa sin requerir cambios de código o consultas directas a la base de datos por parte del equipo de TI.
+
+---
+
+## 9. Corrección del Ancho del Menú Lateral (Sidebar)
+* **Decisión**: Reemplazar la clase de ancho del menú lateral `w-xl` y `w-80` por `w-64 shrink-0` en todos los archivos HTML del proyecto.
+* **Contexto**: En la configuración personalizada de Tailwind, `"xl": "64px"`, lo que provocaba que el sidebar se colapsara a 64 píxeles en desktop, tapando los nombres de los menús.
+* **Razón**: Uniformiza y estabiliza la visualización de la barra de navegación lateral en todas las pantallas de escritorio con un ancho estándar de 256px y previene recortes en el texto.
+
+---
+
+## 10. Dashboard de KPI con Consolidación Mensual y Gráfico de 12 Meses
+* **Decisión**: Rediseñar los KPIs Bento del Dashboard para reflejar Ahorro Reportado (Proyectado), Ahorro Real Validado y Eficiencia de Validación, alimentados de las consultas a `metas_mensuales` y `validaciones_ahorros` (estado `'Validado'`). Cambiar el gráfico de progreso a escala de 12 meses.
+* **Contexto**: Al migrar las metas a mensuales, las métricas del dashboard a escala semanal se volvieron incoherentes.
+* **Razón**: Alinea la visualización ejecutiva del dashboard con la planificación presupuestal mensual y permite medir el porcentaje de ahorro real auditado acumulado a lo largo del año.
+
+---
+
+## 11. Acciones de Borrado con Control de Roles en UI (Iniciativas y Gastos)
+* **Decisión**: Implementar botones de eliminación interactivos en las tablas de Iniciativas y listas de movimientos de Gastos (tanto en Dashboard como en la sección de Gastos) condicionados estrictamente a usuarios con el rol `'administrador'`.
+* **Contexto**: Se requería una vía sencilla para depurar registros ingresados de forma errónea sin alterar la base de datos a nivel SQL.
+* **Razón**: Protege la integridad de los datos permitiendo la eliminación de transacciones e iniciativas únicamente al rol jerárquicamente superior (administrador).

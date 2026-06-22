@@ -227,6 +227,8 @@ function renderRecentExpenses(gastos) {
         return;
     }
 
+    const userRole = localStorage.getItem('user_role');
+
     sorted.forEach(g => {
         let icon = 'receipt_long';
         switch (g.categoria) {
@@ -253,6 +255,12 @@ function renderRecentExpenses(gastos) {
             month: 'short'
         });
 
+        const deleteBtnHtml = userRole === 'administrador'
+            ? `<button class="btn-delete-gasto text-on-surface-variant hover:text-red-400 p-1 rounded ml-sm transition-colors" data-id="${g.id}" title="Eliminar gasto">
+                   <span class="material-symbols-outlined text-[16px]">delete</span>
+               </button>`
+            : '';
+
         const row = document.createElement('div');
         row.className = 'p-sm flex justify-between items-center hover:bg-surface-variant transition-colors';
         row.innerHTML = `
@@ -265,9 +273,40 @@ function renderRecentExpenses(gastos) {
                     <p class="font-label-sm text-label-sm text-on-surface-variant">${formattedDate} • Semana ${g.semana}</p>
                 </div>
             </div>
-            <span class="font-data-mono text-data-mono text-on-surface">$${Number(g.monto_gasto).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <div class="flex items-center gap-sm">
+                <span class="font-data-mono text-data-mono text-on-surface">$${Number(g.monto_gasto).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                ${deleteBtnHtml}
+            </div>
         `;
 
         recentExpensesContainer.appendChild(row);
     });
+
+    // Configurar listener de eliminación de gasto
+    if (userRole === 'administrador') {
+        recentExpensesContainer.querySelectorAll('.btn-delete-gasto').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const gastoId = e.currentTarget.getAttribute('data-id');
+                if (confirm('¿Está seguro de que desea eliminar este gasto de la base de datos?')) {
+                    try {
+                        const { error } = await supabase
+                            .from('gastos_semanales')
+                            .delete()
+                            .eq('id', gastoId);
+
+                        if (error) throw error;
+                        
+                        // Recargar datos
+                        await loadInitialData();
+                        if (inputDate && inputDate.value) {
+                            updateWeeklySummary(inputDate.value);
+                        }
+                    } catch (err) {
+                        console.error('Error al eliminar el gasto:', err);
+                        alert('Error: ' + err.message);
+                    }
+                }
+            });
+        });
+    }
 }

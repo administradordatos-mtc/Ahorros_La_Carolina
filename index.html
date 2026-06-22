@@ -140,7 +140,7 @@
         });
     </script>
     <!-- Sidebar / Navigation Drawer (Desktop) -->
-    <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-xl">
+    <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-64 shrink-0">
         <div class="p-md flex items-center gap-sm">
             <div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
@@ -238,45 +238,44 @@
 
             <!-- Bento Grid Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-                <!-- Ahorro Total -->
+                <!-- Ahorro Reportado (Proyectado) -->
                 <div class="bg-surface-container p-md c-frame relative overflow-hidden group">
                     <div class="flex justify-between items-start mb-lg">
-                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Ahorro Total</span>
+                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Ahorro Reportado (Proyectado)</span>
                         <span class="material-symbols-outlined text-primary" data-icon="savings">savings</span>
                     </div>
                     <div id="card-ahorro-total" class="font-data-mono text-display-lg text-primary">$0</div>
                     <div class="mt-md flex items-center gap-xs">
-                        <span class="text-secondary font-data-mono text-body-md">+0%</span>
-                        <span class="text-on-surface-variant font-body-md">vs mes anterior</span>
+                        <span class="text-on-surface-variant font-body-md">Estimado total mensual acumulado</span>
                     </div>
                     <div class="absolute bottom-0 right-0 p-base opacity-10 group-hover:opacity-20 transition-opacity">
                         <span class="material-symbols-outlined text-[64px]" data-icon="trending_up">trending_up</span>
                     </div>
                 </div>
 
-                <!-- Presupuesto Restante -->
+                <!-- Ahorro Real Validado -->
                 <div class="bg-surface-container p-md c-frame relative overflow-hidden group">
                     <div class="flex justify-between items-start mb-lg">
-                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Presupuesto Restante</span>
-                        <span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
+                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Ahorro Real Validado</span>
+                        <span class="material-symbols-outlined text-primary" data-icon="playlist_add_check">playlist_add_check</span>
                     </div>
-                    <div id="card-presupuesto-restante" class="font-data-mono text-display-lg text-on-surface">$0</div>
+                    <div id="card-presupuesto-restante" class="font-data-mono text-display-lg text-emerald-400">$0</div>
                     <div class="mt-md w-full bg-surface-variant h-2 rounded-full overflow-hidden flex items-center">
-                        <div id="progress-presupuesto" class="bg-primary h-full transition-all duration-1000" style="width: 0%;"></div>
-                        <span class="text-primary ml-2">»</span>
+                        <div id="progress-presupuesto" class="bg-emerald-500 h-full transition-all duration-1000" style="width: 0%;"></div>
+                        <span class="text-emerald-400 ml-2">»</span>
                     </div>
-                    <div id="text-presupuesto-utilizado" class="mt-xs text-right text-on-surface-variant font-label-sm text-label-sm">0% Utilizado</div>
+                    <div id="text-presupuesto-utilizado" class="mt-xs text-right text-on-surface-variant font-label-sm text-label-sm">0% Validado por Control Interno</div>
                 </div>
 
-                <!-- Eficiencia del Mes -->
+                <!-- Eficiencia de Validación -->
                 <div class="bg-surface-container p-md c-frame relative overflow-hidden group">
                     <div class="flex justify-between items-start mb-lg">
-                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Eficiencia del Mes</span>
+                        <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Eficiencia de Validación</span>
                         <span class="material-symbols-outlined text-primary" data-icon="speed">speed</span>
                     </div>
                     <div id="card-eficiencia" class="font-data-mono text-display-lg text-secondary">0%</div>
                     <div class="mt-md flex items-center gap-xs">
-                        <span class="bg-primary/10 text-primary px-xs py-[2px] rounded text-label-sm font-label-sm">OPTIMIZADO</span>
+                        <span class="bg-primary/10 text-primary px-xs py-[2px] rounded text-label-sm font-label-sm">CONTROL INTERNO</span>
                     </div>
                 </div>
             </div>

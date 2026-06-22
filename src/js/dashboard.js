@@ -1,10 +1,10 @@
 import { supabase } from './supabase.js';
 import { Chart, registerables } from 'chart.js';
 
-// Registrar los controladores y componentes necesarios de Chart.js
+// Registrar componentes de Chart.js
 Chart.register(...registerables);
 
-// Variable para almacenar la instancia global del gráfico
+// Instancia global del gráfico
 let myChart = null;
 
 // Elementos del DOM
@@ -14,11 +14,8 @@ const cardPresupuestoRestante = document.getElementById('card-presupuesto-restan
 const progressPresupuesto = document.getElementById('progress-presupuesto');
 const textPresupuestoUtilizado = document.getElementById('text-presupuesto-utilizado');
 const cardEficiencia = document.getElementById('card-eficiencia');
-const labelAhorroTotal = document.querySelector('#card-ahorro-total')?.previousElementSibling;
-const labelPresupuestoRestante = document.querySelector('#card-presupuesto-restante')?.previousElementSibling;
-const labelEficiencia = document.querySelector('#card-eficiencia')?.previousElementSibling;
 
-// Formateadores
+// Formateador de pesos colombianos
 const formatCurrency = (val) => {
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
@@ -27,23 +24,35 @@ const formatCurrency = (val) => {
     }).format(val || 0);
 };
 
+// Obtener mes y año actual
+const today = new Date();
+const actualMonth = today.getMonth() + 1;
+const actualYear = today.getFullYear();
+
+// Estado local
+let allDepartamentos = [];
+let allConceptos = [];
+let allMetasMensuales = [];
+let allGastosSemanales = [];
+let allValidacionesAhorros = [];
+
 const init = async () => {
     if (!supabase) {
         console.warn('Dashboard: Supabase client is not initialized.');
         return;
     }
 
-    // 1. Cargar lista de departamentos en el selector
+    // 1. Cargar lista de departamentos
     await loadDepartments();
 
-    // 2. Cargar datos iniciales (Vista General)
-    await updateDashboard('');
+    // 2. Cargar datos iniciales
+    await loadInitialData();
 
     // 3. Escuchar cambios de filtro de departamento
     if (selectDept) {
         selectDept.addEventListener('change', async (e) => {
             const deptId = e.target.value;
-            await updateDashboard(deptId);
+            await refreshView(deptId);
         });
     }
 };
@@ -67,217 +76,212 @@ async function loadDepartments() {
 
         if (error) throw error;
 
-        // Limpiar
+        allDepartamentos = depts || [];
         selectDept.innerHTML = '<option value="">General (Todos)</option>';
 
-        if (depts && depts.length > 0) {
-            depts.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.id;
-                opt.textContent = d.nombre;
-                selectDept.appendChild(opt);
-            });
-        }
+        allDepartamentos.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.id;
+            opt.textContent = d.nombre;
+            selectDept.appendChild(opt);
+        });
+
+        // Cargar también el catálogo de conceptos
+        const { data: concts } = await supabase.from('conceptos').select('*');
+        allConceptos = concts || [];
+
     } catch (err) {
         console.error('Error al cargar departamentos en dashboard:', err);
     }
 }
 
 /**
- * Actualiza el contenido del dashboard basándose en el departamento seleccionado
+ * Carga todos los datos iniciales y actualiza la vista
  */
-async function updateDashboard(deptId) {
+async function loadInitialData() {
     try {
-        if (!deptId) {
-            // --- VISTA GENERAL (COMPAÑÍA) ---
-            if (labelAhorroTotal) labelAhorroTotal.textContent = 'Ahorro Total';
-            if (labelPresupuestoRestante) labelPresupuestoRestante.textContent = 'Presupuesto Restante';
-            if (labelEficiencia) labelEficiencia.textContent = 'Eficiencia del Mes';
+        const { data: metas, error: metasError } = await supabase
+            .from('metas_mensuales')
+            .select('*');
 
-            const { data: metas, error: metasError } = await supabase
-                .from('metas_semanales')
-                .select('*');
+        const { data: gastos, error: gastosError } = await supabase
+            .from('gastos_semanales')
+            .select('*');
 
-            const { data: gastos, error: gastosError } = await supabase
-                .from('gastos_semanales')
-                .select('*');
+        const { data: valids, error: validsError } = await supabase
+            .from('validaciones_ahorros')
+            .select('*');
 
-            if (metasError) throw metasError;
-            if (gastosError) throw gastosError;
+        if (metasError) throw metasError;
+        if (gastosError) throw gastosError;
+        if (validsError) throw validsError;
 
-            // Procesar métricas generales
-            const totalMeta = metas.reduce((sum, m) => sum + Number(m.monto_meta), 0);
-            const totalGasto = gastos.reduce((sum, g) => sum + Number(g.monto_gasto), 0);
-            const ahorroTotal = totalMeta - totalGasto;
+        allMetasMensuales = metas || [];
+        allGastosSemanales = gastos || [];
+        allValidacionesAhorros = valids || [];
 
-            if (cardAhorroTotal) {
-                cardAhorroTotal.textContent = formatCurrency(ahorroTotal);
-            }
+        // Por defecto, refrescar la vista General
+        await refreshView('');
 
-            // Encontrar la última semana
-            let latestWeek = 0;
-            let latestYear = 0;
-            metas.forEach(m => {
-                if (m.anio > latestYear || (m.anio === latestYear && m.semana > latestWeek)) {
-                    latestYear = m.anio;
-                    latestWeek = m.semana;
-                }
-            });
-            gastos.forEach(g => {
-                if (g.anio > latestYear || (g.anio === latestYear && g.semana > latestWeek)) {
-                    latestYear = g.anio;
-                    latestWeek = g.semana;
-                }
-            });
-            if (latestWeek === 0) {
-                latestWeek = 22;
-                latestYear = 2026;
-            }
-
-            const metaUltimaSemana = metas
-                .filter(m => m.semana === latestWeek && m.anio === latestYear)
-                .reduce((sum, m) => sum + Number(m.monto_meta), 0);
-
-            const gastoUltimoSemana = gastos
-                .filter(g => g.semana === latestWeek && g.anio === latestYear)
-                .reduce((sum, g) => sum + Number(g.monto_gasto), 0);
-
-            const presupuestoRestante = metaUltimaSemana - gastoUltimoSemana;
-            const porcentajeUtilizado = metaUltimaSemana > 0 ? Math.round((gastoUltimoSemana / metaUltimaSemana) * 100) : 0;
-
-            if (cardPresupuestoRestante) {
-                cardPresupuestoRestante.textContent = formatCurrency(presupuestoRestante);
-            }
-
-            if (progressPresupuesto) {
-                let colorClass = 'bg-primary';
-                if (porcentajeUtilizado > 100) {
-                    colorClass = 'bg-red-500';
-                } else if (porcentajeUtilizado >= 80) {
-                    colorClass = 'bg-amber-500';
-                }
-                progressPresupuesto.className = `${colorClass} h-full transition-all duration-1000`;
-                progressPresupuesto.style.width = `${Math.min(100, porcentajeUtilizado)}%`;
-            }
-
-            if (textPresupuestoUtilizado) {
-                textPresupuestoUtilizado.textContent = `${porcentajeUtilizado}% Utilizado (Semana ${latestWeek}, ${latestYear})`;
-            }
-
-            const eficiencia = totalMeta > 0 
-                ? Math.max(0, Math.min(100, (1 - Math.abs(totalGasto - totalMeta) / totalMeta) * 100)) 
-                : 0;
-
-            if (cardEficiencia) {
-                cardEficiencia.textContent = `${eficiencia.toFixed(1)}%`;
-            }
-
-            // Renderizar Gráfico de Líneas General
-            renderLineChart(metas, gastos);
-
-            // Renderizar Movimientos Recientes de Gastos
-            renderRecentExpenses(gastos);
-
-        } else {
-            // --- VISTA DE DEPARTAMENTO (EJ. TECNOLOGÍA) ---
-            if (labelAhorroTotal) labelAhorroTotal.textContent = 'Ahorro Anual Esperado';
-            if (labelPresupuestoRestante) labelPresupuestoRestante.textContent = 'Ahorro Mensual Esperado';
-            if (labelEficiencia) labelEficiencia.textContent = 'Proyectos En Ejecución';
-
-            const { data: inis, error: inisError } = await supabase
-                .from('iniciativas')
-                .select('*')
-                .eq('departamento_id', deptId);
-
-            if (inisError) throw inisError;
-
-            // Calcular Métricas del Departamento
-            let totalMesEsperado = 0;
-            let totalAnioEsperado = 0;
-            let enCurso = 0;
-            let totalInis = inis.length;
-
-            inis.forEach(i => {
-                totalMesEsperado += parseFloat(i.esperado_mes) || 0;
-                totalAnioEsperado += parseFloat(i.anual_esperado) || 0;
-                if (i.estado === 'En curso' || i.estado === 'Completado') {
-                    enCurso++;
-                }
-            });
-
-            const porcentajeEnCurso = totalInis > 0 ? Math.round((enCurso / totalInis) * 100) : 0;
-
-            if (cardAhorroTotal) {
-                cardAhorroTotal.textContent = formatCurrency(totalAnioEsperado);
-            }
-
-            if (cardPresupuestoRestante) {
-                cardPresupuestoRestante.textContent = formatCurrency(totalMesEsperado);
-            }
-
-            if (progressPresupuesto) {
-                progressPresupuesto.className = 'bg-primary h-full transition-all duration-1000';
-                progressPresupuesto.style.width = `${porcentajeEnCurso}%`;
-            }
-
-            if (textPresupuestoUtilizado) {
-                textPresupuestoUtilizado.textContent = `${enCurso} de ${totalInis} Iniciativas En Curso`;
-            }
-
-            if (cardEficiencia) {
-                cardEficiencia.textContent = `${porcentajeEnCurso}%`;
-            }
-
-            // Renderizar Gráfico de Barras de Iniciativas
-            renderInitiativesBarChart(inis);
-
-            // Renderizar Listado de Iniciativas Recientes
-            renderRecentInitiatives(inis);
-        }
     } catch (err) {
-        console.error('Error al actualizar dashboard:', err);
+        console.error('Error al cargar datos en el dashboard:', err);
     }
 }
 
 /**
- * Renderiza el gráfico de líneas (General)
+ * Calcula el gasto real mensual agrupado por mes, año, concepto y departamento de forma retrocompatible
  */
-function renderLineChart(metas, gastos) {
+function getGastoMensual(deptId, conceptoNombre, mes, anio) {
+    return allGastosSemanales
+        .filter(g => {
+            const gDate = new Date(g.fecha + 'T12:00:00');
+            const gMes = gDate.getMonth() + 1;
+            const gAnio = gDate.getFullYear();
+            const matchPeriod = gMes === mes && gAnio === anio;
+            const matchConcepto = g.categoria === conceptoNombre;
+            
+            // Si el gasto tiene la columna departamento_id de forma nativa la validamos
+            const matchDept = !g.departamento_id || g.departamento_id === deptId;
+            
+            return matchPeriod && matchConcepto && matchDept;
+        })
+        .reduce((sum, g) => sum + (Number(g.monto_gasto) || 0), 0);
+}
+
+/**
+ * Refresca los componentes visuales del Dashboard según el departamento
+ */
+async function refreshView(deptId) {
+    const parsedDeptId = deptId !== '' ? parseInt(deptId) : null;
+
+    // 1. Filtrar metas mensuales y validaciones
+    const metasFiltradas = parsedDeptId
+        ? allMetasMensuales.filter(m => m.departamento_id === parsedDeptId)
+        : allMetasMensuales;
+
+    const validsFiltradas = parsedDeptId
+        ? allValidacionesAhorros.filter(v => v.departamento_id === parsedDeptId)
+        : allValidacionesAhorros;
+
+    // 2. Calcular Ahorro Reportado (Meta - Gasto)
+    let ahorroReportadoTotal = 0;
+    metasFiltradas.forEach(meta => {
+        const concepto = allConceptos.find(c => c.id === meta.concepto_id);
+        if (!concepto) return;
+        const gastoReal = getGastoMensual(meta.departamento_id, concepto.nombre, meta.mes, meta.anio);
+        const ahorroProyectado = Number(meta.monto_meta) - gastoReal;
+        ahorroReportadoTotal += ahorroProyectado;
+    });
+
+    if (cardAhorroTotal) {
+        cardAhorroTotal.textContent = formatCurrency(ahorroReportadoTotal);
+    }
+
+    // 3. Calcular Ahorro Real Validado por Control Interno (estado === 'Validado')
+    const ahorroRealValidadoTotal = validsFiltradas
+        .filter(v => v.estado_pipeline === 'Validated' || v.estado_pipeline === 'Validado')
+        .reduce((sum, v) => sum + (Number(v.ahorro_real_ejecutado) || 0), 0);
+
+    if (cardPresupuestoRestante) {
+        cardPresupuestoRestante.textContent = formatCurrency(ahorroRealValidadoTotal);
+    }
+
+    // 4. Progreso de Validación (% de Ahorro Validado vs Ahorro Reportado)
+    const porcentajeValidado = ahorroReportadoTotal > 0
+        ? Math.max(0, Math.min(100, Math.round((ahorroRealValidadoTotal / ahorroReportadoTotal) * 100)))
+        : 0;
+
+    if (progressPresupuesto) {
+        progressPresupuesto.style.width = `${porcentajeValidado}%`;
+    }
+
+    if (textPresupuestoUtilizado) {
+        textPresupuestoUtilizado.textContent = `${porcentajeValidado}% Ahorro Validado por Control Interno`;
+    }
+
+    // 5. Eficiencia de Validación
+    if (cardEficiencia) {
+        cardEficiencia.textContent = `${porcentajeValidado}%`;
+    }
+
+    // 6. Si es vista de departamento, cargar también sus iniciativas de ahorro en el gráfico y panel
+    if (parsedDeptId) {
+        // Cargar iniciativas para el departamento
+        try {
+            const { data: inis } = await supabase
+                .from('iniciativas')
+                .select('*')
+                .eq('departamento_id', parsedDeptId);
+            
+            renderInitiativesBarChart(inis || []);
+            renderRecentInitiatives(inis || []);
+        } catch (err) {
+            console.error('Error al cargar iniciativas del departamento:', err);
+        }
+    } else {
+        // Vista general: Renderizar gráfico lineal acumulado mensual de Metas vs Gastos vs Ahorros Validados
+        renderMonthlyLineChart(metasFiltradas, validsFiltradas);
+        renderRecentExpensesList(deptId);
+    }
+}
+
+/**
+ * Renderiza el gráfico de progreso de forma mensual (12 meses)
+ */
+function renderMonthlyLineChart(metas, valids) {
     const canvas = document.getElementById('savingsChart');
     if (!canvas) return;
 
-    const semanasMap = {};
-    metas.forEach(m => {
-        const key = `${m.anio}-W${String(m.semana).padStart(2, '0')}`;
-        if (!semanasMap[key]) {
-            semanasMap[key] = { label: `Semana ${m.semana}`, meta: 0, gasto: 0 };
+    const mesesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    const metasMensualesArray = Array(12).fill(0);
+    const gastosMensualesArray = Array(12).fill(0);
+    const ahorroValidadoArray = Array(12).fill(0);
+
+    // Agrupar metas mensuales por mes (año actual)
+    metas.filter(m => m.anio === actualYear).forEach(meta => {
+        const mIdx = meta.mes - 1;
+        if (mIdx >= 0 && mIdx < 12) {
+            metasMensualesArray[mIdx] += Number(meta.monto_meta) || 0;
+            
+            // Buscar concepto y calcular el gasto real de este mes y concepto
+            const concepto = allConceptos.find(c => c.id === meta.concepto_id);
+            if (concepto) {
+                const gasto = getGastoMensual(meta.departamento_id, concepto.nombre, meta.mes, meta.anio);
+                gastosMensualesArray[mIdx] += gasto;
+            }
         }
-        semanasMap[key].meta += Number(m.monto_meta);
     });
 
-    gastos.forEach(g => {
-        const key = `${g.anio}-W${String(g.semana).padStart(2, '0')}`;
-        if (!semanasMap[key]) {
-            semanasMap[key] = { label: `Semana ${g.semana}`, meta: 0, gasto: 0 };
+    // Agrupar validaciones de ahorro real
+    valids.filter(v => v.anio === actualYear && (v.estado_pipeline === 'Validado' || v.estado_pipeline === 'Validated')).forEach(v => {
+        const mIdx = v.mes - 1;
+        if (mIdx >= 0 && mIdx < 12) {
+            ahorroValidadoArray[mIdx] += Number(v.ahorro_real_ejecutado) || 0;
         }
-        semanasMap[key].gasto += Number(g.monto_gasto);
     });
-
-    const sortedWeeks = Object.keys(semanasMap).sort().map(key => semanasMap[key]);
-    const labels = sortedWeeks.map(w => w.label);
-    const metaData = sortedWeeks.map(w => w.meta);
-    const gastoData = sortedWeeks.map(w => w.gasto);
 
     if (myChart) myChart.destroy();
 
     myChart = new Chart(canvas, {
         type: 'line',
         data: {
-            labels,
+            labels: mesesLabels,
             datasets: [
                 {
+                    label: 'Meta Límite',
+                    data: metasMensualesArray,
+                    borderColor: '#98907f',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.3,
+                    pointBackgroundColor: '#98907f',
+                    pointBorderColor: '#0B0D0F',
+                    pointRadius: 4,
+                },
+                {
                     label: 'Gasto Real',
-                    data: gastoData,
+                    data: gastosMensualesArray,
                     borderColor: '#f1d47f',
                     backgroundColor: 'rgba(241, 212, 127, 0.1)',
                     borderWidth: 3,
@@ -288,14 +292,13 @@ function renderLineChart(metas, gastos) {
                     pointRadius: 4,
                 },
                 {
-                    label: 'Meta de Límite',
-                    data: metaData,
-                    borderColor: '#98907f',
+                    label: 'Ahorro Validado',
+                    data: ahorroValidadoArray,
+                    borderColor: '#10B981',
                     borderWidth: 2,
-                    borderDash: [5, 5],
                     fill: false,
                     tension: 0.3,
-                    pointBackgroundColor: '#98907f',
+                    pointBackgroundColor: '#10B981',
                     pointBorderColor: '#0B0D0F',
                     pointRadius: 4,
                 }
@@ -340,7 +343,6 @@ function renderInitiativesBarChart(inis) {
     const canvas = document.getElementById('savingsChart');
     if (!canvas) return;
 
-    // Solo graficar iniciativas que tengan un ahorro esperado mayor a 0
     const filteredInis = inis.filter(i => parseFloat(i.esperado_mes) > 0);
     const labels = filteredInis.map(i => i.nombre.length > 20 ? i.nombre.substring(0, 17) + '...' : i.nombre);
     const expectedData = filteredInis.map(i => parseFloat(i.esperado_mes));
@@ -355,7 +357,7 @@ function renderInitiativesBarChart(inis) {
                 {
                     label: 'Ahorro Mensual Esperado',
                     data: expectedData,
-                    backgroundColor: '#C52724', // Rojo Corazón
+                    backgroundColor: '#C52724',
                     borderColor: '#a0020e',
                     borderWidth: 1,
                     borderRadius: 4
@@ -398,19 +400,21 @@ function renderInitiativesBarChart(inis) {
 }
 
 /**
- * Renderiza los últimos gastos del dashboard (Vista General)
+ * Renderiza los últimos gastos del dashboard con opción de eliminar para el administrador
  */
-function renderRecentExpenses(gastos) {
+function renderRecentExpensesList(deptId) {
     const container = document.getElementById('recent-movements-container');
     if (!container) return;
 
     container.innerHTML = '';
-    const sorted = [...gastos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 5);
+    const sorted = [...allGastosSemanales].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 5);
 
     if (sorted.length === 0) {
         container.innerHTML = `<div class="text-center p-md text-on-surface-variant">No hay gastos recientes.</div>`;
         return;
     }
+
+    const userRole = localStorage.getItem('user_role');
 
     sorted.forEach(g => {
         let icon = 'receipt_long';
@@ -426,6 +430,12 @@ function renderRecentExpenses(gastos) {
 
         const dateStr = new Date(g.fecha).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
 
+        const deleteBtnHtml = userRole === 'administrador'
+            ? `<button class="btn-delete-gasto text-on-surface-variant hover:text-red-400 p-1 rounded ml-sm transition-colors" data-id="${g.id}" title="Eliminar gasto">
+                   <span class="material-symbols-outlined text-[16px]">delete</span>
+               </button>`
+            : '';
+
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-sm hover:bg-surface-container-high transition-colors rounded-lg group';
         row.innerHTML = `
@@ -438,12 +448,38 @@ function renderRecentExpenses(gastos) {
                     <p class="font-label-sm text-label-sm text-on-surface-variant">${dateStr} • Semana ${g.semana}</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="font-data-mono text-body-lg text-on-surface">-${formatCurrency(Number(g.monto_gasto))}</p>
-                <span class="text-secondary text-[10px] uppercase font-bold tracking-tighter">Procesado</span>
+            <div class="flex items-center gap-sm">
+                <div class="text-right">
+                    <p class="font-data-mono text-body-lg text-on-surface">-${formatCurrency(Number(g.monto_gasto))}</p>
+                    <span class="text-secondary text-[10px] uppercase font-bold tracking-tighter">Procesado</span>
+                </div>
+                ${deleteBtnHtml}
             </div>
         `;
         container.appendChild(row);
+    });
+
+    // Configurar listener de eliminación de gasto
+    document.querySelectorAll('.btn-delete-gasto').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const gastoId = e.currentTarget.getAttribute('data-id');
+            if (confirm('¿Está seguro de que desea eliminar este gasto de la base de datos?')) {
+                try {
+                    const { error } = await supabase
+                        .from('gastos_semanales')
+                        .delete()
+                        .eq('id', gastoId);
+
+                    if (error) throw error;
+                    
+                    // Recargar datos y refrescar la vista
+                    await loadInitialData();
+                } catch (err) {
+                    console.error('Error al eliminar el gasto:', err);
+                    alert('Error: ' + err.message);
+                }
+            }
+        });
     });
 }
 
