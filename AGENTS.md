@@ -10,6 +10,14 @@ This repo is a Claude Code plugin **and** an Obsidian vault that builds persiste
 - speckit-implement
 - speckit-analyze
 
+## Recent Accomplishments (June 22, 2026)
+
+* **Reestructuración a Metas Mensuales**: Reemplazadas las metas semanales y las categorías estáticas en `goals.html` y `goals.js` por una arquitectura de Metas Mensuales, utilizando el catálogo de Departamentos y el nuevo Maestro de Conceptos presupuestales.
+* **Proyección de Metas por Lote**: Lógica de guardado mensual que genera de forma automática y asíncrona proyecciones de límites de gasto mensuales desde el mes de inicio del ahorro hasta el 31 de diciembre del año presupuestal en Supabase.
+* **Tablero de Validación Pipeline**: Nueva interfaz y lógica para Control Interno (`'control_interno'`) y Administradores que calcula ahorros proyectados (Meta - Gasto Real) y permite registrar el ahorro real efectivamente ejecutado, cambiar el estado del pipeline (`Pendiente`, `En Revisión`, `Validado`, `Observado`) y añadir observaciones de control.
+* **Parámetros Generales**: Nueva pestaña interactiva que permite a los Administradores realizar el mantenimiento (creación, listado y eliminación en cascada) de Departamentos y Conceptos presupuestales directamente desde la interfaz.
+* **Compatibilidad de Gastos**: Agrupación inteligente de registros de `gastos_semanales` por concepto, mes y año para calcular el gasto real acumulado por departamento manteniendo compatibilidad retroactiva.
+
 ## Recent Accomplishments (June 17, 2026)
 
 * **Layout & Spacing**: Resolved density of views, increasing sidebar elements to `space-y-3` and table rows to `py-4 px-6`.

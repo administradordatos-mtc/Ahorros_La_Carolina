@@ -21,7 +21,7 @@ Este archivo documenta los comandos frecuentes, las convenciones de codificació
 │   │   ├── auth.js                # Validación de sesiones y control de roles
 │   │   ├── dashboard.js           # Lógica y gráficos del panel principal
 │   │   ├── expenses.js            # Registro y cálculos de gastos semanales
-│   │   ├── goals.js               # Semáforos y KPIs de metas semanales
+│   │   ├── goals.js               # Lógica de metas mensuales, parámetros y pipeline de validación
 │   │   ├── initiatives.js         # Lista de iniciativas y estimaciones
 │   │   ├── kpis.js                # Métricas de rendimiento
 │   │   ├── supabase.js            # Cliente e inicialización de base de datos
@@ -46,3 +46,8 @@ Este archivo documenta los comandos frecuentes, las convenciones de codificació
 
 ### C. Fechas
 * Para formatear fechas en formato `YYYY-MM-DD`, evitar `toLocaleDateString` de forma directa y usar en su lugar concatenación limpia y rellenos con ceros (`padStart(2, '0')`) para evitar discrepancias en diferentes motores de JavaScript.
+
+### D. Reestructuración Mensual y Proyecciones
+* **Metas Mensuales**: Las metas operan mensualmente. Al guardar una nueva meta, el frontend genera de forma masiva (por lote) registros mensuales automáticos desde el mes de inicio del ahorro hasta el 31 de diciembre del año presupuestal seleccionado mediante `.upsert()`.
+* **Pipeline de Validación de Ahorros**: La tabla `validaciones_ahorros` se alimenta calculando el gasto real acumulado del concepto y departamento del mes desde `gastos_semanales`. Las validaciones se guardan/actualizan en lote, registrando el ahorro ejecutado, observaciones y estado del pipeline (`Pendiente`, `En Revisión`, `Validado`, `Observado`).
+* **Catálogos Dinámicos**: Los conceptos y departamentos se cargan dinámicamente y se gestionan desde la UI (pestaña de parámetros) de forma descentralizada.

@@ -9,10 +9,13 @@ let currentSessionPromise = null;
 export async function checkSession(requiredRole = null) {
     if (currentSessionPromise) {
         const session = await currentSessionPromise;
-        if (session && requiredRole && session.rol !== requiredRole) {
-            console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${session.rol}'`);
-            window.location.href = 'index.html?access_denied=true';
-            return null;
+        if (session && requiredRole) {
+            const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+            if (!allowedRoles.includes(session.rol)) {
+                console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${session.rol}'`);
+                window.location.href = 'index.html?access_denied=true';
+                return null;
+            }
         }
         return session;
     }
@@ -103,10 +106,13 @@ export async function checkSession(requiredRole = null) {
     })();
 
     const session = await currentSessionPromise;
-    if (session && requiredRole && session.rol !== requiredRole) {
-        console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${session.rol}'`);
-        window.location.href = 'index.html?access_denied=true';
-        return null;
+    if (session && requiredRole) {
+        const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+        if (!allowedRoles.includes(session.rol)) {
+            console.warn(`Acceso denegado: Se requiere rol '${requiredRole}' pero tienes '${session.rol}'`);
+            window.location.href = 'index.html?access_denied=true';
+            return null;
+        }
     }
     return session;
 }
@@ -135,7 +141,13 @@ function actualizarInterfazUsuario(email, rol) {
 
         const operatorRoleEl = document.querySelector('aside .font-body-md');
         if (operatorRoleEl) {
-            operatorRoleEl.textContent = rol === 'administrador' ? 'ADMINISTRADOR' : 'DIRECTIVO';
+            if (rol === 'administrador') {
+                operatorRoleEl.textContent = 'ADMINISTRADOR';
+            } else if (rol === 'control_interno') {
+                operatorRoleEl.textContent = 'CONTROL INTERNO';
+            } else {
+                operatorRoleEl.textContent = 'DIRECTIVO';
+            }
         }
 
         // Ocultar botones o vistas administrativas si el usuario es solo "directivo"
