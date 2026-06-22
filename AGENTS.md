@@ -12,7 +12,8 @@ This repo is a Claude Code plugin **and** an Obsidian vault that builds persiste
 
 ## Recent Accomplishments (June 22, 2026)
 
-* **Reorientación a Iniciativas de Ahorro**: Consolidado el control financiero en Iniciativas de Ahorro (`iniciativas`), ocultando los accesos directos a "Gastos" y "Metas" en toda la aplicación. Se actualizó el botón rápido del Dashboard a "NUEVA INICIATIVA" que apunta a `initiatives.html`.
+* **Reorientación a Iniciativas de Ahorro**: Consolidado el control financiero en Iniciativas de Ahorro (`iniciativas`). Se ocultaron y eliminaron físicamente del proyecto los archivos heredados de Gastos y Metas (`expenses.html`, `goals.html`, `src/js/expenses.js`, `src/js/goals.js`), removiendo sus referencias en la configuración de Vite. Se actualizó el botón rápido del Dashboard a "NUEVA INICIATIVA" que apunta a `initiatives.html`.
+* **Proceso de Aprobación Seguro**: Se retiró el selector de estado en el modal de creación de iniciativas (`initiatives.html`) para forzar que toda nueva iniciativa empiece de forma predeterminada como `'Iniciativa'`.
 * **Cálculo de Ahorros por Meses Activos**: Implementada la estimación anual en función de la `fecha_inicio_ejecucion` de cada iniciativa, calculando `esperado_mes * (12 - startMonth + 1)`.
 * **Gráfico de Ahorro Acumulativo de Caja**: Reconstruido el gráfico anual de 12 meses en el Dashboard para proyectar curvas acumulativas de ahorros proyectados (Meta) y validados (Real).
 * **Validación Directa en el Dashboard**: Integrados selectores de estado interactivos (`'Iniciativa'` / `'Validada'`) y botones de borrado para administradores y auditores directamente en la sección de Movimientos Recientes del Dashboard.

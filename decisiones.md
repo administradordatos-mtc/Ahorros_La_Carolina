@@ -106,3 +106,10 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Decisión**: Habilitar selectores de cambio de estado y botones de eliminación directa en la lista de movimientos del Dashboard para roles autorizados.
 * **Contexto**: Facilitar el trabajo de Control Interno y Administradores reduciendo clicks y permitiendo validar o limpiar registros desde el panel de inicio.
 * **Razón**: Optimiza la usabilidad y velocidad de administración del pipeline de ahorros.
+
+---
+
+## 16. Remoción de Selector de Estado en el Modal de Creación
+* **Decisión**: Eliminar el elemento select de estado (`#ini-status`) del HTML del modal y forzar el estado `'Iniciativa'` por defecto en el backend/inserción.
+* **Contexto**: Permitir elegir el estado `'Validada'` al crear una iniciativa omitía el flujo de validación y control de la empresa.
+* **Razón**: Garantiza la integridad del proceso de aprobación presupuestal, asegurando que toda iniciativa nueva deba ser formalmente revisada y validada por Control Interno o Administración a través de los tableros designados.

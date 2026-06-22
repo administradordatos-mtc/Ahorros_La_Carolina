@@ -12,7 +12,7 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Ocultación de Secciones Obsoletas**: Se removieron las secciones "Gastos" y "Metas" de los menús laterales y móviles. Se actualizó el botón rápido en el Dashboard de "REPORTAR GASTO" a "NUEVA INICIATIVA", redirigiendo a iniciativas.
 
 ### B. Enfoque y Reestructuración en Iniciativas de Ahorro (Caja General)
-* **Formulario y Estados Simplificados**: Se añadió la captura de la fecha de inicio (`fecha_inicio_ejecucion`) y departamento en el modal de creación de iniciativas, y se limitaron los estados válidos únicamente a `'Iniciativa'` y `'Validada'`.
+* **Formulario y Estados Simplificados**: Se añadió la captura de la fecha de inicio (`fecha_inicio_ejecucion`) y departamento en el modal de creación de iniciativas, y se retiró el selector de estado del HTML (`initiatives.html`), forzando en el script (`src/js/initiatives.js`) que toda nueva iniciativa empiece estrictamente en estado `'Iniciativa'`.
 * **Sincronización de Departamento**: Se implementó una lógica reactiva en el formulario que pre-selecciona automáticamente el departamento en el modal basándose en el filtro activo del listado principal.
 * **Cálculo de Ahorros Dinámicos**: Se reestructuró la lógica para calcular el ahorro anual esperado multiplicando el `esperado_mes` por los meses activos restantes en el año presupuestal (`12 - startMonth + 1`).
 * **Validación Directa en Dashboard y Tablas**: Los administradores y auditores de Control Interno pueden validar en tiempo real el estado de una iniciativa (cambiar entre `'Iniciativa'` y `'Validada'`) a través de un select dropdown interactivo directamente en las tablas y en la lista de movimientos recientes del Dashboard.

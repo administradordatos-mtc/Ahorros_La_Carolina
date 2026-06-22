@@ -106,7 +106,7 @@ const init = async () => {
             const capexVal = document.getElementById('ini-capex').value;
             const paybackVal = document.getElementById('ini-payback').value;
             const roiVal = document.getElementById('ini-roi').value;
-            const status = document.getElementById('ini-status').value;
+            const status = 'Iniciativa';
             const notes = document.getElementById('ini-notes').value.trim();
             
             const selectIniDept = document.getElementById('ini-dept');
