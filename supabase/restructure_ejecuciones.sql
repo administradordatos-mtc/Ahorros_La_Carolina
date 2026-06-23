@@ -16,10 +16,24 @@ create table if not exists public.iniciativas_ejecucion (
     constraint unique_iniciativa_mes_anio unique (iniciativa_id, mes, anio)
 );
 
--- 2. Enable Row Level Security (RLS)
+-- 2. Habilitar Row Level Security (RLS)
 alter table public.iniciativas_ejecucion enable row level security;
 
--- 3. Drop existing policies if they exist (to ensure clean migration)
+-- 3. Crear función de validación de rol de Control Interno o Administrador (en caso de que no exista)
+create or replace function public.es_control_interno_o_admin(user_id uuid)
+returns boolean
+security definer
+language plpgsql
+as $$
+begin
+  return exists (
+    select 1 from public.perfiles
+    where id = user_id and rol in ('administrador', 'control_interno')
+  );
+end;
+$$;
+
+-- 4. Drop existing policies if they exist (to ensure clean migration)
 drop policy if exists "Usuarios autenticados pueden ver ejecuciones" on public.iniciativas_ejecucion;
 drop policy if exists "Solo admin y control interno pueden modificar ejecuciones" on public.iniciativas_ejecucion;
 
