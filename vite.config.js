@@ -26,6 +26,7 @@ export default defineConfig({
         users: resolve(__dirname, 'users.html'),
         initiatives: resolve(__dirname, 'initiatives.html'),
         kpis: resolve(__dirname, 'kpis.html'),
+        execution: resolve(__dirname, 'execution.html'),
       },
     },
   },

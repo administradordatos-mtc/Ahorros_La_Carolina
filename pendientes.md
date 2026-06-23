@@ -6,23 +6,23 @@ Este documento lista las tareas pendientes y próximas mejoras identificadas par
 
 ## 1. Próximas Mejoras y Refactorizaciones
 
-### A. Desglose de Gastos por Departamento
-* Modificar la tabla `gastos_semanales` en producción para requerir u opcionalmente capturar el `departamento_id` (mediante un selector en `expenses.html`), permitiendo que el cálculo del ahorro proyectado y el gasto acumulado en el pipeline sea exacto en vez de consolidado o basado en el concepto global.
+### A. Exportación de Ejecuciones Mensuales
+* Añadir un botón de exportación a CSV/Excel en el tablero de Ejecución Mensual (`execution.html`) para permitir que los auditores de Control Interno descarguen los históricos de ahorros reales validados y observaciones registradas.
 
-### B. Exportación de Validaciones para Control Interno
-* Añadir un botón de exportación a CSV/Excel en el Tablero de Validación (`goals.html`) para permitir que los usuarios de Control Interno descarguen las validaciones de ahorros mensuales y estados de pipeline aprobados.
+### B. Feedback Visual de Carga (Spinners)
+* Ya implementado en la vista de ejecución (`execution.html`). Se puede replicar este spinner de carga en otras vistas principales (`index.html`, `initiatives.html`, `kpis.html`) para mitigar la percepción de retraso durante la inicialización de Supabase y validación de sesión.
 
-### C. Feedback Visual de Carga (Spinners)
-* Añadir un componente de indicador de carga (spinner o esqueleto animado) en la sección principal de datos de cada página (`index.html`, `goals.html`, `expenses.html`, etc.) para mitigar la percepción de retraso durante la autenticación y consulta inicial de Supabase.
+### C. Alertas de Validación Financiera
+* Implementar alertas automáticas si el Ahorro Real Ejecutado registrado excede de forma desmedida el Ahorro Esperado Mes, sirviendo como filtro preventivo ante errores tipográficos al registrar montos.
 
 ### D. Pruebas de Carga y Concurrencia
-* Validar el comportamiento de la caché de promesas de sesión ante conexiones lentas (simulación 3G/2G en Chrome DevTools) para asegurar que no ocurran efectos colaterales de renderizado.
+* Validar el comportamiento de la caché de promesas de sesión ante conexiones lentas (simulación de red lenta en Chrome DevTools) para asegurar que no ocurran retrasos molestos de renderizado.
 
 ### E. Despliegue y Pruebas en Staging
-* Validar que la autenticación y políticas de RLS en el entorno de producción de Supabase y Vercel coincidan exactamente con la base de datos de desarrollo.
+* Confirmar que la estructura de la tabla `iniciativas_ejecucion` y políticas de RLS en el entorno de producción de Supabase coincidan exactamente con el script SQL de migración y base de datos de desarrollo.
 
 ---
 
 ## 2. Automatización y Calidad de Código
-* Configurar linters y formateadores (Prettier/ESLint) para asegurar que el espaciado de las tablas y layouts sea uniforme.
+* Configurar linters y formateadores (Prettier/ESLint) para asegurar la uniformidad en el espaciado de tablas y layouts.
 * Diseñar pruebas de integración automáticas para verificar que la redirección por falta de sesión funcione correctamente sin depender de intervención manual.

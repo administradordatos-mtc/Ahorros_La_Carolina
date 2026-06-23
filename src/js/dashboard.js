@@ -32,6 +32,7 @@ const actualYear = today.getFullYear();
 // Estado local
 let allDepartamentos = [];
 let allIniciativas = [];
+let allEjecuciones = [];
 
 const init = async () => {
     if (!supabase) {
@@ -93,13 +94,16 @@ async function loadDepartments() {
  */
 async function loadInitialData() {
     try {
-        const { data: inis, error } = await supabase
-            .from('iniciativas')
-            .select('*');
+        const [inisResult, ejecucionesResult] = await Promise.all([
+            supabase.from('iniciativas').select('*'),
+            supabase.from('iniciativas_ejecucion').select('*')
+        ]);
 
-        if (error) throw error;
+        if (inisResult.error) throw inisResult.error;
+        if (ejecucionesResult.error) throw ejecucionesResult.error;
 
-        allIniciativas = inis || [];
+        allIniciativas = inisResult.data || [];
+        allEjecuciones = ejecucionesResult.data || [];
 
         // Por defecto, refrescar la vista General
         await refreshView('');
@@ -130,10 +134,20 @@ async function refreshView(deptId) {
             : 1;
         const activeMonths = Math.max(0, 12 - startMonth + 1);
         const proyectadoAnual = (Number(i.esperado_mes) || 0) * activeMonths;
-        const validadoAnual = i.estado === 'Validada' ? proyectadoAnual : 0;
 
         ahorroReportadoTotal += proyectadoAnual;
-        ahorroRealValidadoTotal += validadoAnual;
+    });
+
+    // Calcular ahorro real validado desde la tabla de ejecuciones para el año actual
+    const iniIdsFiltradas = new Set(inisFiltradas.map(i => i.id));
+    const ejecucionesFiltradas = allEjecuciones.filter(e => 
+        iniIdsFiltradas.has(e.iniciativa_id) && 
+        e.anio === actualYear && 
+        e.estado_pipeline === 'Validado'
+    );
+
+    ejecucionesFiltradas.forEach(e => {
+        ahorroRealValidadoTotal += Number(e.ahorro_real_ejecutado) || 0;
     });
 
     if (cardAhorroTotal) {
@@ -195,14 +209,24 @@ function renderMonthlyLineChart(inis) {
             ? new Date(i.fecha_inicio_ejecucion + 'T12:00:00').getMonth() + 1
             : 1;
         const esperado = Number(i.esperado_mes) || 0;
-        const isValidated = (i.estado === 'Validada');
 
         // Se activa a partir de startMonth
         for (let m = startMonth; m <= 12; m++) {
             ahorroProyectadoMes[m - 1] += esperado;
-            if (isValidated) {
-                ahorroRealMes[m - 1] += esperado;
-            }
+        }
+    });
+
+    // Calcular ahorro real mensual activo de las ejecuciones validadas para el año actual
+    const iniIdsAñoActual = new Set(inisAñoActual.map(i => i.id));
+    const ejecucionesAñoActual = allEjecuciones.filter(e => 
+        iniIdsAñoActual.has(e.iniciativa_id) && 
+        e.anio === actualYear && 
+        e.estado_pipeline === 'Validado'
+    );
+
+    ejecucionesAñoActual.forEach(e => {
+        if (e.mes >= 1 && e.mes <= 12) {
+            ahorroRealMes[e.mes - 1] += Number(e.ahorro_real_ejecutado) || 0;
         }
     });
 

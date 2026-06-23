@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Usuarios - LA CAROLINA MTC</title>
+    <title>Ejecución Mensual - LA CAROLINA MTC</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
@@ -14,6 +14,18 @@
             border-left: 1px solid rgba(241, 212, 127, 0.15);
             border-top: 1px solid rgba(241, 212, 127, 0.15);
             transition: border-color 0.2s ease;
+        }
+        .route-line {
+            position: relative;
+        }
+        .route-line::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(241, 212, 127, 0.2) 0%, transparent 100%);
         }
         body {
             background-color: #0B0D0F;
@@ -122,7 +134,7 @@
 <body class="flex flex-col md:flex-row min-h-screen">
     <script type="module">
         import { checkSession } from './src/js/auth.js';
-        checkSession('administrador').then(session => {
+        checkSession().then(session => {
             if (session) {
                 document.body.style.visibility = 'visible';
             }
@@ -130,7 +142,7 @@
     </script>
 
     <!-- Sidebar / Navigation Drawer (Desktop) -->
-    <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-64 shrink-0">
+    <aside class="hidden md:flex flex-col h-screen sticky top-0 bg-surface-container-low border-r border-primary/15 w-64 shrink-0 z-50">
         <div class="p-md flex items-center gap-sm">
             <div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
@@ -148,7 +160,6 @@
                         <span class="font-title-lg text-title-lg">Dashboard</span>
                     </a>
                 </li>
-
                 <li class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="reports.html">
                         <span class="material-symbols-outlined" data-icon="assessment">assessment</span>
@@ -161,9 +172,9 @@
                         <span class="font-title-lg text-title-lg">Iniciativas</span>
                     </a>
                 </li>
-                <li class="text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                <li class="bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="execution.html">
-                        <span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+                        <span class="material-symbols-outlined text-on-primary-container" data-icon="fact_check">fact_check</span>
                         <span class="font-title-lg text-title-lg">Ejecución</span>
                     </a>
                 </li>
@@ -173,9 +184,9 @@
                         <span class="font-title-lg text-title-lg">KPIs</span>
                     </a>
                 </li>
-                <li id="menu-usuarios" class="hidden bg-primary-container text-on-primary-container rounded-xl mx-2 my-1 cursor-pointer transition-colors">
+                <li id="menu-usuarios" class="hidden text-on-surface-variant hover:bg-surface-variant rounded-xl mx-2 my-1 cursor-pointer transition-colors">
                     <a class="flex items-center gap-sm px-md py-sm" href="users.html">
-                        <span class="material-symbols-outlined text-on-primary-container" data-icon="group">group</span>
+                        <span class="material-symbols-outlined" data-icon="group">group</span>
                         <span class="font-title-lg text-title-lg">Usuarios</span>
                     </a>
                 </li>
@@ -200,38 +211,82 @@
         </header>
 
         <!-- Page Content -->
-        <section class="p-margin-mobile md:p-margin-desktop space-y-lg overflow-y-auto">
+        <section class="p-margin-mobile md:p-margin-desktop space-y-lg overflow-y-auto flex-grow">
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-primary/10 pb-md">
                 <div>
-                    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">GESTIÓN DE USUARIOS</h2>
-                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Administración de credenciales de acceso y asignación de roles.</p>
+                    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">EJECUCIÓN MENSUAL</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Registro, seguimiento y validación del ahorro real ejecutado.</p>
                 </div>
-                <div>
-                    <button id="btn-nuevo-usuario" class="bg-secondary-container hover:bg-on-secondary-fixed-variant text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform flex items-center gap-sm">
-                        NUEVO USUARIO
-                        <span class="material-symbols-outlined">add</span>
-                    </button>
+                
+                <!-- Filters Container -->
+                <div class="flex flex-wrap items-center gap-sm">
+                    <!-- Dropdown Departamento -->
+                    <div class="flex flex-col gap-[2px]">
+                        <label for="filter-dept" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Departamento</label>
+                        <select id="filter-dept" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[160px]">
+                            <option value="">Todos los departamentos</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown Mes -->
+                    <div class="flex flex-col gap-[2px]">
+                        <label for="filter-month" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Mes de Ejecución</label>
+                        <select id="filter-month" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown Año -->
+                    <div class="flex flex-col gap-[2px]">
+                        <label for="filter-year" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Año Presupuestal</label>
+                        <select id="filter-year" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[90px]">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Users List Table -->
-            <div class="bg-surface-container p-md c-frame rounded-xl overflow-hidden">
+            <!-- Execution Table Container -->
+            <div class="bg-surface-container p-md c-frame rounded-xl overflow-hidden relative">
+                <!-- Loading indicator -->
+                <div id="loading-overlay" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-30 flex items-center justify-center">
+                    <div class="flex flex-col items-center gap-sm">
+                        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+                        <span class="font-body-md text-primary">Cargando ejecuciones...</span>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto w-full">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
                             <tr class="border-b border-primary/10 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                                <th class="py-4 px-6 font-bold">Correo Electrónico</th>
-                                <th class="py-4 px-6 font-bold">Rol Asignado</th>
-                                <th class="py-4 px-6 font-bold">Fecha de Creación</th>
-                                <th class="py-4 px-6 font-bold text-center">Acciones</th>
+                                <th class="py-4 px-6 font-bold w-[25%]">Iniciativa</th>
+                                <th class="py-4 px-6 font-bold w-[12%]">Departamento</th>
+                                <th class="py-4 px-6 font-bold text-center w-[10%]">Fecha Inicio</th>
+                                <th class="py-4 px-6 font-bold text-right w-[12%]">Esperado Mes</th>
+                                <th class="py-4 px-6 font-bold text-center w-[15%]">Ahorro Real Ejecutado</th>
+                                <th class="py-4 px-6 font-bold text-center w-[13%]">Estado Pipeline</th>
+                                <th class="py-4 px-6 font-bold w-[23%]">Observaciones de Control</th>
+                                <th class="py-4 px-6 font-bold text-center w-[8%]">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="users-table-body" class="divide-y divide-primary/5 font-body-md text-body-md text-on-surface">
-                            <!-- Rows dynamically populated by JS -->
+                        <tbody id="execution-table-body" class="divide-y divide-primary/5 font-body-md text-body-md text-on-surface">
                             <tr>
-                                <td colspan="3" class="py-lg text-center text-on-surface-variant">
-                                    Cargando listado de usuarios...
+                                <td colspan="8" class="py-lg text-center text-on-surface-variant">
+                                    Cargando iniciativas de ahorro...
                                 </td>
                             </tr>
                         </tbody>
@@ -251,125 +306,27 @@
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span class="font-label-sm text-label-sm">Dashboard</span>
             </a>
-
             <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="initiatives.html">
                 <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
                 <span class="font-label-sm text-label-sm">Iniciativas</span>
             </a>
-            <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="execution.html">
-                <span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+            <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform" href="execution.html">
+                <span class="material-symbols-outlined text-primary" data-icon="fact_check">fact_check</span>
                 <span class="font-label-sm text-label-sm">Ejecución</span>
             </a>
             <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="kpis.html">
                 <span class="material-symbols-outlined" data-icon="speed">speed</span>
                 <span class="font-label-sm text-label-sm">KPIs</span>
             </a>
-            <a id="mobile-menu-usuarios" class="hidden flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform" href="users.html">
+            <a id="mobile-menu-usuarios" class="hidden flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform" href="users.html">
                 <span class="material-symbols-outlined" data-icon="group">group</span>
                 <span class="font-label-sm text-label-sm">Usuarios</span>
             </a>
         </nav>
     </main>
 
-    <!-- Modal: Nuevo Usuario -->
-    <div id="user-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-margin-mobile bg-black/70 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-[#171B1E] p-md md:p-lg rounded-xl c-frame border border-primary/10 flex flex-col gap-md">
-            <div class="flex justify-between items-center">
-                <h3 class="font-headline-md text-headline-md text-primary tracking-wider">REGISTRAR NUEVO USUARIO</h3>
-                <button id="btn-close-modal" class="text-on-surface-variant hover:text-white transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            
-            <div class="h-[1px] bg-primary/10 my-xs"></div>
-
-            <form id="new-user-form" class="space-y-md">
-                <!-- Email -->
-                <div class="flex flex-col gap-xs">
-                    <label for="new-email" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Correo Electrónico
-                    </label>
-                    <input id="new-email" type="email" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="usuario@lacarolina.com"/>
-                </div>
-
-                <!-- Contraseña -->
-                <div class="flex flex-col gap-xs">
-                    <label for="new-password" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Contraseña inicial
-                    </label>
-                    <input id="new-password" type="password" required minlength="6" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
-                </div>
-
-                <!-- Rol -->
-                <div class="flex flex-col gap-xs">
-                    <label for="new-role" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Rol asignado
-                    </label>
-                    <select id="new-role" required class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all">
-                        <option value="directivo">Directivo (Sólo Dashboard y Reportes)</option>
-                        <option value="administrador">Administrador (Carga y registro de datos)</option>
-                    </select>
-                </div>
-
-                <!-- Botones -->
-                <div class="flex justify-end gap-sm pt-xs">
-                    <button type="button" id="btn-cancel-modal" class="border border-primary text-primary px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
-                        CANCELAR
-                    </button>
-                    <button type="submit" class="rojo-corazon hover:bg-on-secondary-fixed-variant text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
-                        REGISTRAR
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Cambiar Contraseña -->
-    <div id="change-password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-margin-mobile bg-black/70 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-[#171B1E] p-md md:p-lg rounded-xl c-frame border border-primary/10 flex flex-col gap-md">
-            <div class="flex justify-between items-center">
-                <h3 class="font-headline-md text-headline-md text-primary tracking-wider">CAMBIAR CONTRASEÑA</h3>
-                <button id="btn-close-pwd-modal" class="text-on-surface-variant hover:text-white transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            
-            <div class="h-[1px] bg-primary/10 my-xs"></div>
-
-            <form id="change-password-form" class="space-y-md">
-                <input id="pwd-user-id" type="hidden"/>
-                
-                <!-- Email (Read-Only) -->
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase">
-                        Usuario
-                    </label>
-                    <input id="pwd-user-email" type="text" readonly disabled class="bg-[#0b0d0f] border border-[#1E2226] text-on-surface-variant font-body-md text-body-md px-sm py-xs rounded-lg opacity-50 outline-none"/>
-                </div>
-
-                <!-- Nueva Contraseña -->
-                <div class="flex flex-col gap-xs">
-                    <label for="pwd-new-password" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
-                        <span class="text-primary">»»»</span> Nueva Contraseña
-                    </label>
-                    <input id="pwd-new-password" type="password" required minlength="6" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
-                </div>
-
-                <!-- Botones -->
-                <div class="flex justify-end gap-sm pt-xs">
-                    <button type="button" id="btn-cancel-pwd-modal" class="border border-primary text-primary px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
-                        CANCELAR
-                    </button>
-                    <button type="submit" class="rojo-corazon hover:bg-on-secondary-fixed-variant text-white px-md py-xs font-headline-md text-headline-md rounded-lg active:scale-95 transition-transform">
-                        ASIGNAR
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        // Simple micro-interactions
+        // Simple card border hover interactions
         document.querySelectorAll('.c-frame').forEach(card => {
             card.addEventListener('mouseenter', () => {
                 card.style.borderColor = 'rgba(241, 212, 127, 0.4)';
@@ -379,6 +336,6 @@
             });
         });
     </script>
-    <script type="module" src="./src/js/users.js"></script>
+    <script type="module" src="./src/js/execution.js"></script>
 </body>
 </html>

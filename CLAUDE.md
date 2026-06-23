@@ -20,8 +20,7 @@ Este archivo documenta los comandos frecuentes, las convenciones de codificació
 │   ├── js/
 │   │   ├── auth.js                # Validación de sesiones y control de roles
 │   │   ├── dashboard.js           # Lógica y gráficos del panel principal
-│   │   ├── expenses.js            # Registro y cálculos de gastos semanales
-│   │   ├── goals.js               # Lógica de metas mensuales, parámetros y pipeline de validación
+│   │   ├── execution.js           # Registro, filtros y lógica de ejecución mensual
 │   │   ├── initiatives.js         # Lista de iniciativas y estimaciones
 │   │   ├── kpis.js                # Métricas de rendimiento
 │   │   ├── supabase.js            # Cliente e inicialización de base de datos
@@ -48,7 +47,7 @@ Este archivo documenta los comandos frecuentes, las convenciones de codificació
 * Para formatear fechas en formato `YYYY-MM-DD`, evitar `toLocaleDateString` de forma directa y usar en su lugar concatenación limpia y rellenos con ceros (`padStart(2, '0')`) para evitar discrepancias en diferentes motores de JavaScript.
 
 ### D. Iniciativas de Ahorro y Afectación de Caja
-* **Foco en Iniciativas**: El control presupuestal y de ahorros se centra en las **Iniciativas de Ahorro**, eliminando las metas y gastos independientes. Las iniciativas inician en estado `'Iniciativa'` y avanzan a `'Validada'`.
+* **Foco en Iniciativas**: El control presupuestal y de ahorros se centra en las **Iniciativas de Ahorro**, eliminando las metas y gastos independientes. Las iniciativas inician en estado `'Iniciativa'`.
 * **Cálculo de Ahorros Acumulados**: El ahorro anual proyectado se calcula en función de la `fecha_inicio_ejecucion`, multiplicando el valor `esperado_mes` por los meses activos restantes en el año (`12 - mes_inicio + 1`).
-* **Ahorro Real**: Se determina sumando el ahorro anual esperado únicamente de las iniciativas que han sido validadas (`estado === 'Validada'`) por Control Interno o Administradores.
-* **Dashboard Acumulado (12 Meses)**: Muestra curvas acumulativas mensuales de ahorros proyectados (Meta) y validados (Real) para simular el impacto en la caja general del año actual.
+* **Ejecución Mensual y Ahorro Real**: El ahorro real se registra mes a mes en la tabla `iniciativas_ejecucion` con los campos de ahorro real y estado de pipeline. El ahorro real validado acumulado se determina sumando el ahorro real ejecutado de las filas en estado `'Validado'` en el año presupuestal actual.
+* **Dashboard Acumulado (12 Meses)**: Muestra curvas acumulativas mensuales del ahorro proyectado (Meta) y del ahorro real mensual validado (Real) de la tabla `iniciativas_ejecucion` para simular el impacto real en la caja de la empresa.

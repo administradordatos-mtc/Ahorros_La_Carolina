@@ -120,3 +120,11 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Decisión**: Ejecutar `git rev-parse --abbrev-ref HEAD` en `vite.config.js` e inyectar el resultado como una constante global de compilación (`__GIT_BRANCH__`). En el cliente, insertar dinámicamente un badge de rama Git en la cabecera de todas las páginas autenticadas desde `auth.js`.
 * **Contexto**: Para mejorar el control de versiones y la trazabilidad del entorno (desarrollo, pruebas, producción), es crucial que los usuarios y desarrolladores visualicen la rama Git activa de forma clara y no obstructiva.
 * **Razón**: Al inyectar el elemento dinámicamente en el DOM durante el ciclo de actualización de sesión de `auth.js`, evitamos modificar y replicar código HTML estático repetitivo en cada una de las páginas, manteniendo el principio DRY.
+
+---
+
+## 18. Registro de Ejecución Mensual por Iniciativa en Tabla Unificada
+* **Decisión**: Crear una tabla dedicada `iniciativas_ejecucion` con clave compuesta `(iniciativa_id, mes, anio)` para almacenar mensualmente el ahorro real, estado de pipeline y observaciones.
+* **Contexto**: Anteriormente el control se realizaba mediante metas fijas e iniciativas estáticas sin poder auditar de manera fina qué ahorro real se lograba mes a mes por cada iniciativa de forma independiente.
+* **Razón**: Permite la auditoría granular mes a mes de los ahorros reales por iniciativa, separando la previsión (iniciativa inicial) del flujo real de ejecución presupuestal validado por Control Interno.
+
