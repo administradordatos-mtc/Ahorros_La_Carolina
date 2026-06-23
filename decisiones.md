@@ -113,3 +113,10 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Decisión**: Eliminar el elemento select de estado (`#ini-status`) del HTML del modal y forzar el estado `'Iniciativa'` por defecto en el backend/inserción.
 * **Contexto**: Permitir elegir el estado `'Validada'` al crear una iniciativa omitía el flujo de validación y control de la empresa.
 * **Razón**: Garantiza la integridad del proceso de aprobación presupuestal, asegurando que toda iniciativa nueva deba ser formalmente revisada y validada por Control Interno o Administración a través de los tableros designados.
+
+---
+
+## 17. Inyección Dinámica y Centralizada de Rama Git en Interfaz
+* **Decisión**: Ejecutar `git rev-parse --abbrev-ref HEAD` en `vite.config.js` e inyectar el resultado como una constante global de compilación (`__GIT_BRANCH__`). En el cliente, insertar dinámicamente un badge de rama Git en la cabecera de todas las páginas autenticadas desde `auth.js`.
+* **Contexto**: Para mejorar el control de versiones y la trazabilidad del entorno (desarrollo, pruebas, producción), es crucial que los usuarios y desarrolladores visualicen la rama Git activa de forma clara y no obstructiva.
+* **Razón**: Al inyectar el elemento dinámicamente en el DOM durante el ciclo de actualización de sesión de `auth.js`, evitamos modificar y replicar código HTML estático repetitivo en cada una de las páginas, manteniendo el principio DRY.

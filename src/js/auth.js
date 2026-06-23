@@ -133,6 +133,20 @@ export async function logout() {
  */
 function actualizarInterfazUsuario(email, rol) {
     const initUI = () => {
+        // Mostrar la rama git activa al lado del título
+        const headerTitle = document.querySelector('header h1');
+        if (headerTitle && !document.getElementById('git-branch-badge')) {
+            const branchBadge = document.createElement('span');
+            branchBadge.id = 'git-branch-badge';
+            branchBadge.className = 'bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider self-center';
+            try {
+                branchBadge.textContent = typeof __GIT_BRANCH__ !== 'undefined' ? __GIT_BRANCH__ : 'development';
+            } catch (err) {
+                branchBadge.textContent = 'development';
+            }
+            headerTitle.parentNode.appendChild(branchBadge);
+        }
+
         // Actualizar el correo o nombre del operador en el sidebar si existe
         const operatorNameEl = document.querySelector('aside .font-title-lg');
         if (operatorNameEl) {

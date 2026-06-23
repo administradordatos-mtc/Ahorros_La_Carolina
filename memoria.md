@@ -69,3 +69,12 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * Se agregaron bloques `try-catch` robustos en accesos a `localStorage`.
 * Se implementaron fallbacks seguros en los comparadores de ordenamiento (`.sort()`) en `goals.js` para evitar excepciones si la base de datos devuelve categorías, semanas o años nulos.
 * Se agregó un banner visual prominente de error en caso de que el cliente Supabase falle al inicializarse.
+
+---
+
+## 3. Trabajo Realizado y Desarrollos (23 de Junio de 2026)
+
+### A. Visualización de Rama Git Activa en Pantalla
+* **Constante en Build (`vite.config.js`)**: Configurado Vite para ejecutar `git rev-parse --abbrev-ref HEAD` de manera síncrona en tiempo de compilación y registrar la rama activa en la constante global `__GIT_BRANCH__`.
+* **Inyección Dinámica de Interfaz (`src/js/auth.js`)**: Modificado el actualizador de interfaz (`actualizarInterfazUsuario`) para inyectar dinámicamente un badge de estilo Tailwind (`#git-branch-badge`) al lado del título "LA CAROLINA MTC" en la cabecera superior. Esto permite que cualquier vista autenticada muestre la rama actual en tiempo real sin modificar los archivos HTML individuales.
+* **Verificación y Compilación**: Validado que `npm run build` compila correctamente el proyecto de producción e incluye el nombre de la rama en el haz empaquetado.

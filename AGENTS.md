@@ -10,6 +10,10 @@ This repo is a Claude Code plugin **and** an Obsidian vault that builds persiste
 - speckit-implement
 - speckit-analyze
 
+## Recent Accomplishments (June 23, 2026)
+
+* **Visualización de Rama Git Activa**: Implementada la inyección de la rama Git activa de forma síncrona en build time y renderizado dinámico de un badge en el top app bar centralizado desde `auth.js`.
+
 ## Recent Accomplishments (June 22, 2026)
 
 * **Reorientación a Iniciativas de Ahorro**: Consolidado el control financiero en Iniciativas de Ahorro (`iniciativas`). Se ocultaron y eliminaron físicamente del proyecto los archivos heredados de Gastos y Metas (`expenses.html`, `goals.html`, `src/js/expenses.js`, `src/js/goals.js`), removiendo sus referencias en la configuración de Vite. Se actualizó el botón rápido del Dashboard a "NUEVA INICIATIVA" que apunta a `initiatives.html`.
