@@ -36,6 +36,10 @@
         .rojo-corazon {
             background-color: #C52724;
         }
+        .kanban-cards-area.drag-over {
+            background-color: rgba(241, 212, 127, 0.06) !important;
+            border: 2px dashed rgba(241, 212, 127, 0.3) !important;
+        }
     </style>
     <script id="tailwind-config">
         tailwind.config = {
@@ -220,55 +224,72 @@
                 </div>
                 
                 <!-- Filters Container -->
-                <div class="flex flex-wrap items-center gap-sm">
-                    <!-- Dropdown Departamento -->
-                    <div class="flex flex-col gap-[2px]">
-                        <label for="filter-dept" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Departamento</label>
-                        <select id="filter-dept" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[160px]">
-                            <option value="">Todos los departamentos</option>
-                        </select>
+                <div class="flex flex-wrap items-center justify-between gap-md w-full">
+                    <div class="flex flex-wrap items-center gap-sm">
+                        <!-- Dropdown Departamento -->
+                        <div class="flex flex-col gap-[2px]">
+                            <label for="filter-dept" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Departamento</label>
+                            <select id="filter-dept" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[160px]">
+                                <option value="">Todos los departamentos</option>
+                            </select>
+                        </div>
+
+                        <!-- Dropdown Mes -->
+                        <div class="flex flex-col gap-[2px]">
+                            <label for="filter-month" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Mes de Ejecución</label>
+                            <select id="filter-month" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]">
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                        </div>
+
+                        <!-- Dropdown Año -->
+                        <div class="flex flex-col gap-[2px]">
+                            <label for="filter-year" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Año Presupuestal</label>
+                            <select id="filter-year" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[90px]">
+                                <option value="2026" selected>2026</option>
+                                <option value="2025">2025</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Dropdown Mes -->
+                    <!-- Toggle Vista -->
                     <div class="flex flex-col gap-[2px]">
-                        <label for="filter-month" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Mes de Ejecución</label>
-                        <select id="filter-month" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]">
-                            <option value="1">Enero</option>
-                            <option value="2">Febrero</option>
-                            <option value="3">Marzo</option>
-                            <option value="4">Abril</option>
-                            <option value="5">Mayo</option>
-                            <option value="6">Junio</option>
-                            <option value="7">Julio</option>
-                            <option value="8">Agosto</option>
-                            <option value="9">Septiembre</option>
-                            <option value="10">Octubre</option>
-                            <option value="11">Noviembre</option>
-                            <option value="12">Diciembre</option>
-                        </select>
-                    </div>
-
-                    <!-- Dropdown Año -->
-                    <div class="flex flex-col gap-[2px]">
-                        <label for="filter-year" class="font-label-sm text-label-sm text-primary uppercase text-[10px]">Año Presupuestal</label>
-                        <select id="filter-year" class="bg-[#121414] border border-primary/15 text-primary font-body-md text-body-md px-sm py-[6px] rounded-lg outline-none focus:ring-1 focus:ring-primary/30 min-w-[90px]">
-                            <option value="2026" selected>2026</option>
-                            <option value="2025">2025</option>
-                        </select>
+                        <label class="font-label-sm text-label-sm text-primary uppercase text-[10px]">&nbsp;</label>
+                        <div class="flex bg-surface-container-high p-[3px] rounded-lg border border-primary/10 select-none">
+                            <button id="view-table-btn" type="button" class="flex items-center gap-xs px-sm py-[5px] rounded-lg text-primary bg-surface-container font-body-md text-body-md active:scale-95 transition-all">
+                                <span class="material-symbols-outlined text-[16px]">table_rows</span>
+                                Tabla
+                            </button>
+                            <button id="view-kanban-btn" type="button" class="flex items-center gap-xs px-sm py-[5px] rounded-lg text-on-surface-variant hover:text-white font-body-md text-body-md active:scale-95 transition-all">
+                                <span class="material-symbols-outlined text-[16px]">dashboard_customize</span>
+                                Kanban
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Execution Table Container -->
-            <div class="bg-surface-container p-md c-frame rounded-xl overflow-hidden relative">
-                <!-- Loading indicator -->
-                <div id="loading-overlay" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-30 flex items-center justify-center">
-                    <div class="flex flex-col items-center gap-sm">
-                        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-                        <span class="font-body-md text-primary">Cargando ejecuciones...</span>
-                    </div>
+            <!-- Loading indicator -->
+            <div id="loading-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div class="flex flex-col items-center gap-sm">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+                    <span class="font-body-md text-primary">Procesando ejecuciones...</span>
                 </div>
+            </div>
 
+            <!-- Execution Table Container -->
+            <div id="table-view-container" class="bg-surface-container p-md c-frame rounded-xl overflow-hidden relative">
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
@@ -291,6 +312,65 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Kanban Board Container -->
+            <div id="kanban-view-container" class="hidden grid grid-cols-1 md:grid-cols-4 gap-md min-h-[500px]">
+                <!-- Column: Pendiente -->
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-md" data-column="Pendiente">
+                    <div class="flex justify-between items-center border-b border-primary/10 pb-xs">
+                        <div class="flex items-center gap-xs">
+                            <span class="w-2.5 h-2.5 bg-zinc-400 rounded-full"></span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface tracking-wider">PENDIENTE</h3>
+                        </div>
+                        <span id="count-pendiente" class="bg-zinc-800 text-on-surface-variant text-xs font-bold px-2 py-0.5 rounded-full card-count">0</span>
+                    </div>
+                    <div class="flex-grow flex flex-col gap-sm overflow-y-auto max-h-[70vh] min-h-[300px] kanban-cards-area p-1 rounded-lg transition-all duration-200" data-status="Pendiente">
+                        <!-- Cards -->
+                    </div>
+                </div>
+
+                <!-- Column: En Revisión -->
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-md" data-column="En Revisión">
+                    <div class="flex justify-between items-center border-b border-primary/10 pb-xs">
+                        <div class="flex items-center gap-xs">
+                            <span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface tracking-wider">EN REVISIÓN</h3>
+                        </div>
+                        <span id="count-revision" class="bg-amber-950/40 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-full card-count">0</span>
+                    </div>
+                    <div class="flex-grow flex flex-col gap-sm overflow-y-auto max-h-[70vh] min-h-[300px] kanban-cards-area p-1 rounded-lg transition-all duration-200" data-status="En Revisión">
+                        <!-- Cards -->
+                    </div>
+                </div>
+
+                <!-- Column: Validado -->
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-md" data-column="Validado">
+                    <div class="flex justify-between items-center border-b border-primary/10 pb-xs">
+                        <div class="flex items-center gap-xs">
+                            <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface tracking-wider">VALIDADO</h3>
+                        </div>
+                        <span id="count-validado" class="bg-emerald-950/40 text-emerald-400 text-xs font-bold px-2 py-0.5 rounded-full card-count">0</span>
+                    </div>
+                    <div class="flex-grow flex flex-col gap-sm overflow-y-auto max-h-[70vh] min-h-[300px] kanban-cards-area p-1 rounded-lg transition-all duration-200" data-status="Validado">
+                        <!-- Cards -->
+                    </div>
+                </div>
+
+                <!-- Column: Observado -->
+                <div class="bg-surface-container p-md c-frame rounded-xl flex flex-col gap-md" data-column="Observado">
+                    <div class="flex justify-between items-center border-b border-primary/10 pb-xs">
+                        <div class="flex items-center gap-xs">
+                            <span class="w-2.5 h-2.5 bg-red-400 rounded-full"></span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface tracking-wider">OBSERVADO</h3>
+                        </div>
+                        <span id="count-observado" class="bg-red-950/40 text-red-400 text-xs font-bold px-2 py-0.5 rounded-full card-count">0</span>
+                    </div>
+                    <div class="flex-grow flex flex-col gap-sm overflow-y-auto max-h-[70vh] min-h-[300px] kanban-cards-area p-1 rounded-lg transition-all duration-200" data-status="Observado">
+                        <!-- Cards -->
+                    </div>
                 </div>
             </div>
         </section>
