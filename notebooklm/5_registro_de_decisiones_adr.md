@@ -71,4 +71,11 @@ El objetivo de registrar estas decisiones es mantener la trazabilidad de por qu�
 * **Decisión**: Añadir un botón `"GESTIONAR DEPARTAMENTOS"` (`#btn-gestionar-depts`) y un modal de mantenimiento (`#dept-modal`) en `initiatives.html` controlado reactivamente por `src/js/initiatives.js` para usuarios con el rol `'administrador'`.
 * **Razón**: Permite la flexibilidad operativa para que los administradores mantengan actualizado el catálogo de departamentos de la compañía en Supabase directamente desde la misma pantalla donde se ingresan y filtran las iniciativas, evitando la duplicación de páginas de mantenimiento.
 
+### ADR 11: Cierre de Sesión Rápido, Avatar Personalizado y Responsive Drawer Centralizado
+* **Contexto**: El cierre de sesión anterior era implícito (clic en el avatar) y poco intuitivo, no había forma de cambiar el avatar de usuario para identificarse y la barra lateral se desconfiguraba en tabletas o no respondía en móviles.
+* **Problema**: La falta de una experiencia de salida e identificación fluida reducía la usabilidad del sistema en dispositivos móviles y aumentaba la fricción de uso.
+* **Decisión**: Centralizar en `auth.js` la inyección de: (1) un botón de salida rápida (`#header-logout-btn`) en el TopAppBar, (2) un botón completo de logout (`#sidebar-logout-btn`) en la base del Aside, (3) un menú Popover de perfil con carga de avatar Base64 persistido en `localStorage`, y (4) la reconfiguración y control del aside como un Drawer deslizable móvil mediante escuchas al botón hamburguesa y un overlay `#sidebar-overlay`.
+* **Razón**: Al inyectar dinámicamente estos componentes en tiempo de ejecución desde `auth.js`, logramos una mejora dramática en la UX, responsividad y personalización del perfil de forma universal (DRY) para todas las vistas del proyecto sin alterar sus archivos HTML estáticos.
+
+
 

@@ -105,4 +105,17 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
   * Refresco dinámico automático en tiempo real de todos los selectores de departamentos en la pantalla principal tras operaciones de inserción o borrado para garantizar consistencia del DOM.
 * **Build de Producción**: Confirmada la compilación correcta mediante `npm run build` y empaquetado del bundle modificado de iniciativas.
 
+### C. Cierre de Sesión Rápido, Avatar Personalizado y Responsive Drawer Centralizado
+* **Inyección de Estilos y Drawer (`src/js/auth.js`)**: Configurado el Sidebar (`aside`) dinámicamente como un Drawer fixed deslizable en resoluciones móviles y tablets, y flex relativo en desktop. Inyectado un `#sidebar-overlay` translúcido para capturar el click de cierre y enlazado el botón hamburguesa (`menu`) del header superior.
+* **Salida Rápida (Logout) de Dos Vías**:
+  * Inyectado en el TopAppBar de la cabecera un botón directo de salida rápida (`#header-logout-btn`) con el icono de `logout` en rojo tenue.
+  * Inyectado en el pie del Sidebar izquierdo un botón textual prominente `"Cerrar Sesión"` (`#sidebar-logout-btn`).
+  * Ambos disparan la confirmación de seguridad y limpian la sesión local redirigiendo a `login.html`.
+* **Identificación del Usuario y Carga de Avatar**:
+  * Diseñado un menú Popover flotante al lado del perfil que muestra la información de rol e email del usuario.
+  * Incorporada la carga de imágenes personalizadas mediante un input de archivos. Lee el archivo como DataURL (Base64) y lo guarda en `localStorage.getItem('custom_avatar_base64')`, actualizando en caliente todos los avatares presentes en el DOM de forma sincronizada.
+  * Añadida la funcionalidad de restauración de imagen para limpiar la clave de almacenamiento.
+* **Build de Producción**: Compilado con éxito con Vite y verificado que el JS de autenticación empaqueta todas las mejoras.
+
+
 

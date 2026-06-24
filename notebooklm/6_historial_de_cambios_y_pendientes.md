@@ -12,7 +12,12 @@ Este documento consolida el historial de desarrollo, optimizaciones de código, 
   * Integración de un botón de `"GESTIONAR DEPARTAMENTOS"` y un modal `#dept-modal` exclusivo para administradores.
   * Lógica para el listado reactivo, creación y eliminación física en cascada en la base de datos de Supabase.
   * Sincronización en caliente y refresco dinámico de todos los selectores de la página principal tras cualquier inserción o borrado para garantizar la integridad visual del DOM.
+* **Cierre de Sesión Rápido, Avatar Personalizado y Responsive Drawer Centralizado (`src/js/auth.js`)**:
+  * Inyección dinámica de clases y eventos para Drawer móvil deslizable (overlay `#sidebar-overlay` y alternador de botón hamburguesa).
+  * Salida rápida mediante botón directo `#header-logout-btn` (cabecera) y botón completo `#sidebar-logout-btn` (Sidebar).
+  * Menú Popover de perfil con carga de avatar Base64 persistido en `localStorage` y botón de restauración por defecto.
 * **Verificación de Compilación**: Ejecutado `npm run build` con éxito, verificando que Vite empaqueta la vista y su lógica JS sin dependencias rotas.
+
 
 
 ### B. Actualización y Refactorización (23 de Junio de 2026)
