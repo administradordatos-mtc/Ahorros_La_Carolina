@@ -134,6 +134,13 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Incidente**: Al intentar ingresar con un nuevo usuario creado por el Administrador, se presentaba el mensaje de error `Email not confirmed` de Supabase Auth.
 * **Resolución**: Identificado que la directiva por defecto de Supabase exige confirmación por enlace de correo. Se estructuraron los pasos para desactivar la directiva `Confirm email` en la consola de Supabase Auth, y se proveyó el script SQL para autoconfirmar cuentas de forma masiva en la tabla `auth.users` para corregir los usuarios creados previamente.
 
+### G. Corrección de Visualización en Dispositivos Móviles (Altura Responsiva)
+* **Incidente**: Reportado que el contenido de los proyectos/iniciativas y métricas del dashboard colapsaba y no era visible en pantallas móviles.
+* **Diagnóstico**: Detectado que la regla CSS de altura estática `min-height: max(884px, 100dvh);` inyectada en el `body` forzaba a que las dimensiones del contenedor excedieran el viewport del dispositivo móvil. Al combinarse con layouts flexibles y secciones con scroll (`overflow-y-auto`), el motor del navegador móvil colapsaba a `0px` la altura del contenido principal, ocultándolo por completo.
+* **Solución**: Se reemplazó la regla de min-height rígida por la propiedad responsiva flexible `min-height: 100dvh;` (Dynamic Viewport Height) en las 6 vistas principales de la aplicación (`index.html`, `users.html`, `initiatives.html`, `execution.html`, `reports.html`, `kpis.html`). Esto permite adaptar de forma nativa la pantalla al viewport real del dispositivo, eliminando colisiones de scrolls y haciendo visible todo el contenido.
+* **Git Sincronizado**: Compilado con `npm run build` y subido a `origin` y `vercel` en la rama `development`.
+
+
 
 
 
