@@ -135,4 +135,12 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Contexto**: Los reportes ejecutivos poseían fechas estáticas obsoletas (2023 y 2024) y no analizaban la información real cargada en Supabase sobre iniciativas de ahorro y ejecuciones del periodo 2026.
 * **Razón**: Proporciona una herramienta de auditoría y análisis de caja real y dinámica para directivos y control interno, alineando los datos visualizados en reportes con las transacciones de ejecución guardadas en base de datos.
 
+---
+
+## 20. Gestión de Departamentos Integrada en la Vista de Iniciativas
+* **Decisión**: Añadir un botón `"GESTIONAR DEPARTAMENTOS"` (`#btn-gestionar-depts`) y un modal de mantenimiento (`#dept-modal`) en `initiatives.html` controlado reactivamente por `src/js/initiatives.js` para usuarios con el rol `'administrador'`.
+* **Contexto**: Se requería un mecanismo sencillo y autónomo para crear y borrar departamentos presupuestales, ya que la pestaña centralizada de parámetros generales fue eliminada físicamente al consolidar la plataforma en torno a Iniciativas de Ahorro.
+* **Razón**: Permite la flexibilidad operativa para que los administradores mantengan actualizado el catálogo de departamentos de la compañía en Supabase directamente desde la misma pantalla donde se ingresan y filtran las iniciativas, evitando la duplicación de páginas de mantenimiento.
+
+
 

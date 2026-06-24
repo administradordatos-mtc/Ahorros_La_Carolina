@@ -96,3 +96,13 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Exportación CSV e Impresión PDF**: Implementación de un exportador CSV reactivo que genera y descarga dinámicamente un archivo con los datos del periodo seleccionado. Configuración de estilos `@media print` para generar impresiones en PDF limpias y profesionales, ocultando elementos del sistema como el menú lateral y los filtros de búsqueda.
 * **Verificación de Compilación**: Ejecutado `npm run build` con éxito, verificando que Vite empaqueta la vista y su lógica JS sin dependencias rotas.
 
+### B. Gestión de Departamentos desde la Vista de Iniciativas
+* **Mapeo e Integración UI (`initiatives.html`)**: Añadido el botón `"GESTIONAR DEPARTAMENTOS"` (`#btn-gestionar-depts`) y el modal `#dept-modal` con un formulario de creación y una lista para visualizar y eliminar registros en cascada, accesible únicamente para usuarios con rol `administrador`.
+* **Interactividad y Sincronización Supabase (`src/js/initiatives.js`)**:
+  * Implementado el listado reactivo de departamentos (`refreshDeptModalList()`) consultando Supabase de forma directa.
+  * Lógica de borrado físico del departamento con cuadro de advertencia sobre la eliminación en cascada.
+  * Formulario de creación con inserción de departamento e inicialización inmediata de la vista principal con el nuevo departamento seleccionado.
+  * Refresco dinámico automático en tiempo real de todos los selectores de departamentos en la pantalla principal tras operaciones de inserción o borrado para garantizar consistencia del DOM.
+* **Build de Producción**: Confirmada la compilación correcta mediante `npm run build` y empaquetado del bundle modificado de iniciativas.
+
+

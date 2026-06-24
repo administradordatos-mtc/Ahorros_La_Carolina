@@ -8,7 +8,12 @@ Este documento consolida el historial de desarrollo, optimizaciones de código, 
 * **Rediseño e Interactividad (`reports.html`)**: Reemplazado todo el grid de reportes estáticos obsoletos (2023 y 2024) por un panel interactivo con barra de filtros para seleccionar Año, Mes y Departamento. Incorporación de Bento Cards de KPIs (Ahorro Proyectado, Ahorro Real Validado, Desviación Neta, Eficiencia de Validación) y una tabla detallada con spinner de carga.
 * **Lógica del Negocio y Consultas Supabase (`src/js/reports.js`)**: Creación de un script dedicado que consulta `iniciativas` e `iniciativas_ejecucion` y calcula en tiempo real el ahorro proyectado del periodo (acotado a la fecha de inicio de ejecución de cada iniciativa) y el ahorro real validado.
 * **Exportación CSV e Impresión PDF**: Implementación de un exportador CSV reactivo que genera y descarga dinámicamente un archivo con los datos del periodo seleccionado. Configuración de estilos `@media print` para generar impresiones en PDF limpias y profesionales, ocultando elementos del sistema como el menú lateral y los filtros de búsqueda.
+* **Mantenimiento y Parámetros de Departamentos (`initiatives.html`, `src/js/initiatives.js`)**:
+  * Integración de un botón de `"GESTIONAR DEPARTAMENTOS"` y un modal `#dept-modal` exclusivo para administradores.
+  * Lógica para el listado reactivo, creación y eliminación física en cascada en la base de datos de Supabase.
+  * Sincronización en caliente y refresco dinámico de todos los selectores de la página principal tras cualquier inserción o borrado para garantizar la integridad visual del DOM.
 * **Verificación de Compilación**: Ejecutado `npm run build` con éxito, verificando que Vite empaqueta la vista y su lógica JS sin dependencias rotas.
+
 
 ### B. Actualización y Refactorización (23 de Junio de 2026)
 * **Visualización de Rama Git Activa**:

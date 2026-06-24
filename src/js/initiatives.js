@@ -9,6 +9,12 @@ const btnClose = document.getElementById('btn-close-modal');
 const btnCancel = document.getElementById('btn-cancel-modal');
 const form = document.getElementById('new-initiative-form');
 
+const btnGestionarDepts = document.getElementById('btn-gestionar-depts');
+const deptModal = document.getElementById('dept-modal');
+const btnCloseDeptModal = document.getElementById('btn-close-dept-modal');
+const deptForm = document.getElementById('new-dept-form');
+const deptListContainer = document.getElementById('dept-list-container');
+
 // Cards
 const cardAhorroMes = document.getElementById('card-ahorro-mes');
 const cardAhorroAnio = document.getElementById('card-ahorro-anio');
@@ -35,6 +41,62 @@ const init = async () => {
     const userRole = localStorage.getItem('user_role');
     if (userRole === 'administrador') {
         if (btnNew) btnNew.classList.remove('hidden');
+        if (btnGestionarDepts) btnGestionarDepts.classList.remove('hidden');
+    }
+
+    // Lógica del modal de departamentos
+    const hideDeptModal = () => {
+        if (deptModal) deptModal.classList.add('hidden');
+        if (deptForm) deptForm.reset();
+    };
+
+    if (btnGestionarDepts) {
+        btnGestionarDepts.addEventListener('click', async () => {
+            await refreshDeptModalList();
+            if (deptModal) deptModal.classList.remove('hidden');
+        });
+    }
+
+    if (btnCloseDeptModal) btnCloseDeptModal.addEventListener('click', hideDeptModal);
+
+    if (deptForm) {
+        deptForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('dept-new-name');
+            const nombre = input.value.trim();
+            if (!nombre) return;
+
+            const submitBtn = deptForm.querySelector('button[type="submit"]');
+            const origText = submitBtn.textContent;
+            submitBtn.textContent = '...';
+            submitBtn.disabled = true;
+
+            try {
+                const { error: insertError } = await supabase
+                    .from('departamentos')
+                    .insert({ nombre: nombre });
+
+                if (insertError) throw insertError;
+
+                input.value = '';
+                await loadDepartments();
+                await refreshDeptModalList();
+
+                // Preseleccionar el departamento recién creado
+                const newDeptOption = Array.from(selectDept.options).find(opt => opt.text === nombre);
+                if (newDeptOption) {
+                    selectDept.value = newDeptOption.value;
+                    await loadInitiatives(newDeptOption.value);
+                }
+
+            } catch (err) {
+                console.error('Error al crear departamento:', err);
+                alert('No se pudo crear el departamento (puede que ya exista): ' + err.message);
+            } finally {
+                submitBtn.textContent = origText;
+                submitBtn.disabled = false;
+            }
+        });
     }
 
     // Cargar departamentos
@@ -406,4 +468,85 @@ function clearSummaries() {
     if (cardTotalIniciativas) cardTotalIniciativas.textContent = '0';
     if (cardIniciativasCurso) cardIniciativasCurso.textContent = '0';
     if (cardPorcentajeCurso) cardPorcentajeCurso.textContent = '0% validadas';
+}
+
+/**
+ * Consulta y pinta la lista de departamentos dentro del modal de mantenimiento
+ */
+async function refreshDeptModalList() {
+    if (!deptListContainer) return;
+    deptListContainer.innerHTML = '<li class="py-sm text-center text-on-surface-variant">Cargando departamentos...</li>';
+
+    try {
+        const { data: depts, error } = await supabase
+            .from('departamentos')
+            .select('*')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        deptListContainer.innerHTML = '';
+
+        if (!depts || depts.length === 0) {
+            deptListContainer.innerHTML = '<li class="py-sm text-center text-on-surface-variant">No hay departamentos.</li>';
+            return;
+        }
+
+        depts.forEach(d => {
+            const li = document.createElement('li');
+            li.className = "flex justify-between items-center py-2 border-b border-primary/5 last:border-b-0";
+            li.innerHTML = `
+                <span class="font-body-md text-on-surface">${d.nombre}</span>
+                <button class="btn-delete-dept text-on-surface-variant hover:text-red-400 p-1 rounded transition-colors cursor-pointer" data-id="${d.id}" data-name="${d.nombre}">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+            `;
+            deptListContainer.appendChild(li);
+        });
+
+        // Configurar listener para eliminar departamento
+        deptListContainer.querySelectorAll('.btn-delete-dept').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const btnEl = e.currentTarget;
+                const deptId = parseInt(btnEl.getAttribute('data-id'));
+                const deptName = btnEl.getAttribute('data-name');
+                
+                if (confirm(`¿Estás seguro de eliminar el departamento "${deptName}"? Esto eliminará de forma irreversible todas sus iniciativas y ejecuciones mensuales en Supabase.`)) {
+                    try {
+                        const { error: deleteError } = await supabase
+                            .from('departamentos')
+                            .delete()
+                            .eq('id', deptId);
+
+                        if (deleteError) throw deleteError;
+
+                        // Recargar catálogos principales y modal
+                        await loadDepartments();
+                        await refreshDeptModalList();
+
+                        // Limpiar pantalla principal si el departamento eliminado estaba seleccionado
+                        if (selectDept.value === String(deptId) || selectDept.value === '') {
+                            selectDept.value = '';
+                            container.innerHTML = `
+                                <tr>
+                                    <td colspan="7" class="py-lg text-center text-on-surface-variant">
+                                        Selecciona un departamento para ver sus iniciativas de ahorro.
+                                    </td>
+                                </tr>
+                            `;
+                            clearSummaries();
+                        }
+
+                    } catch (err) {
+                        console.error('Error al eliminar departamento:', err);
+                        alert('No se pudo eliminar el departamento: ' + err.message);
+                    }
+                }
+            });
+        });
+
+    } catch (err) {
+        console.error('Error al cargar departamentos en modal:', err);
+        deptListContainer.innerHTML = '<li class="py-sm text-center text-red-400">Error al cargar departamentos.</li>';
+    }
 }

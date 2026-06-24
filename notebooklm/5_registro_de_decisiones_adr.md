@@ -65,3 +65,10 @@ El objetivo de registrar estas decisiones es mantener la trazabilidad de por qu�
 * **Decisión**: Reemplazar la página estática de reportes ejecutivos (`reports.html`) por un panel interactivo controlado por un nuevo script `src/js/reports.js`. Esto incluye filtros de Año, Mes y Departamento, la presentación de Bento Cards de KPIs calculados en tiempo real, una tabla detallada por iniciativa con estados coloreados y soporte de exportación CSV e impresión PDF.
 * **Razón**: Proporciona una herramienta de auditoría y análisis de caja real y dinámica para directivos y control interno, alineando los datos visualizados en reportes con las transacciones de ejecución guardadas en base de datos.
 
+### ADR 10: Gestión de Departamentos Integrada en la Vista de Iniciativas
+* **Contexto**: Se requería un mecanismo sencillo y autónomo para crear y borrar departamentos presupuestales, ya que la pestaña centralizada de parámetros generales fue eliminada físicamente al consolidar la plataforma en torno a Iniciativas de Ahorro.
+* **Problema**: La falta de una interfaz visual obligaba a realizar inserciones y eliminaciones de departamentos mediante consultas directas a nivel SQL.
+* **Decisión**: Añadir un botón `"GESTIONAR DEPARTAMENTOS"` (`#btn-gestionar-depts`) y un modal de mantenimiento (`#dept-modal`) en `initiatives.html` controlado reactivamente por `src/js/initiatives.js` para usuarios con el rol `'administrador'`.
+* **Razón**: Permite la flexibilidad operativa para que los administradores mantengan actualizado el catálogo de departamentos de la compañía en Supabase directamente desde la misma pantalla donde se ingresan y filtran las iniciativas, evitando la duplicación de páginas de mantenimiento.
+
+
