@@ -121,6 +121,16 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Robustez en Script SQL (`supabase/change_password_func.sql`)**: Modificado el script SQL para incluir la directiva `create extension if not exists pgcrypto;` al inicio del archivo. Esto asegura de forma preventiva que la extensión criptográfica requerida por las funciones `crypt` y `gen_salt` esté activa en la base de datos remota antes de crear la función.
 * **Diagnóstico de Schema Cache**: Identificado que la llamada en `src/js/users.js` está estructurada de forma correcta con los parámetros `target_user_id` y `new_password`. El error se debe únicamente a la ausencia de la función SQL registrada en la instancia remota de Supabase (o falta de refresco de caché). Se estructuraron las instrucciones SQL consolidadas para que el usuario las aplique directamente.
 
+### E. Visibilidad Visual de Contraseñas (Revelar/Ocultar)
+* **Pantalla de Login (`login.html`)**: Incorporado un contenedor relativo y un botón con icono interactivo (`visibility`) de Google Material Symbols. Al hacer clic, alterna de forma dinámica el tipo del input entre `password` y `text` e intercambia el icono con `visibility_off`.
+* **Administración de Usuarios (`users.html` / `src/js/users.js`)**:
+  * Integrado el botón de revelado visual en el modal de Registro de Nuevo Usuario (`#new-password`).
+  * Integrado el botón de revelado visual en el modal de Cambio de Contraseña de Terceros (`#pwd-new-password`).
+  * Programado el toggle interactivo en caliente de visibilidad mediante una utilidad común `setupPasswordToggle`.
+  * Diseñado un flujo de limpieza y seguridad donde, al cerrar cualquiera de los modales, el input restablece su tipo a `password` y su icono a oculto (`visibility`) por defecto.
+* **Compilación de Producción**: Re-ejecutado `npm run build` con éxito, verificando que los nuevos elementos interactivos y lógica se empaqueten adecuadamente para producción sin colisiones ni errores.
+
+
 
 
 
