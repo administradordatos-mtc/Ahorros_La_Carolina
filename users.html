@@ -297,7 +297,12 @@
                     <label for="new-password" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
                         <span class="text-primary">»»»</span> Contraseña inicial
                     </label>
-                    <input id="new-password" type="password" required minlength="6" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
+                    <div class="relative">
+                        <input id="new-password" type="password" required minlength="6" class="w-full bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md pl-sm pr-10 py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
+                        <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 pr-sm flex items-center text-on-surface-variant hover:text-white transition-colors">
+                            <span class="material-symbols-outlined select-none text-[20px]">visibility</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Rol -->
@@ -352,7 +357,12 @@
                     <label for="pwd-new-password" class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center gap-xs">
                         <span class="text-primary">»»»</span> Nueva Contraseña
                     </label>
-                    <input id="pwd-new-password" type="password" required minlength="6" class="bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md px-sm py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
+                    <div class="relative">
+                        <input id="pwd-new-password" type="password" required minlength="6" class="w-full bg-[#0B0D0F] border border-[#1E2226] text-on-surface font-body-md text-body-md pl-sm pr-10 py-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all" placeholder="Mínimo 6 caracteres"/>
+                        <button type="button" id="toggle-pwd-new-password" class="absolute inset-y-0 right-0 pr-sm flex items-center text-on-surface-variant hover:text-white transition-colors">
+                            <span class="material-symbols-outlined select-none text-[20px]">visibility</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Botones -->

@@ -40,6 +40,11 @@ const init = async () => {
     const hideModal = () => {
         modal.classList.add('hidden');
         form.reset();
+        // Resetear la visibilidad de la contraseña
+        const pwdInput = document.getElementById('new-password');
+        if (pwdInput) pwdInput.type = 'password';
+        const icon = document.querySelector('#toggle-new-password .material-symbols-outlined');
+        if (icon) icon.textContent = 'visibility';
     };
 
     if (btnClose) btnClose.addEventListener('click', hideModal);
@@ -125,10 +130,14 @@ const init = async () => {
         });
     }
 
-    // Eventos del Modal de Cambio de Contraseña
     const hidePwdModal = () => {
         pwdModal.classList.add('hidden');
         formPwd.reset();
+        // Resetear la visibilidad de la contraseña
+        const pwdInput = document.getElementById('pwd-new-password');
+        if (pwdInput) pwdInput.type = 'password';
+        const icon = document.querySelector('#toggle-pwd-new-password .material-symbols-outlined');
+        if (icon) icon.textContent = 'visibility';
     };
 
     if (btnClosePwd) btnClosePwd.addEventListener('click', hidePwdModal);
@@ -189,6 +198,25 @@ const init = async () => {
             }
         });
     }
+
+    // Lógica para alternar visibilidad de contraseña en Modales de Gestión de Usuarios
+    const setupPasswordToggle = (inputId, buttonId) => {
+        const passwordInput = document.getElementById(inputId);
+        const toggleBtn = document.getElementById(buttonId);
+        if (passwordInput && toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                const icon = toggleBtn.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+                }
+            });
+        }
+    };
+
+    setupPasswordToggle('new-password', 'toggle-new-password');
+    setupPasswordToggle('pwd-new-password', 'toggle-pwd-new-password');
 };
 
 if (document.readyState === 'loading') {
