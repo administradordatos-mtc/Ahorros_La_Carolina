@@ -140,6 +140,14 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Solución**: Se reemplazó la regla de min-height rígida por la propiedad responsiva flexible `min-height: 100dvh;` (Dynamic Viewport Height) en las 6 vistas principales de la aplicación (`index.html`, `users.html`, `initiatives.html`, `execution.html`, `reports.html`, `kpis.html`). Esto permite adaptar de forma nativa la pantalla al viewport real del dispositivo, eliminando colisiones de scrolls y haciendo visible todo el contenido.
 * **Git Sincronizado**: Compilado con `npm run build` y subido a `origin` y `vercel` en la rama `development`.
 
+### H. Robustez en Carga de Sesiones (Evitando Pantallas Ocultas en Blanco)
+* **Diagnóstico de Pantallas Ocultas**: Si se producía un error de red en el móvil al consultar Supabase o fallaba la sesión, la promesa `checkSession()` se rechazaba silenciosamente. Debido a que el script de carga en los HTML principales carecía de un bloque `.catch()`, la regla `visibility: hidden;` del `body` (diseñada para prevenir el flash de contenido desprotegido) jamás era removida, dejando la pantalla en negro de forma permanente.
+* **Solución**:
+  * Se modificó el script de inicialización en los 6 archivos HTML principales (`index.html`, `users.html`, `initiatives.html`, `execution.html`, `reports.html`, `kpis.html`) incorporando bloques `.catch(err => { ... })` que fuerzan el paso del `body` a `visibility: visible` ante cualquier fallo.
+  * Se blindaron todos los accesos a la variable `rol` en `src/js/auth.js` (reemplazando `rol.replace` y comparaciones directas por `rol || 'directivo'`), de modo que perfiles sin rol o retrasos de base de datos no interrumpan con errores de tipo `TypeError` la ejecución del script.
+* **Git Sincronizado**: Compilado y empujado a `origin` y `vercel` en la rama `development`.
+
+
 
 
 
