@@ -147,6 +147,16 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
   * Se blindaron todos los accesos a la variable `rol` en `src/js/auth.js` (reemplazando `rol.replace` y comparaciones directas por `rol || 'directivo'`), de modo que perfiles sin rol o retrasos de base de datos no interrumpan con errores de tipo `TypeError` la ejecución del script.
 * **Git Sincronizado**: Compilado y empujado a `origin` y `vercel` en la rama `development`.
 
+### I. Optimización de Espaciados e Inicios de Página (Compactación Móvil)
+* **Incidente**: Reportado que al desplegar la aplicación en pantallas móviles, existían espacios vacíos excesivos arriba del contenido principal y entre los bloques de información.
+* **Diagnóstico**: Encontrado que el padding general superior de las secciones (`p-margin-mobile` que aplica 16px) sumado al margen de flujo vertical (`space-y-lg` que añade 40px a nivel de sección) y a la separación del contenedor de bienvenida (`pb-md` de 24px) resultaban en una separación vertical desproporcionada en móviles.
+* **Solución**:
+  * Se modificaron los 6 archivos HTML principales (`index.html`, `users.html`, `initiatives.html`, `execution.html`, `reports.html`, `kpis.html`) para usar clases responsivas y compactas en dispositivos móviles.
+  * Cambiado el padding y el espaciado de sección de `p-margin-mobile space-y-lg` a `p-4 pt-sm space-y-4 md:space-y-lg`. Esto reduce los espacios entre bloques a 16px en móviles (manteniendo 40px en PC).
+  * Reducidos los gaps verticales y paddings de las cabeceras de bienvenida en móviles (`gap-sm md:gap-md pb-sm md:pb-md`), logrando una visualización sumamente compacta y elegante al inicio del viewport.
+* **Git Sincronizado**: Compilado con Vite y empujado a `origin` y `vercel` en la rama `development`.
+
+
 
 
 
