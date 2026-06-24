@@ -130,6 +130,11 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
   * Diseñado un flujo de limpieza y seguridad donde, al cerrar cualquiera de los modales, el input restablece su tipo a `password` y su icono a oculto (`visibility`) por defecto.
 * **Compilación de Producción**: Re-ejecutado `npm run build` con éxito, verificando que los nuevos elementos interactivos y lógica se empaqueten adecuadamente para producción sin colisiones ni errores.
 
+### F. Diagnóstico y Configuración de Autenticación (Email Not Confirmed)
+* **Incidente**: Al intentar ingresar con un nuevo usuario creado por el Administrador, se presentaba el mensaje de error `Email not confirmed` de Supabase Auth.
+* **Resolución**: Identificado que la directiva por defecto de Supabase exige confirmación por enlace de correo. Se estructuraron los pasos para desactivar la directiva `Confirm email` en la consola de Supabase Auth, y se proveyó el script SQL para autoconfirmar cuentas de forma masiva en la tabla `auth.users` para corregir los usuarios creados previamente.
+
+
 
 
 
