@@ -35,6 +35,7 @@ El proyecto sigue una estructura organizada por módulos y responsabilidades:
 │   │   ├── dashboard.js           # Lógica de KPI Bento y gráficos de tendencias acumulativas de 12 meses
 │   │   ├── initiatives.js         # Modal e inserción de iniciativas de ahorro presupuestal
 │   │   ├── execution.js           # Lógica interactiva de Tabla y Kanban con Drag & Drop para ejecución mensual
+│   │   ├── reports.js             # Lógica analítica interactiva de Reportes Ejecutivos, exportación CSV e impresión PDF
 │   │   ├── kpis.js                # Control de valores de indicadores generales
 │   │   └── users.js               # Creación y administración de perfiles y restablecimiento de claves
 ├── supabase/                      # Migraciones, esquemas SQL y semilla de datos (seeds)

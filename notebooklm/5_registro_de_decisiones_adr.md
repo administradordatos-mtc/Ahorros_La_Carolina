@@ -58,3 +58,10 @@ El objetivo de registrar estas decisiones es mantener la trazabilidad de por qu�
 * **Problema**: Replicar un badge estático en cada archivo HTML causaba duplicidad y complejidad en la actualización del código.
 * **Decisión**: Ejecutar el comando `git rev-parse --abbrev-ref HEAD` de forma síncrona dentro de `vite.config.js` durante la fase de empaquetado para definir la variable de entorno de compilación `__GIT_BRANCH__`. En el cliente, `auth.js` inyecta automáticamente un badge dinámico (`#git-branch-badge`) en la cabecera durante la validación de la sesión.
 * **Razón**: Centraliza y automatiza la presentación del entorno de desarrollo sin duplicación de código en el DOM HTML (principio DRY).
+
+### ADR 9: Dinamización y Filtro Temporal de Reportes Ejecutivos
+* **Contexto**: Los reportes ejecutivos poseían fechas estáticas obsoletas (2023 y 2024) y no analizaban la información real cargada en Supabase sobre iniciativas de ahorro y ejecuciones del periodo 2026.
+* **Problema**: La falta de interactividad impedía auditar los periodos reales de control de caja y exportar resultados financieros.
+* **Decisión**: Reemplazar la página estática de reportes ejecutivos (`reports.html`) por un panel interactivo controlado por un nuevo script `src/js/reports.js`. Esto incluye filtros de Año, Mes y Departamento, la presentación de Bento Cards de KPIs calculados en tiempo real, una tabla detallada por iniciativa con estados coloreados y soporte de exportación CSV e impresión PDF.
+* **Razón**: Proporciona una herramienta de auditoría y análisis de caja real y dinámica para directivos y control interno, alineando los datos visualizados en reportes con las transacciones de ejecución guardadas en base de datos.
+
