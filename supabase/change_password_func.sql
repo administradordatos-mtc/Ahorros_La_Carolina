@@ -1,3 +1,6 @@
+-- Asegurar que la extensión pgcrypto esté activa (requerida para encriptar contraseñas)
+create extension if not exists pgcrypto;
+
 -- Función para que un administrador cambie la contraseña de cualquier usuario
 create or replace function public.actualizar_password_usuario(target_user_id uuid, new_password text)
 returns boolean

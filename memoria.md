@@ -117,5 +117,10 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
   * Añadida la funcionalidad de restauración de imagen para limpiar la clave de almacenamiento.
 * **Build de Producción**: Compilado con éxito con Vite y verificado que el JS de autenticación empaqueta todas las mejoras.
 
+### D. Resolución de Error al Cambiar Contraseña (RPC Schema Cache)
+* **Robustez en Script SQL (`supabase/change_password_func.sql`)**: Modificado el script SQL para incluir la directiva `create extension if not exists pgcrypto;` al inicio del archivo. Esto asegura de forma preventiva que la extensión criptográfica requerida por las funciones `crypt` y `gen_salt` esté activa en la base de datos remota antes de crear la función.
+* **Diagnóstico de Schema Cache**: Identificado que la llamada en `src/js/users.js` está estructurada de forma correcta con los parámetros `target_user_id` y `new_password`. El error se debe únicamente a la ausencia de la función SQL registrada en la instancia remota de Supabase (o falta de refresco de caché). Se estructuraron las instrucciones SQL consolidadas para que el usuario las aplique directamente.
+
+
 
 
