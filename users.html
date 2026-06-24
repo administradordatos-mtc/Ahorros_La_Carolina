@@ -122,11 +122,16 @@
 <body class="flex flex-col md:flex-row min-h-screen">
     <script type="module">
         import { checkSession } from './src/js/auth.js';
-        checkSession('administrador').then(session => {
-            if (session) {
+        checkSession('administrador')
+            .then(session => {
+                if (session) {
+                    document.body.style.visibility = 'visible';
+                }
+            })
+            .catch(err => {
+                console.error("Error al validar sesión:", err);
                 document.body.style.visibility = 'visible';
-            }
-        });
+            });
     </script>
 
     <!-- Sidebar / Navigation Drawer (Desktop) -->

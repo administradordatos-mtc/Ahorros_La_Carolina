@@ -240,7 +240,7 @@ function actualizarInterfazUsuario(email, rol) {
                     </div>
                     <div class="flex flex-col truncate">
                         <span id="dropdown-user-email" class="font-bold text-on-surface text-xs truncate" title="${email}">${email}</span>
-                        <span id="dropdown-user-role" class="text-[10px] text-primary uppercase font-bold tracking-wider mt-[2px]">${rol.replace('_', ' ')}</span>
+                        <span id="dropdown-user-role" class="text-[10px] text-primary uppercase font-bold tracking-wider mt-[2px]">${(rol || 'directivo').replace('_', ' ')}</span>
                     </div>
                 </div>
                 <div class="h-[1px] bg-primary/10 my-base"></div>
@@ -365,10 +365,11 @@ function actualizarInterfazUsuario(email, rol) {
         }
 
         const operatorRoleEl = document.querySelector('aside .font-body-md');
+        const userRole = rol || 'directivo';
         if (operatorRoleEl) {
-            if (rol === 'administrador') {
+            if (userRole === 'administrador') {
                 operatorRoleEl.textContent = 'ADMINISTRADOR';
-            } else if (rol === 'control_interno') {
+            } else if (userRole === 'control_interno') {
                 operatorRoleEl.textContent = 'CONTROL INTERNO';
             } else {
                 operatorRoleEl.textContent = 'DIRECTIVO';
@@ -376,7 +377,7 @@ function actualizarInterfazUsuario(email, rol) {
         }
 
         // Ocultar botones o vistas administrativas si el usuario es solo "directivo"
-        if (rol === 'directivo') {
+        if (userRole === 'directivo') {
             const btnReportar = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('REPORTAR GASTO'));
             if (btnReportar) {
                 btnReportar.style.display = 'none';
@@ -384,7 +385,7 @@ function actualizarInterfazUsuario(email, rol) {
         }
 
         // Mostrar accesos de administración de usuarios si el usuario es administrador
-        if (rol === 'administrador') {
+        if (userRole === 'administrador') {
             const menuUsuarios = document.querySelectorAll('#menu-usuarios, #mobile-menu-usuarios');
             menuUsuarios.forEach(el => {
                 el.classList.remove('hidden');

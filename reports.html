@@ -182,11 +182,16 @@
 <body class="min-h-screen overflow-x-hidden font-body-md text-body-md">
     <script type="module">
         import { checkSession } from './src/js/auth.js';
-        checkSession().then(session => {
-            if (session) {
+        checkSession()
+            .then(session => {
+                if (session) {
+                    document.body.style.visibility = 'visible';
+                }
+            })
+            .catch(err => {
+                console.error("Error al validar sesión:", err);
                 document.body.style.visibility = 'visible';
-            }
-        });
+            });
     </script>
     <!-- Watermark Background -->
     <div class="watermark-c">C</div>
