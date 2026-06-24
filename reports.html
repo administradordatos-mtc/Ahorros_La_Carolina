@@ -140,6 +140,43 @@
             height: 1px;
             background: linear-gradient(90deg, rgba(241, 212, 127, 0.2) 0%, transparent 100%);
         }
+        @media print {
+            aside, header, nav, .print\:hidden, #btn-export-csv, #btn-print-pdf {
+                display: none !important;
+            }
+            main {
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+                color: black !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .watermark-c {
+                display: none !important;
+            }
+            .bg-surface-container, .bg-surface-container-low, .bg-surface-container-high, .bg-surface-container-lowest {
+                background: white !important;
+                color: black !important;
+                border-color: #ddd !important;
+            }
+            .text-primary, .text-secondary {
+                color: #8c6d1d !important;
+            }
+            .text-on-surface, .text-on-surface-variant {
+                color: black !important;
+            }
+            th, td {
+                color: black !important;
+                border-bottom-color: #ccc !important;
+            }
+            .border-primary\/15, .border-primary\/10 {
+                border-color: #ccc !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden font-body-md text-body-md">
@@ -221,81 +258,133 @@
                     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Acceda a los informes detallados de gestión, eficiencia operativa y proyecciones financieras de la flota Carolina.</p>
                 </div>
 
-                <!-- Reports Grid / Bento List -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-                    <!-- Main Feature: Monthly Report -->
-                    <div class="md:col-span-8 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 c-frame hover:bg-surface-container-high transition-all cursor-pointer relative overflow-hidden active:scale-[0.98]">
-                        <div class="flex flex-col md:flex-row gap-md items-start md:items-center justify-between relative z-10">
-                            <div class="flex items-center gap-md">
-                                <div class="w-16 h-16 flex items-center justify-center bg-secondary-container/20 rounded-lg text-secondary border border-secondary/20">
-                                    <span class="material-symbols-outlined text-[40px]">picture_as_pdf</span>
-                                </div>
-                                <div>
-                                    <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Reporte Mensual de Eficiencia</h3>
-                                    <p class="font-body-md text-body-md text-on-surface-variant">Análisis detallado de consumo, rutas y tiempos de respuesta. Mayo 2024.</p>
-                                </div>
-                            </div>
-                            <button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-headline-md text-headline-md flex items-center gap-xs hover:bg-primary-container transition-colors active:scale-95">
-                                DESCARGAR <span class="material-symbols-outlined">download</span>
-                            </button>
+                <!-- Barra de Filtros del Reporte -->
+                <div class="bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-wrap gap-md items-end justify-between print:hidden">
+                    <div class="flex flex-wrap gap-md flex-1">
+                        <div class="flex flex-col gap-xs">
+                            <label for="report-year" class="font-label-sm text-label-sm text-primary uppercase">Año Presupuestal</label>
+                            <select id="report-year" class="bg-surface-container-lowest border border-primary/20 rounded-lg text-on-surface p-sm min-w-[120px] focus:border-primary focus:ring-0">
+                                <option value="2025">2025</option>
+                                <option value="2026" selected>2026</option>
+                                <option value="2027">2027</option>
+                            </select>
                         </div>
-                        <!-- Background Accent -->
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <span class="material-symbols-outlined text-[160px] text-primary">assessment</span>
+                        <div class="flex flex-col gap-xs">
+                            <label for="report-month" class="font-label-sm text-label-sm text-primary uppercase">Mes</label>
+                            <select id="report-month" class="bg-surface-container-lowest border border-primary/20 rounded-lg text-on-surface p-sm min-w-[150px] focus:border-primary focus:ring-0">
+                                <option value="all" selected>Todos los meses</option>
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label for="report-dept" class="font-label-sm text-label-sm text-primary uppercase">Departamento</label>
+                            <select id="report-dept" class="bg-surface-container-lowest border border-primary/20 rounded-lg text-on-surface p-sm min-w-[200px] focus:border-primary focus:ring-0">
+                                <option value="">General (Todos)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-sm mt-md md:mt-0">
+                        <button id="btn-export-csv" class="border border-primary text-primary hover:bg-primary hover:text-on-primary px-md py-sm rounded-lg font-headline-md text-headline-md flex items-center gap-xs transition-colors active:scale-95">
+                            EXPORTAR CSV <span class="material-symbols-outlined">download</span>
+                        </button>
+                        <button id="btn-print-pdf" class="bg-primary text-on-primary hover:bg-primary-container px-md py-sm rounded-lg font-headline-md text-headline-md flex items-center gap-xs transition-colors active:scale-95">
+                            IMPRIMIR PDF <span class="material-symbols-outlined">print</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bento KPIs Dinámicos -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+                    <!-- KPI Ahorro Proyectado -->
+                    <div class="bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-between min-h-[140px] hover:bg-surface-container-high transition-colors">
+                        <div class="flex justify-between items-start">
+                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Ahorro Esperado</span>
+                            <span class="material-symbols-outlined text-primary text-[28px]">analytics</span>
+                        </div>
+                        <div>
+                            <h3 id="kpi-esperado" class="font-headline-lg text-3xl text-on-surface mt-sm">$ 0</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Ahorro proyectado del periodo</p>
                         </div>
                     </div>
 
-                    <!-- Side Info Card -->
-                    <div class="md:col-span-4 bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-center gap-sm">
-                        <div class="flex items-center gap-xs">
-                            <span class="material-symbols-outlined text-primary">info</span>
-                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Estado del Sistema</span>
+                    <!-- KPI Ahorro Real Validado -->
+                    <div class="bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-between min-h-[140px] hover:bg-surface-container-high transition-colors">
+                        <div class="flex justify-between items-start">
+                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Ahorro Real Validado</span>
+                            <span class="material-symbols-outlined text-primary text-[28px]">verified_user</span>
                         </div>
-                        <p class="font-body-md text-body-md text-on-surface-variant">Los datos están actualizados al cierre de operación de ayer a las 23:59.</p>
-                        <div class="mt-base h-1 w-full bg-surface-variant rounded-full overflow-hidden">
-                            <div class="h-full bg-primary w-full animate-pulse"></div>
-                        </div>
-                    </div>
-
-                    <!-- Secondary Reports -->
-                    <div class="md:col-span-6 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 hover:bg-surface-container-high transition-all cursor-pointer active:scale-[0.98]">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-md">
-                                <div class="w-12 h-12 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant border border-primary/10">
-                                    <span class="material-symbols-outlined">picture_as_pdf</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">Comparativa Trimestral</h4>
-                                    <p class="font-body-md text-body-md text-on-surface-variant">Q1 vs Q2 2024</p>
-                                </div>
-                            </div>
-                            <span class="text-primary font-body-md flex items-center group-hover:translate-x-1 transition-transform">VER »»</span>
+                        <div>
+                            <h3 id="kpi-real-validado" class="font-headline-lg text-3xl text-on-surface mt-sm">$ 0</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Ahorros aprobados por Control Interno</p>
                         </div>
                     </div>
 
-                    <div class="md:col-span-6 group bg-surface-container rounded-xl p-md border-l border-t border-primary/15 hover:bg-surface-container-high transition-all cursor-pointer active:scale-[0.98]">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-md">
-                                <div class="w-12 h-12 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant border border-primary/10">
-                                    <span class="material-symbols-outlined">picture_as_pdf</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary">Análisis de Desviaciones</h4>
-                                    <p class="font-body-md text-body-md text-on-surface-variant">Presupuesto Operativo 2024</p>
-                                </div>
-                            </div>
-                            <span class="text-primary font-body-md flex items-center group-hover:translate-x-1 transition-transform">VER »»</span>
+                    <!-- KPI Desviación -->
+                    <div class="bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-between min-h-[140px] hover:bg-surface-container-high transition-colors">
+                        <div class="flex justify-between items-start">
+                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Desviación</span>
+                            <span class="material-symbols-outlined text-primary text-[28px]">difference</span>
+                        </div>
+                        <div>
+                            <h3 id="kpi-desviacion" class="font-headline-lg text-3xl text-on-surface mt-sm">$ 0</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Diferencia (Real Validado - Esperado)</p>
                         </div>
                     </div>
 
-                    <!-- Custom Visual Feature -->
-                    <div class="md:col-span-12 h-48 rounded-xl overflow-hidden relative border border-primary/10 group">
-                        <img alt="Transport Background" class="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgn9LYyA-3FFoZtJPVAPmdWAw-zZPnrV1HakSSlo6YIdvbq1G3xH0HTUImBU40NPJnqm9Z48C99HBs680hV7D91IBMoiPMhws_cWpT9ZByMl66qPJitoWG2xORspk1i9A2uLQibI4RtGFPWvbMqnlprHFjqRrBqNlCA9bapdjlS1siXA9jE7qvYF1qnWWiGnxVgjZL6TRN-YsIuapzrozk_ZaECggLMoDgtNbGs3_tHy3-WlijpVRGocjcyyWwY4nNYo3qfexdJsM"/>
-                        <div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent flex flex-col justify-center px-lg">
-                            <span class="font-label-sm text-label-sm text-primary mb-xs">PRÓXIMA ENTREGA</span>
-                            <h3 class="font-display-lg text-4xl text-on-surface">REPORTE ANUAL 2023</h3>
-                            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm">Consolidación completa del ejercicio fiscal previo disponible el 15 de Junio.</p>
+                    <!-- KPI Eficiencia -->
+                    <div class="bg-surface-container rounded-xl p-md border-l border-t border-primary/15 flex flex-col justify-between min-h-[140px] hover:bg-surface-container-high transition-colors">
+                        <div class="flex justify-between items-start">
+                            <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Eficiencia de Validación</span>
+                            <span class="material-symbols-outlined text-primary text-[28px]">speed</span>
                         </div>
+                        <div>
+                            <h3 id="kpi-eficiencia" class="font-headline-lg text-3xl text-on-surface mt-sm">0.0 %</h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Porcentaje del ahorro validado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Detallada de Reportes -->
+                <div class="bg-surface-container rounded-xl border border-primary/15 overflow-hidden">
+                    <div class="px-md py-sm border-b border-primary/15 bg-surface-container-low flex justify-between items-center">
+                        <h3 class="font-headline-md text-headline-md text-primary">DESGLOSE DE INICIATIVAS EN EL PERIODO</h3>
+                        <div id="reports-spinner" class="hidden flex items-center gap-xs">
+                            <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">Cargando datos...</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surface-container-high text-primary border-b border-primary/15">
+                                    <th class="py-4 px-6 font-headline-md text-headline-md">Iniciativa</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md">Departamento</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md text-right">Ahorro Proyectado</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md text-right">Ahorro Real</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md text-center">Estado Pipeline</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md text-right">Desviación</th>
+                                    <th class="py-4 px-6 font-headline-md text-headline-md">Observaciones de Auditoría</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body" class="divide-y divide-primary/10">
+                                <tr>
+                                    <td colspan="7" class="py-md text-center text-on-surface-variant">
+                                        Seleccione un periodo para consultar los reportes.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -333,36 +422,13 @@
         </nav>
     </div>
 
+    <script type="module" src="./src/js/reports.js"></script>
     <script>
         // Micro-interactions and effects
         document.querySelectorAll('.active\\:scale-95, .active\\:scale-90').forEach(el => {
             el.addEventListener('mousedown', () => el.style.transform = 'scale(0.95)');
             el.addEventListener('mouseup', () => el.style.transform = '');
             el.addEventListener('mouseleave', () => el.style.transform = '');
-        });
-
-        // Simple Fade In for reports
-        window.addEventListener('DOMContentLoaded', () => {
-            const items = document.querySelectorAll('.grid > div');
-            items.forEach((item, index) => {
-                item.style.opacity = '0';
-                item.style.transform = 'translateY(20px)';
-                item.style.transition = 'all 0.5s ease-out';
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }, 100 * index);
-            });
-        });
-
-        // Interactive border transitions
-        document.querySelectorAll('.c-frame').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.borderColor = 'rgba(241, 212, 127, 0.4)';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.borderColor = 'rgba(241, 212, 127, 0.15)';
-            });
         });
     </script>
 </body>

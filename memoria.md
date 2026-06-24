@@ -85,3 +85,14 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
 * **Desarrollo de la Lógica Interactiva (`src/js/execution.js`)**: Implementada la lógica de carga cruzada (iniciativas con ejecuciones registradas), bloqueo de campos en base a rol (`directivo` de solo lectura) y guardado reactivo individual por fila vía upsert.
 * **Actualización del Dashboard (`src/js/dashboard.js`)**: Adaptadas las Bento Cards y la lógica del gráfico anual de 12 meses para reflejar el ahorro real consolidando las ejecuciones en estado `'Validado'` en lugar de basarse en el estado binario general de las iniciativas.
 * **Vinculación en Navegación y Compilación**: Agregado el enlace a "Ejecución" (`execution.html`) en la barra lateral desktop y menú móvil de las 5 vistas del proyecto. Añadido el entry point a `vite.config.js`.
+
+---
+
+## 4. Trabajo Realizado y Desarrollos (24 de Junio de 2026)
+
+### A. Dinamización y Filtros Temporales en Reportes Ejecutivos
+* **Rediseño e Interactividad (`reports.html`)**: Reemplazado todo el grid de reportes estáticos obsoletos (2023 y 2024) por un panel interactivo con barra de filtros para seleccionar Año, Mes y Departamento. Incorporación de Bento Cards de KPIs (Ahorro Proyectado, Ahorro Real Validado, Desviación Neta, Eficiencia de Validación) y una tabla detallada con spinner de carga.
+* **Lógica del Negocio y Consultas Supabase (`src/js/reports.js`)**: Creación de un script dedicado que consulta `iniciativas` e `iniciativas_ejecucion` y calcula en tiempo real el ahorro proyectado del periodo (acotado a la fecha de inicio de ejecución de cada iniciativa) y el ahorro real validado.
+* **Exportación CSV e Impresión PDF**: Implementación de un exportador CSV reactivo que genera y descarga dinámicamente un archivo con los datos del periodo seleccionado. Configuración de estilos `@media print` para generar impresiones en PDF limpias y profesionales, ocultando elementos del sistema como el menú lateral y los filtros de búsqueda.
+* **Verificación de Compilación**: Ejecutado `npm run build` con éxito, verificando que Vite empaqueta la vista y su lógica JS sin dependencias rotas.
+

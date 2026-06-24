@@ -128,3 +128,11 @@ Este documento registra las decisiones arquitectónicas y de diseño técnico to
 * **Contexto**: Anteriormente el control se realizaba mediante metas fijas e iniciativas estáticas sin poder auditar de manera fina qué ahorro real se lograba mes a mes por cada iniciativa de forma independiente.
 * **Razón**: Permite la auditoría granular mes a mes de los ahorros reales por iniciativa, separando la previsión (iniciativa inicial) del flujo real de ejecución presupuestal validado por Control Interno.
 
+---
+
+## 19. Dinamización y Filtro Temporal de Reportes Ejecutivos
+* **Decisión**: Reemplazar la página estática e inconexa de reportes ejecutivos (`reports.html`) por un panel interactivo controlado por un nuevo script `src/js/reports.js`. Esto incluye filtros de Año, Mes y Departamento, la presentación de Bento Cards de KPIs calculados en tiempo real, una tabla detallada por iniciativa con estados coloreados y soporte de exportación CSV e impresión PDF.
+* **Contexto**: Los reportes ejecutivos poseían fechas estáticas obsoletas (2023 y 2024) y no analizaban la información real cargada en Supabase sobre iniciativas de ahorro y ejecuciones del periodo 2026.
+* **Razón**: Proporciona una herramienta de auditoría y análisis de caja real y dinámica para directivos y control interno, alineando los datos visualizados en reportes con las transacciones de ejecución guardadas en base de datos.
+
+
