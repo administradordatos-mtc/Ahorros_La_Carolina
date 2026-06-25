@@ -163,7 +163,10 @@ function actualizarInterfazUsuario(email, rol) {
             sidebar.classList.add('drawer-config');
             
             // Reconfigurar clases para hacerlo fixed deslizable en móvil y flex relativo en desktop
-            sidebar.className = sidebar.className.replace(/\bhidden\b/g, '') + 
+            sidebar.className = sidebar.className
+                .replace(/\bhidden\b/g, '')
+                .replace(/\bsticky\b/g, '')
+                .replace(/\btop-0\b/g, '') + 
                 ' fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 md:flex z-50';
 
             // Inyectar el overlay de fondo en el body
