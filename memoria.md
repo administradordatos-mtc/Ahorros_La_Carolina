@@ -156,6 +156,15 @@ Este documento contiene el registro de todo el trabajo, depuración, optimizaci�
   * Reducidos los gaps verticales y paddings de las cabeceras de bienvenida en móviles (`gap-sm md:gap-md pb-sm md:pb-md`), logrando una visualización sumamente compacta y elegante al inicio del viewport.
 * **Git Sincronizado**: Compilado con Vite y empujado a `origin` y `vercel` en la rama `development`.
 
+### J. Corrección de Posicionamiento de Sidebar en Móviles (Resolución de Espacio Negro Superior)
+* **Incidente**: Reportado mediante captura de pantalla que persistía una enorme zona negra en la parte superior en navegadores móviles (donde se leía "DATOS" truncado y flotaba el icono de perfil), empujando el contenido real hacia abajo.
+* **Diagnóstico**: Identificado que la barra lateral (`aside`) original venía configurada con la clase de flujo rígida `sticky top-0` en el HTML. Al ser móvil, el JS dinámico en `auth.js` le agregaba la propiedad `fixed inset-y-0 left-0`. Tener aplicadas ambas propiedades de posicionamiento (`sticky` y `fixed` simultáneamente) generaba un conflicto crítico de renderizado en navegadores móviles, causando que el elemento continuara ocupando espacio físico en el flujo flexible vertical (`flex-col`) del body en vez de salirse del flujo.
+* **Solución**:
+  * Modificados los 6 archivos HTML principales (`index.html`, `users.html`, `initiatives.html`, `execution.html`, `reports.html`, `kpis.html`) para limitar el comportamiento `sticky` exclusivamente a pantallas medianas y grandes, cambiando `sticky top-0` por `md:sticky md:top-0`.
+  * Ajustada la lógica de inyección de clases en `src/js/auth.js` para remover de forma activa cualquier clase `sticky` o `top-0` al configurar el Drawer responsivo en móvil antes de concatenar el `fixed z-50`.
+* **Git Sincronizado**: Compilado y empujado a `origin` y `vercel` en la rama `development`.
+
+
 
 
 
